@@ -12,7 +12,10 @@ export async function getAppConfig(req: Request, res: Response) {
 
 export async function putClip(req: Request, res: Response) {
   const { clipId } = req.params;
-  const s3 = new S3();
+  const s3 = new S3({
+    endpoint: process.env.S3_ENDPOINT || undefined,
+    s3ForcePathStyle: true,
+  });
   await s3
     .upload({ Bucket: "plasmic-clips", Key: clipId, Body: req.body.content })
     .promise();
@@ -25,7 +28,9 @@ export async function putClip(req: Request, res: Response) {
 
 export async function getClip(req: Request, res: Response) {
   const { clipId } = req.params;
-  const s3 = new S3();
+  const s3 = new S3({
+    endpoint: process.env.S3_ENDPOINT || undefined,
+  });
   const result = await s3
     .getObject({
       Bucket: "plasmic-clips",
