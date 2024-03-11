@@ -57,9 +57,8 @@ const commitHash = childProcess
   .slice(0, 6);
 
 const publicUrl =
-  process.env.NODE_ENV === 'development'
-    ? process.env.PUBLIC_URL
-    : require(paths.resolveApp('package.json')).homepage;
+  process.env.PUBLIC_URL
+    || require(paths.resolveApp('package.json')).homepage;
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
