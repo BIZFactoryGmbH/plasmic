@@ -69,7 +69,10 @@ export async function uploadFileToS3(
       const storagePath = `${fileHash}.${ext}`;
 
       try {
-        const { Location } = await new S3()
+        const { Location } = await new S3({
+          endpoint: process.env.S3_ENDPOINT || undefined,
+          s3ForcePathStyle: true,
+        })
           .upload({
             Bucket: siteAssetsBucket,
             Key: storagePath,

@@ -459,7 +459,10 @@ async function fetchImageAssetsFromS3(site: Site) {
         return;
       }
       const storagePath = new URL(i.dataUri).pathname.replace(/^\//, "");
-      const res = await new S3()
+      const res = await new S3({
+        endpoint: process.env.S3_ENDPOINT || undefined,
+        s3ForcePathStyle: true,
+      })
         .getObject({
           Bucket: siteAssetsBucket,
           Key: storagePath,

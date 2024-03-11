@@ -53,7 +53,10 @@ export async function runCypressTest(opts: {
 
     if (result.status === "failed" && diffFiles.length > 0) {
       console.log("Diff files", diffFiles);
-      const s3 = new S3();
+      const s3 = new S3({
+        endpoint: process.env.S3_ENDPOINT || undefined,
+        s3ForcePathStyle: true,
+      });
       for (const diffFile of diffFiles) {
         const { Location } = await s3
           .upload({
