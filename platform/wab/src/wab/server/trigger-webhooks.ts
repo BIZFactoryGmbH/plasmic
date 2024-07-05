@@ -26,34 +26,22 @@ export async function triggerWebhookOnly(
     headers[key] = value;
   }
 
-  // Prevent reaching internal IPs.
-  const hostname = new URL(url).hostname;
-  const ip = await dns.promises.lookup(hostname);
-  const isPrivate = isPrivateIp(ip.address);
-
   let response: { status: number; data: string };
-  if (isPrivate) {
+  try {
+    const resp = await axios.request({
+      method,
+      url,
+      headers,
+      data: payload,
+      // Disable axios default transform to always get a string response.
+      transformResponse: (res) => res,
+    });
+    response = { status: resp.status, data: resp.data };
+  } catch (error) {
     response = {
-      status: 500,
-      data: "Hostname resolves to internal IP",
+      status: error.response?.status,
+      data: error.response?.data,
     };
-  } else {
-    try {
-      const resp = await axios.request({
-        method,
-        url,
-        headers,
-        data: payload,
-        // Disable axios default transform to always get a string response.
-        transformResponse: (res) => res,
-      });
-      response = { status: resp.status, data: resp.data };
-    } catch (error) {
-      response = {
-        status: error.response?.status,
-        data: error.response?.data,
-      };
-    }
   }
   return response;
 }
