@@ -1,4 +1,111 @@
 //@ts-ignore
+import ContextMenuIndicator from "@/wab/client/components/ContextMenuIndicator/ContextMenuIndicator";
+import { ComponentPropModal } from "@/wab/client/components/modals/ComponentPropModal";
+import { DataPickerEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/DataPickerEditor";
+import {
+  AUTOCOMPLETE_OPTIONS,
+  FallbackEditor,
+  getComponentPropTypes,
+  getContextComponentPropTypes,
+  IndentedRow,
+} from "@/wab/client/components/sidebar-tabs/ComponentPropsSection";
+import { ValuePreview } from "@/wab/client/components/sidebar-tabs/data-tab";
+import { DataPickerTypesSchema } from "@/wab/client/components/sidebar-tabs/DataBinding/DataPicker";
+import { getInputTagType } from "@/wab/client/components/sidebar-tabs/HTMLAttributesSection";
+import { PropValueEditor } from "@/wab/client/components/sidebar-tabs/PropValueEditor";
+import WarningIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__WarningTriangleSvg";
+
+import {
+  getValueSetState,
+  InvariantablePropTooltip,
+  LabeledItemRow,
+  ValueSetState,
+} from "@/wab/client/components/sidebar/sidebar-helpers";
+import { TplExpsProvider } from "@/wab/client/components/style-controls/StyleComponent";
+import { InlineIcon } from "@/wab/client/components/widgets";
+import { Icon } from "@/wab/client/components/widgets/Icon";
+import InfoIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Info";
+import LinkIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Link";
+import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
+import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
+import { StandardMarkdown } from "@/wab/client/utils/StandardMarkdown";
+import { HighlightBlinker } from "@/wab/commons/components/HighlightBlinker";
+import { DeepReadonly } from "@/wab/commons/types";
+import { getLinkedCodeProps } from "@/wab/shared/cached-selectors";
+import {
+  ensurePropTypeToWabType,
+  getPropTypeLayout,
+  getPropTypeType,
+  isAllowedDefaultExprForPropType,
+  isDynamicValueDisabledInPropType,
+  isExprValuePropType,
+  isPlainObjectPropType,
+  maybePropTypeToAbout,
+  StudioPropType,
+  wabTypeToPropType,
+} from "@/wab/shared/code-components/code-components";
+import {
+  assert,
+  ensure,
+  ensureInstance,
+  filterFalsy,
+  hackyCast,
+  isOneOf,
+  leftZip,
+  maybe,
+  strictZip,
+  swallow,
+  switchType,
+  tuple,
+} from "@/wab/shared/common";
+import { getContextDependentValue } from "@/wab/shared/context-dependent-value";
+import {
+  extractParamsFromPagePath,
+  getComponentDisplayName,
+  getParamDisplayName,
+  getRealParams,
+  isCodeComponent,
+  isContextCodeComponent,
+  isPageComponent,
+  isPlainComponent,
+  isPlumeComponent,
+} from "@/wab/shared/core/components";
+import {
+  asCode,
+  clone,
+  code,
+  codeLit,
+  createExprForDataPickerValue,
+  ExprCtx,
+  extractReferencedParam,
+  extractValueSavedFromDataPicker,
+  hasDynamicParts,
+  isAllowedDefaultExpr,
+  isDynamicExpr,
+  isFallbackSet,
+  isPageHref,
+  isRealCodeExpr,
+  renderable,
+  summarizeExpr,
+  tryExtractLit,
+} from "@/wab/shared/core/exprs";
+import {
+  getTplTextBlockContent,
+  isTplRawString,
+  isTplTag,
+  TplTagCodeGenType,
+} from "@/wab/shared/core/tpls";
+import {
+  getInvalidArgErrorMessage,
+  InvalidArgMeta,
+} from "@/wab/shared/core/val-nodes";
+import {
+  computeDefinedIndicator,
+  DefinedIndicatorType,
+} from "@/wab/shared/defined-indicator";
+import { tryEvalExpr } from "@/wab/shared/eval";
+import { getInputTypeOptions } from "@/wab/shared/html-utils";
 import {
   CollectionExpr,
   CompositeExpr,
@@ -36,122 +143,21 @@ import {
   Type,
   VariantsRef,
   VarRef,
-} from "@/wab/classes";
-import ContextMenuIndicator from "@/wab/client/components/ContextMenuIndicator/ContextMenuIndicator";
-import { ComponentPropModal } from "@/wab/client/components/modals/ComponentPropModal";
-import {
-  getValueSetState,
-  InvariantablePropTooltip,
-  LabeledItemRow,
-  ValueSetState,
-} from "@/wab/client/components/sidebar/sidebar-helpers";
-import { TplExpsProvider } from "@/wab/client/components/style-controls/StyleComponent";
-import { InlineIcon } from "@/wab/client/components/widgets";
-import { Icon } from "@/wab/client/components/widgets/Icon";
-import InfoIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Info";
-import LinkIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Link";
-import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { StandardMarkdown } from "@/wab/client/utils/StandardMarkdown";
-import {
-  assert,
-  ensure,
-  ensureInstance,
-  filterFalsy,
-  hackyCast,
-  isOneOf,
-  leftZip,
-  maybe,
-  strictZip,
-  swallow,
-  switchType,
-  tuple,
-} from "@/wab/common";
-import { HighlightBlinker } from "@/wab/commons/components/HighlightBlinker";
-import { DeepReadonly } from "@/wab/commons/types";
-import {
-  extractParamsFromPagePath,
-  getComponentDisplayName,
-  getParamDisplayName,
-  getRealParams,
-  isCodeComponent,
-  isContextCodeComponent,
-  isPageComponent,
-  isPlainComponent,
-  isPlumeComponent,
-} from "@/wab/components";
-import {
-  asCode,
-  clone,
-  code,
-  codeLit,
-  createExprForDataPickerValue,
-  ExprCtx,
-  extractReferencedParam,
-  extractValueSavedFromDataPicker,
-  hasDynamicParts,
-  isAllowedDefaultExpr,
-  isDynamicExpr,
-  isFallbackSet,
-  isPageHref,
-  isRealCodeExpr,
-  renderable,
-  summarizeExpr,
-  tryExtractLit,
-} from "@/wab/exprs";
-import { getLinkedCodeProps } from "@/wab/shared/cached-selectors";
-import {
-  ensurePropTypeToWabType,
-  getPropTypeLayout,
-  getPropTypeType,
-  isAllowedDefaultExprForPropType,
-  isDynamicValueDisabledInPropType,
-  isExprValuePropType,
-  isPlainObjectPropType,
-  maybePropTypeToAbout,
-  StudioPropType,
-  wabTypeToPropType,
-} from "@/wab/shared/code-components/code-components";
-import { getContextDependentValue } from "@/wab/shared/context-dependent-value";
+} from "@/wab/shared/model/classes";
 import {
   isRenderableType,
   typeFactory,
   typesEqual,
-} from "@/wab/shared/core/model-util";
-import {
-  computeDefinedIndicator,
-  DefinedIndicatorType,
-} from "@/wab/shared/defined-indicator";
-import { tryEvalExpr } from "@/wab/shared/eval";
-import { getInputTypeOptions } from "@/wab/shared/html-utils";
+} from "@/wab/shared/model/model-util";
 import { hashExpr } from "@/wab/shared/site-diffs";
 import { getTplComponentArg, unsetTplComponentArg } from "@/wab/shared/TplMgr";
 import { $$$ } from "@/wab/shared/TplQuery";
 import { isBaseVariant } from "@/wab/shared/Variants";
 import { ensureBaseVariantSetting } from "@/wab/shared/VariantTplMgr";
-import {
-  getTplTextBlockContent,
-  isTplRawString,
-  isTplTag,
-  TplTagCodeGenType,
-} from "@/wab/tpls";
-import { Menu } from "antd";
+import { Menu, Tooltip } from "antd";
 import { capitalize, isString, keyBy } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useMemo } from "react";
-import { DataPickerEditor } from "./ComponentProps/DataPickerEditor";
-import {
-  AUTOCOMPLETE_OPTIONS,
-  FallbackEditor,
-  getComponentPropTypes,
-  getContextComponentPropTypes,
-  IndentedRow,
-} from "./ComponentPropsSection";
-import { ValuePreview } from "./data-tab";
-import { DataPickerTypesSchema } from "./DataBinding/DataPicker";
-import { getInputTagType } from "./HTMLAttributesSection";
-import { PropValueEditor } from "./PropValueEditor";
 
 export interface ControlExtras {
   path: (number | string)[];
@@ -159,8 +165,9 @@ export interface ControlExtras {
 }
 
 interface PropEditorContextData {
-  componentPropValues: any;
+  componentPropValues: Record<string, any>;
   ccContextData: any;
+  invalidArg?: InvalidArgMeta;
   tpl?: TplTag | TplComponent;
   viewCtx?: ViewCtx;
   env: { [key: string]: any } | undefined;
@@ -438,8 +445,8 @@ function PropEditorRowWrapper_(props: {
     tpl,
     param
   );
-  const { componentPropValues, ccContextData } =
-    viewCtx.getComponentPropValuesAndContextData(tpl, param);
+  const { componentPropValues, ccContextData, invalidArgs } =
+    viewCtx.getComponentEvalContext(tpl, param);
   const controlExtras: ControlExtras = { path: [param.variable.name] };
   if (
     isPlainObjectPropType(propType) &&
@@ -530,6 +537,7 @@ function PropEditorRowWrapper_(props: {
       tpl={tpl}
       componentPropValues={componentPropValues}
       ccContextData={ccContextData}
+      invalidArg={invalidArgs.find((invalidArg) => invalidArg.param === param)}
     />
   );
 }
@@ -611,6 +619,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
   const {
     componentPropValues,
     ccContextData,
+    invalidArg,
     env: origCanvasEnv,
     tpl,
     viewCtx,
@@ -627,9 +636,9 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
   };
   const ref = React.useRef<PropEditorRef>(null);
 
-  const { unwrapExpr, wrapExpr } =
+  const { maybeUnwrapExpr, maybeWrapExpr } =
     getExprTransformationBasedOnPropType(propType);
-  const expr = unwrapExpr(origExpr);
+  const expr = maybeUnwrapExpr(origExpr);
 
   const studioCtx = useStudioCtx();
   const [newParamModalVisibile, setNewParamModalVisible] =
@@ -701,7 +710,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
       path: ["undefined"],
       fallback: expr ? clone(expr) : codeLit(undefined),
     });
-    props.onChange(wrapExpr(newExpr));
+    props.onChange(maybeWrapExpr(newExpr));
     setShowFallback(true);
     setIsDataPickerVisible(true);
   }
@@ -757,14 +766,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
         (isPageComponent(ownerComponent) || isPlainComponent(ownerComponent)) &&
         !referencedParam &&
         canLinkToProp && (
-          <Menu.SubMenu
-            title={
-              <span>
-                Link to a prop for component{" "}
-                <strong>{getComponentDisplayName(ownerComponent)}</strong>
-              </span>
-            }
-          >
+          <Menu.SubMenu title={<span>Allow external access</span>}>
             {getRealParams(ownerComponent)
               .filter((p) => canLinkPropToParam(wabType, p))
               .map((param) => (
@@ -819,7 +821,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
             onClick={() => {
               props.onChange(
                 isKnownCustomCode(expr) || isKnownObjectPath(expr)
-                  ? wrapExpr(expr.fallback) ?? undefined
+                  ? maybeWrapExpr(expr.fallback)
                   : undefined
               );
             }}
@@ -872,11 +874,9 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
             ? clone(codeExpr.fallback)
             : undefined;
           const newExpr = createExprForDataPickerValue(val, fallbackExpr);
-          props.onChange(wrapExpr(newExpr));
+          props.onChange(maybeWrapExpr(newExpr));
         }}
-        onUnlink={() =>
-          props.onChange(wrapExpr(codeExpr.fallback) ?? undefined)
-        }
+        onUnlink={() => props.onChange(maybeWrapExpr(codeExpr.fallback))}
         visible={isDataPickerVisible}
         setVisible={setIsDataPickerVisible}
         data={canvasEnv}
@@ -915,13 +915,13 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
                 viewCtx
               );
               if (newExpr !== expr) {
-                props.onChange(wrapExpr(newExpr));
+                props.onChange(maybeWrapExpr(newExpr));
               }
             });
           } else {
             const newExpr = updateOrCreateExpr(expr, wabType, val);
             if (newExpr !== expr) {
-              props.onChange(wrapExpr(newExpr));
+              props.onChange(maybeWrapExpr(newExpr));
             }
           }
         }}
@@ -942,6 +942,13 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
             exprCtx,
           }}
         >
+          {invalidArg && (
+            <div className="invalid-arg-icon">
+              <Tooltip title={getInvalidArgErrorMessage(invalidArg)}>
+                <WarningIcon />
+              </Tooltip>
+            </div>
+          )}
           <LabeledItemRow
             data-test-id={`prop-editor-row-${attr ?? label}`}
             label={
@@ -1015,6 +1022,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
           {newParamModalVisibile && ownerComponent && viewCtx && (
             <ComponentPropModal
               studioCtx={studioCtx}
+              suggestedName={label}
               component={ownerComponent}
               visible={newParamModalVisibile}
               type={wabType}
@@ -1075,12 +1083,12 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
                     } else {
                       delete newExpr.params[param];
                     }
-                    props.onChange(wrapExpr(newExpr));
+                    props.onChange(maybeWrapExpr(newExpr));
                   }}
                   onDelete={() => {
                     const newExpr = clone(expr) as PageHref;
                     delete newExpr.params[param];
-                    props.onChange(wrapExpr(newExpr));
+                    props.onChange(maybeWrapExpr(newExpr));
                   }}
                   disableLinkToProp={props.disableLinkToProp}
                   disableDynamicValue={props.disableDynamicValue}
@@ -1115,7 +1123,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
                             path: codeExpr.path,
                             fallback: undefined,
                           });
-                      props.onChange(wrapExpr(newExpr));
+                      props.onChange(maybeWrapExpr(newExpr));
                     });
                   }}
                 >
@@ -1151,7 +1159,7 @@ function InnerPropEditorRow_(props: PropEditorRowProps) {
                               path: codeExpr.path,
                               fallback: fallbackExpr,
                             });
-                        props.onChange(wrapExpr(newExpr));
+                        props.onChange(maybeWrapExpr(newExpr));
                       });
                     }}
                     onDelete={props.onDelete}
@@ -1288,17 +1296,27 @@ function getExprTransformationBasedOnPropType(propType: StudioPropType<any>) {
         ? propType.argTypes.map(({ name }) => name)
         : propType.argNames;
     return {
-      wrapExpr: (x) =>
-        new FunctionExpr({
+      maybeWrapExpr: (x: Expr | undefined | null) => {
+        if (x == null) {
+          return undefined;
+        }
+        return new FunctionExpr({
           bodyExpr: x,
           argNames,
-        }),
-      unwrapExpr: (x) => (isKnownFunctionExpr(x) ? x.bodyExpr : undefined),
+        });
+      },
+      maybeUnwrapExpr: (x: Expr | undefined | null) => {
+        if (x == null) {
+          return undefined;
+        }
+        return isKnownFunctionExpr(x) ? x.bodyExpr : undefined;
+      },
     };
   }
   return {
-    wrapExpr: (x) => x,
-    unwrapExpr: (x) => x,
+    maybeWrapExpr: (x: Expr | undefined | null) => (x == null ? undefined : x),
+    maybeUnwrapExpr: (x: Expr | undefined | null) =>
+      x == null ? undefined : x,
   };
 }
 
@@ -1312,13 +1330,31 @@ function PropEditorRow_(
     schema?: DataPickerTypesSchema;
     componentPropValues?: Record<string, any>;
     ccContextData?: any;
+    invalidArg?: InvalidArgMeta;
   }
 ) {
   const { tpl, viewCtx, ...rest } = props;
-  const { componentPropValues, ccContextData } =
-    !!props.componentPropValues || !!props.ccContextData
-      ? props
-      : viewCtx.getComponentPropValuesAndContextData(tpl);
+  const getCurrentComponentEvalContext = () => {
+    if (
+      !!props.componentPropValues ||
+      !!props.ccContextData ||
+      !!props.invalidArg
+    ) {
+      return props;
+    }
+    const { componentPropValues, ccContextData, invalidArgs } =
+      viewCtx.getComponentEvalContext(tpl);
+    const invalidArg = invalidArgs.find(
+      (arg) => arg.param.variable.name === rest.attr
+    );
+    return {
+      componentPropValues,
+      ccContextData,
+      invalidArg,
+    };
+  };
+  const { componentPropValues, ccContextData, invalidArg } =
+    getCurrentComponentEvalContext();
   const env = !props.env ? viewCtx.getCanvasEnvForTpl(tpl) : props.env;
   const schema = !props.schema ? viewCtx.customFunctionsSchema() : props.schema;
 
@@ -1327,8 +1363,9 @@ function PropEditorRow_(
       value={{
         tpl,
         viewCtx,
-        componentPropValues,
+        componentPropValues: componentPropValues ?? {},
         ccContextData,
+        invalidArg,
         env,
         schema,
       }}

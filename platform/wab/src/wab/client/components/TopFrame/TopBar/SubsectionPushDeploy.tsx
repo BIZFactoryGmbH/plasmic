@@ -4,15 +4,18 @@ import GithubIntegration, {
   filterPlasmicPullRequests,
 } from "@/wab/client/components/github/GithubIntegration";
 import { confirm, reactConfirm } from "@/wab/client/components/quick-modals";
+import { VisibleEnableBlock } from "@/wab/client/components/TopFrame/TopBar/PublishFlowDialog";
+import { PublishState } from "@/wab/client/components/TopFrame/TopBar/PublishFlowDialogWrapper";
+import { TopBarModal } from "@/wab/client/components/TopFrame/TopBar/TopBarModal";
 import Button from "@/wab/client/components/widgets/Button";
 import GitJobStep from "@/wab/client/components/widgets/GitJobStep";
 import Select from "@/wab/client/components/widgets/Select";
-import { AsyncState } from "@/wab/client/hooks/useAsyncStrict";
+import { AsyncFnReturn } from "@/wab/client/hooks/useAsyncStrict";
 import {
   DefaultSubsectionPushDeployProps,
   PlasmicSubsectionPushDeploy,
 } from "@/wab/client/plasmic/plasmic_kit_continuous_deployment/PlasmicSubsectionPushDeploy";
-import { ensure, spawn } from "@/wab/common";
+import { ensure, spawn } from "@/wab/shared/common";
 import {
   ApiProject,
   ApiProjectRepository,
@@ -20,17 +23,13 @@ import {
   GitWorkflowJobStep,
 } from "@/wab/shared/ApiSchema";
 import * as React from "react";
-import { PromiseType } from "react-use/lib/util";
-import { VisibleEnableBlock } from "./PublishFlowDialog";
-import { PublishState } from "./PublishFlowDialogWrapper";
-import { TopBarModal } from "./TopBarModal";
 
 export type SetupPushDeploy = {
   gitActionParams: GitActionParams;
   setGitActionParams: (params: GitActionParams) => void;
-  projectRepository: AsyncState<
-    PromiseType<ReturnType<() => Promise<ApiProjectRepository | null>>>
-  >;
+  projectRepository: AsyncFnReturn<
+    () => Promise<ApiProjectRepository | null>
+  >[0];
   updateProjectRepository: () => Promise<ApiProjectRepository | null>;
   connectedToGithub: boolean;
   setConnectedToGithub: (connected: boolean) => void;

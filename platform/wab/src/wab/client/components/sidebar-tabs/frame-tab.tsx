@@ -1,7 +1,6 @@
-import { ArenaFrame } from "@/wab/classes";
 import { makeFrameSizeMenu } from "@/wab/client/components/menus/FrameSizeMenu";
-import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { SidebarModalProvider } from "@/wab/client/components/sidebar/SidebarModal";
+import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { ColorButton } from "@/wab/client/components/style-controls/ColorButton";
 import StyleToggleButton from "@/wab/client/components/style-controls/StyleToggleButton";
 import StyleToggleButtonGroup from "@/wab/client/components/style-controls/StyleToggleButtonGroup";
@@ -12,25 +11,22 @@ import CenterAndPadIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Cent
 import FrameStretchIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__FrameStretch";
 import TriangleBottomIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__TriangleBottom";
 import { ViewComponentProps, ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure, parsePx } from "@/wab/common";
+import { ensure, parsePx } from "@/wab/shared/common";
 import { isTokenRef } from "@/wab/commons/StyleToken";
+import { isPageComponent, isPageFrame } from "@/wab/shared/core/components";
 import {
-  isFrameComponent,
-  isPageComponent,
-  isPageFrame,
-  isPlainComponent,
-} from "@/wab/components";
-import { FrameViewMode, getFrameHeight } from "@/wab/shared/Arenas";
-import { isStretchyComponentFrame } from "@/wab/shared/component-arenas";
+  FrameViewMode,
+  getFrameHeight,
+  isHeightAutoDerived,
+} from "@/wab/shared/Arenas";
 import { FRAME_CAP } from "@/wab/shared/Labels";
-import { ContainerLayoutType } from "@/wab/shared/layoututils";
+import { ArenaFrame } from "@/wab/shared/model/classes";
 import { frameSizeGroups } from "@/wab/shared/responsiveness";
 import { getComponentDefaultSize } from "@/wab/shared/sizingutils";
 import { Chroma } from "@/wab/shared/utils/color-utils";
-import { getFrameContainerType } from "@/wab/sites";
 import { Menu } from "antd";
 import L from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
 
 interface FramePanelProps extends ViewComponentProps {
@@ -49,56 +45,56 @@ export const FramePanel = observer(function FramePanel(props: FramePanelProps) {
   const isStretchable = defaultSize.width === "stretch";
   return (
     <div style={{ width: 200 }}>
-      <FrameSizeSection frame={frame} viewCtx={viewCtx} />
-      {!isPageComponent(component) && (
-        <LabeledItemRow label="View mode">
-          <StyleToggleButtonGroup
-            value={frame.viewMode}
-            onChange={async (mode) =>
-              viewCtx.studioCtx.changeFrameViewMode(
-                frame,
-                mode as "stretch" | "centered"
-              )
-            }
-            autoWidth
-          >
-            <StyleToggleButton
-              value={FrameViewMode.Stretch}
-              tooltip={
-                <>
-                  Content fills entire {FRAME_CAP}; useful for full-screen
-                  designs.{" "}
-                  {!isStretchable && (
-                    <strong>
-                      Will also set your root width to <code>stretch</code>!
-                    </strong>
-                  )}
-                </>
-              }
-            >
-              <Icon icon={FrameStretchIcon} />
-            </StyleToggleButton>
-            <StyleToggleButton
-              value={FrameViewMode.Centered}
-              tooltip={
-                <>
-                  Content centered in {FRAME_CAP}; useful for reusable
-                  components like buttons.
-                </>
-              }
-            >
-              <Icon icon={CenterAndPadIcon} />
-            </StyleToggleButton>
-          </StyleToggleButtonGroup>
-        </LabeledItemRow>
-      )}
       {
         // We don't show the background color config if it is a page component;
         // in this case, the root node should be supplying the background color
-        (isPlainComponent(component) || isFrameComponent(component)) && (
-          <FrameBgSection viewCtx={viewCtx} />
+        !isPageComponent(component) && (
+          <>
+            <FrameBgSection viewCtx={viewCtx} />
+            <LabeledItemRow label="View mode">
+              <StyleToggleButtonGroup
+                value={frame.viewMode}
+                onChange={async (mode) =>
+                  viewCtx.studioCtx.changeFrameViewMode(
+                    frame,
+                    mode as "stretch" | "centered"
+                  )
+                }
+                autoWidth
+              >
+                <StyleToggleButton
+                  value={FrameViewMode.Stretch}
+                  tooltip={
+                    <>
+                      Stretch mode, where content fills entire {FRAME_CAP}.
+                      Useful for full-screen designs.{" "}
+                      {!isStretchable && (
+                        <strong>
+                          Will also set your root width to <code>stretch</code>!
+                        </strong>
+                      )}
+                    </>
+                  }
+                >
+                  <Icon icon={FrameStretchIcon} />
+                </StyleToggleButton>
+                <StyleToggleButton
+                  value={FrameViewMode.Centered}
+                  tooltip={
+                    <>
+                      Centered mode, where content is centered in {FRAME_CAP}.
+                      Useful for reusable components like buttons.
+                    </>
+                  }
+                >
+                  <Icon icon={CenterAndPadIcon} />
+                </StyleToggleButton>
+              </StyleToggleButtonGroup>
+            </LabeledItemRow>
+          </>
         )
       }
+      <FrameSizeSection frame={frame} viewCtx={viewCtx} />
     </div>
   );
 });
@@ -172,38 +168,6 @@ const FrameSizeSection = observer(function FrameSizeSection(
     });
   };
 
-  const containerType = getFrameContainerType(frame);
-
-  const renderLabeledDimSpinner = (prop: "width" | "height", label: string) => {
-    return (
-      <LabeledItemRow label={label}>
-        <DimTokenSpinner
-          allowedUnits={["px"]}
-          value={`${prop === "width" ? frame[prop] : getFrameHeight(frame)}px`}
-          noClear
-          disabled={
-            (isPageFrame(frame) ||
-              (isStretchyComponentFrame(frame) &&
-                containerType !== ContainerLayoutType.free)) &&
-            prop === "height"
-          }
-          onChange={(val) =>
-            changeSize(prop, ensure(val, "onChange only fires for valid val"))
-          }
-          extraOptions={[]}
-          data-test-id={`artboard-size-${prop}`}
-          tooltip={
-            isStretchyComponentFrame(frame) &&
-            prop === "height" &&
-            containerType !== ContainerLayoutType.free
-              ? `In ${frame.viewMode} view mode the height is auto-sized`
-              : undefined
-          }
-        />
-      </LabeledItemRow>
-    );
-  };
-
   return (
     <>
       {frame.viewMode === FrameViewMode.Stretch && (
@@ -219,35 +183,33 @@ const FrameSizeSection = observer(function FrameSizeSection(
                       dim: "width",
                       amount: size.width,
                     });
-
-                    if (isPageFrame(frame)) {
-                      frame.viewportHeight = size.height;
-                    } else {
-                      viewCtx.studioCtx.changeFrameSize({
-                        frame,
-                        dim: "height",
-                        amount: size.height,
-                      });
-                    }
+                    viewCtx.studioCtx.changeFrameSize({
+                      frame,
+                      dim: "height",
+                      amount: size.height,
+                    });
 
                     viewCtx.studioCtx.spreadNewFrameSize(frame);
                   }),
               })
             }
           >
-            <button className="right-panel-input-background select-dropdown__button flex-fill code">
+            <button className="right-panel-input-background select-dropdown__button flex-fill">
               <div className="select-dropdown__container">
-                <span className="select-dropdown__selected">
+                <span
+                  className="select-dropdown__selected"
+                  style={{ padding: "6px 8px" }}
+                >
                   {(() => {
                     const curSize = L.flatten(
                       frameSizeGroups.map((g) => g.sizes)
                     ).find(
                       (size) =>
                         size.width === frame.width &&
-                        size.height === getFrameHeight(frame)
+                        size.height === frame.height
                     );
                     if (!curSize) {
-                      return "";
+                      return "Custom";
                     } else {
                       return curSize.name;
                     }
@@ -259,8 +221,44 @@ const FrameSizeSection = observer(function FrameSizeSection(
           </widgets.IFrameAwareDropdownMenu>
         </LabeledItemRow>
       )}
-      {renderLabeledDimSpinner("width", "Width")}
-      {renderLabeledDimSpinner("height", "Height")}
+      <LabeledItemRow label={"Width"}>
+        <DimTokenSpinner
+          data-test-id="artboard-size-width"
+          allowedUnits={["px"]}
+          value={`${frame.width}px`}
+          noClear
+          onChange={(val) => changeSize("width", ensure(val, "noClear"))}
+        />
+      </LabeledItemRow>
+      <LabeledItemRow label={"Height"}>
+        <DimTokenSpinner
+          data-test-id="artboard-size-height"
+          allowedUnits={["px"]}
+          value={`${frame.height}px`}
+          noClear
+          onChange={(val) => changeSize("height", ensure(val, "noClear"))}
+        />
+      </LabeledItemRow>
+      {isHeightAutoDerived(frame) && (
+        <LabeledItemRow label={"Content Height"}>
+          <DimTokenSpinner
+            data-test-id="artboard-size-content-height"
+            allowedUnits={["px"]}
+            value={`${getFrameHeight(frame)}px`}
+            noClear
+            onChange={() => {
+              /* this should never be invoked */
+            }}
+            disabled
+            tooltipPlacement={"bottom"}
+            tooltip={
+              isPageFrame(frame)
+                ? "Page height grows based on content. This value is automatically computed."
+                : "In stretch mode, component height grows based on content. This value is automatically computed."
+            }
+          />
+        </LabeledItemRow>
+      )}
     </>
   );
 });

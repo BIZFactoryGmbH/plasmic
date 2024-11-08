@@ -1,23 +1,24 @@
 import { DbMgr } from "@/wab/server/db/DbMgr";
+import { createSystemDiscourseClient } from "@/wab/server/discourse/clients";
 import { TeamDiscourseInfo } from "@/wab/server/entities/Entities";
 import { PreconditionFailedError } from "@/wab/shared/ApiErrors/errors";
 import { TeamId } from "@/wab/shared/ApiSchema";
+import {
+  BASE_URL,
+  FEATURE_TIERS,
+  FeatureTierConfig,
+  PRIVATE_SUPPORT_CATEGORY_ID,
+  SUPPORT_GROUP_NAME,
+} from "@/wab/shared/discourse/config";
 import {
   Category,
   CategoryMutation,
   DiscourseClient,
   GroupAliasLevel,
+  GroupData,
   GroupVisibilityLevel,
   PermissionType,
 } from "@/wab/shared/discourse/DiscourseClient";
-import { createSystemDiscourseClient } from "./clients";
-import {
-  BASE_URL,
-  FeatureTierConfig,
-  FEATURE_TIERS,
-  PRIVATE_SUPPORT_CATEGORY_ID,
-  SUPPORT_GROUP_NAME,
-} from "./config";
 
 /**
  * Creates or updates the org's Discourse configuration,
@@ -74,19 +75,21 @@ async function upsertToDiscourse(ctx: Ctx) {
   const groupId = await upsertDiscourseGroup(ctx);
   const { category, parentCategory } = await upsertDiscourseCategory(ctx);
   await updateDiscourseCategoryWelcomePost(ctx, category, parentCategory);
+  await ensureSupportGroupTrackingCategory(ctx, category);
   return { categoryId: category.id, groupId };
 }
 
 async function upsertDiscourseGroup(ctx: Ctx) {
   const { systemDiscourseClient, existingInfo, slug, name } = ctx;
 
-  const groupData = {
+  const groupData: GroupData = {
     name: slug,
     full_name: name,
     members_visibility_level: GroupVisibilityLevel.MEMBERS,
     mentionable_level: GroupAliasLevel.MEMBERS_MODS_AND_ADMINS,
     messageable_level: GroupAliasLevel.NOBODY,
     visibility_level: GroupVisibilityLevel.MEMBERS,
+    grant_trust_level: 2, // TL2 grants them more votes
   };
   if (existingInfo) {
     await systemDiscourseClient.groupUpdate(existingInfo.groupId, {
@@ -185,4 +188,26 @@ async function updateDiscourseCategoryWelcomePost(
     })
   ).post;
   await systemDiscourseClient.postRevisionHide(post.id, post.version);
+}
+
+async function ensureSupportGroupTrackingCategory(
+  { systemDiscourseClient }: Ctx,
+  category: Category
+) {
+  const group = (await systemDiscourseClient.groupGet(SUPPORT_GROUP_NAME))
+    .group;
+  if (group.watching_category_ids.includes(category.id)) {
+    return;
+  }
+
+  const newWatchingCategoryIds = [
+    ...group.watching_category_ids,
+    category.id,
+  ].sort();
+  await systemDiscourseClient.groupUpdate(group.id, {
+    group: {
+      watching_category_ids: newWatchingCategoryIds,
+    },
+    update_existing_users: "true",
+  });
 }

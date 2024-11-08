@@ -1,3 +1,57 @@
+import * as common from "@/wab/shared/common";
+import {
+  assert,
+  check,
+  clampedAt,
+  ensure,
+  ensureArray,
+  filterMapNils,
+  insert,
+  InvalidCodePathError,
+  maybe,
+  only,
+  remove,
+  removeWhere,
+  replace,
+  replaceAll,
+  replaceMultiple,
+  switchType,
+  tryRemove,
+} from "@/wab/shared/common";
+import {
+  allStyleVariants,
+  isCodeComponent,
+  removeComponentParam,
+} from "@/wab/shared/core/components";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import {
+  ensureCorrectImplicitStates,
+  removeImplicitStatesAfterRemovingTplNode,
+} from "@/wab/shared/core/states";
+import {
+  ancestorsUp,
+  ancestorsUpWithSlotSelections,
+  clone,
+  detectComponentCycle,
+  flattenTpls,
+  getOwnerSite,
+  getParentTplOrSlotSelection,
+  getTplOwnerComponent,
+  isTplComponent,
+  isTplSlot,
+  isTplTag,
+  isTplTextBlock,
+  isTplVariantable,
+  mkTplTagX,
+  removeMarkersToTpl,
+  summarizeSlotParam,
+  summarizeTpl,
+  tplChildren,
+  tplChildrenOnly,
+  trackComponentRoot,
+  tryGetOwnerSite,
+  tryGetTplOwnerComponent,
+} from "@/wab/shared/core/tpls";
 import {
   Arg,
   Component,
@@ -17,71 +71,21 @@ import {
   TplNode,
   TplSlot,
   TplTag,
-} from "@/wab/classes";
-import * as common from "@/wab/common";
-import {
-  assert,
-  check,
-  clampedAt,
-  ensure,
-  ensureArray,
-  filterMapNils,
-  insert,
-  InvalidCodePathError,
-  maybe,
-  only,
-  remove,
-  removeWhere,
-  replace,
-  replaceAll,
-  replaceMultiple,
-  switchType,
-  tryRemove,
-} from "@/wab/common";
-import {
-  allComponentStyleVariants,
-  isCodeComponent,
-  removeComponentParam,
-} from "@/wab/components";
-import { SlotSelection } from "@/wab/slots";
-import {
-  ensureCorrectImplicitStates,
-  removeImplicitStatesAfterRemovingTplNode,
-} from "@/wab/states";
-import {
-  ancestorsUp,
-  ancestorsUpWithSlotSelections,
-  clone,
-  detectComponentCycle,
-  flattenTpls,
-  getOwnerSite,
-  getParentTplOrSlotSelection,
-  getTplOwnerComponent,
-  isTplComponent,
-  isTplSlot,
-  isTplTag,
-  isTplTextBlock,
-  isTplVariantable,
-  mkTplTagX,
-  removeMarkersToTpl,
-  summarizeSlotParam,
-  summarizeTpl,
-  trackComponentRoot,
-  tryGetOwnerSite,
-  tryGetTplOwnerComponent,
-} from "@/wab/tpls";
-import { notification } from "antd";
-import L from "lodash";
+} from "@/wab/shared/model/classes";
 import {
   getSlotArgs,
-  getSlotParams,
   getTplSlotDescendants,
   getTplSlotForParam,
   isSlot,
-} from "./SlotUtils";
-import { TplMgr } from "./TplMgr";
-import { ComponentCycleUserError, NestedTplSlotsError } from "./UserError";
-import { tryGetBaseVariantSetting } from "./Variants";
+} from "@/wab/shared/SlotUtils";
+import { TplMgr } from "@/wab/shared/TplMgr";
+import {
+  ComponentCycleUserError,
+  NestedTplSlotsError,
+} from "@/wab/shared/UserError";
+import { tryGetBaseVariantSetting } from "@/wab/shared/Variants";
+import { notification } from "antd";
+import L from "lodash";
 
 type TplNodeOrSlot = TplNode | SlotSelection;
 export type TplQueryInput = TplQuery | TplNodeOrSlot | TplNodeOrSlot[];
@@ -151,6 +155,9 @@ export class TplQuery {
         const owningComponent = getTplOwnerComponent(child);
         const content = [child];
         TplQuery.checkComponentCycles(owningComponent, newChildren);
+        for (const newChild of newChildren) {
+          newChild.parent = null;
+        }
         mutate(content);
         owningComponent.tplTree = only(content);
         trackComponentRoot(owningComponent);
@@ -380,7 +387,7 @@ export class TplQuery {
 
     if (isTplVariantable(node)) {
       // Remove private variants referencing this node
-      const privateVariants = allComponentStyleVariants(component, true).filter(
+      const privateVariants = allStyleVariants(component).filter(
         (v) =>
           v.forTpl &&
           $$$(v.forTpl).ancestors().toArrayOfTplNodes().includes(node)
@@ -471,9 +478,15 @@ export class TplQuery {
   // Removes an element, but reattaches its children to its parent.
   ungroup() {
     for (const node_ of [...this.nodes]) {
-      const node = ensureKnownTplTag(node_);
+      const node = ensureKnownTplNode(node_);
+      const $node = $$$(node);
 
-      const ungroupedItems = node.children;
+      const $ungroupedItems = $node.childrenOnly();
+      // We detach the children of `node` to avoid having them
+      // marked as deleted when we remove `node` from the model.
+      $ungroupedItems.detach();
+      const ungroupedItems = $ungroupedItems.toArrayOfTplNodes();
+
       TplQuery._updateParentSlotContaining(
         node,
         ungroupedItems,
@@ -566,32 +579,46 @@ export class TplQuery {
     return this;
   }
 
+  /**
+   * Returns direct child nodes, including ALL slots for TplComponents.
+   *
+   * See `childrenOnly()` to get only the "children" slot for TplComponents.
+   */
   children() {
+    return this.childrenInternal(false);
+  }
+
+  /**
+   * Returns direct child nodes, including the "children" slot for TplComponents.
+   *
+   * See `children()` to get ALL slots for TplComponents.
+   */
+  childrenOnly() {
+    return this.childrenInternal(true);
+  }
+
+  private childrenInternal(childrenOnly: boolean) {
     return $$$(
-      L.flatten(
-        [...this.nodes].map((node) => {
-          const result = switchType(node)
-            .when(
-              SlotSelection,
-              (ss) =>
-                maybe(
-                  $$$(
-                    ensure(ss.tpl, () => `Expected a tpl-backed SlotSelection`)
-                  ).getSlotArg(ss.slotParam.variable.name),
-                  (arg) => ensureKnownRenderExpr(arg.expr).tpl
-                ) || []
-            )
-            .when(TplTag, (n: /*TWZ*/ TplTag) => n.children)
-            .when(TplComponent, (n) => {
-              const slotArgs = getSlotArgs(n);
-              return slotArgs.flatMap((arg) =>
-                isKnownRenderExpr(arg.expr) ? arg.expr.tpl : []
-              );
-            })
-            .when(TplSlot, (n) => n.defaultContents)
-            .result();
-          return result;
-        })
+      this.nodes.flatMap((node) =>
+        switchType(node)
+          .when(
+            SlotSelection,
+            (ss) =>
+              maybe(
+                $$$(
+                  ensure(ss.tpl, () => `Expected a tpl-backed SlotSelection`)
+                ).getSlotArg(ss.slotParam.variable.name),
+                (arg) => ensureKnownRenderExpr(arg.expr).tpl
+              ) || []
+          )
+          .when(TplNode, (n) => {
+            if (childrenOnly) {
+              return tplChildrenOnly(n);
+            } else {
+              return tplChildren(n);
+            }
+          })
+          .result()
       )
     );
   }
@@ -1029,32 +1056,6 @@ export class TplQuery {
         slotParam: this.param(slotName),
       })
     );
-  }
-
-  /**
-   * Same as children, but for TplComponents, yield children across all
-   * slots, not just those in the slot named 'children'.
-   */
-  allChildren() {
-    const tpl = ensureKnownTplNode(only(this.nodes));
-    if (isKnownTplComponent(tpl)) {
-      const component = tpl.component;
-
-      function* genChildren() {
-        for (const slotParam of getSlotParams(component)) {
-          const arg = $$$(tpl).getSlotArg(slotParam.variable.name);
-          if (arg && isKnownRenderExpr(arg.expr)) {
-            for (const child of arg.expr.tpl) {
-              yield child;
-            }
-          }
-        }
-      }
-
-      return $$$([...genChildren()]);
-    } else {
-      return this.children();
-    }
   }
 
   siblings() {

@@ -1,3 +1,31 @@
+import { isElementWithComments } from "@/wab/client/components/comments/utils";
+import { Matcher } from "@/wab/client/components/view-common";
+import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
+import {
+  eagerCoalesce,
+  ensure,
+  filterMapTruthy,
+  maybe,
+  switchType,
+  tuple,
+  withoutNils,
+} from "@/wab/shared/common";
+import { toOpaque } from "@/wab/commons/types";
+import { isCodeComponent } from "@/wab/shared/core/components";
+import { getOnlyAssetRef } from "@/wab/shared/core/image-assets";
+import { FrameViewMode } from "@/wab/shared/Arenas";
+import { isTplSlotVisible } from "@/wab/shared/cached-selectors";
+import { isPlainObjectPropType } from "@/wab/shared/code-components/code-components";
+import {
+  EffectiveVariantSetting,
+  getTplComponentActiveVariants,
+} from "@/wab/shared/effective-variant-setting";
+import {
+  COMMENTS_LOWER,
+  INTERACTIVE_CAP,
+  REPEATED_CAP,
+} from "@/wab/shared/Labels";
 import {
   ArenaFrame,
   Component,
@@ -12,30 +40,7 @@ import {
   TplNode,
   TplSlot,
   TplTag,
-} from "@/wab/classes";
-import { Matcher } from "@/wab/client/components/view-common";
-import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import {
-  eagerCoalesce,
-  ensure,
-  filterMapTruthy,
-  maybe,
-  switchType,
-  tuple,
-  withoutNils,
-} from "@/wab/common";
-import { brand } from "@/wab/commons/types";
-import { isCodeComponent } from "@/wab/components";
-import { getOnlyAssetRef } from "@/wab/image-assets";
-import { FrameViewMode } from "@/wab/shared/Arenas";
-import { isTplSlotVisible } from "@/wab/shared/cached-selectors";
-import { isPlainObjectPropType } from "@/wab/shared/code-components/code-components";
-import {
-  EffectiveVariantSetting,
-  getTplComponentActiveVariants,
-} from "@/wab/shared/effective-variant-setting";
-import { INTERACTIVE_CAP, REPEATED_CAP } from "@/wab/shared/Labels";
+} from "@/wab/shared/model/classes";
 import { getPlumeEditorPlugin } from "@/wab/shared/plume/plume-registry";
 import { ReadonlyIRuleSetHelpersX } from "@/wab/shared/RuleSetHelpers";
 import {
@@ -48,16 +53,16 @@ import {
   isVisibilityHidden,
   TplVisibility,
 } from "@/wab/shared/visibility-utils";
-import { isTplAttachedToSite } from "@/wab/sites";
-import { SlotSelection } from "@/wab/slots";
-import * as Tpls from "@/wab/tpls";
+import { isTplAttachedToSite } from "@/wab/shared/core/sites";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import * as Tpls from "@/wab/shared/core/tpls";
 import {
   isTplImage,
   isTplTagOrComponent,
   summarizeSlotParam,
-} from "@/wab/tpls";
-import { ValComponent } from "@/wab/val-nodes";
-import { asTpl, asTplOrSlotSelection } from "@/wab/vals";
+} from "@/wab/shared/core/tpls";
+import { ValComponent } from "@/wab/shared/core/val-nodes";
+import { asTpl, asTplOrSlotSelection } from "@/wab/shared/core/vals";
 import * as Immutable from "immutable";
 import debounce from "lodash/debounce";
 import {
@@ -69,9 +74,9 @@ import {
   runInAction,
 } from "mobx";
 import { computedFn } from "mobx-utils";
-import { Brand } from "utility-types";
+import type { Opaque } from "type-fest";
 
-export type OutlineNodeKey = Brand<string, "OutlineNodeKey">;
+export type OutlineNodeKey = Opaque<string, "OutlineNodeKey">;
 
 export interface OutlineNodeData {
   key: OutlineNodeKey;
@@ -427,6 +432,10 @@ function* getSearchableTexts(
     yield INTERACTIVE_CAP;
   }
 
+  if (isElementWithComments(viewCtx.studioCtx, tpl)) {
+    yield COMMENTS_LOWER;
+  }
+
   if (Tpls.isTplNamable(tpl) && tpl.name) {
     yield tpl.name;
   }
@@ -456,15 +465,15 @@ export function makeNodeKey(
   tpl: TplNode | SlotSelection | ArenaFrame
 ): OutlineNodeKey {
   if (isKnownArenaFrame(tpl)) {
-    return brand(`${tpl.uid}`);
+    return toOpaque(`${tpl.uid}`);
   } else if (tpl instanceof SlotSelection) {
-    return brand(
+    return toOpaque(
       `${
         ensure(tpl.toTplSlotSelection().tpl, "SlotSelection.tpl must exist").uid
       }-${tpl.slotParam.uid}`
     );
   } else {
-    return brand(`${tpl.uid}`);
+    return toOpaque(`${tpl.uid}`);
   }
 }
 

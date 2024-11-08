@@ -1,4 +1,9 @@
 import { UU } from "@/wab/client/cli-routes";
+import {
+  useCmsRows,
+  useCmsTableMaybe,
+} from "@/wab/client/components/cms/cms-contexts";
+import { getRowIdentifierNode } from "@/wab/client/components/cms/CmsEntryDetails";
 import { PublicLink } from "@/wab/client/components/PublicLink";
 import { FileUploader, Spinner } from "@/wab/client/components/widgets";
 import Button from "@/wab/client/components/widgets/Button";
@@ -8,7 +13,6 @@ import Select from "@/wab/client/components/widgets/Select";
 import Switch from "@/wab/client/components/widgets/Switch";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { assert, ensure, ensureType } from "@/wab/common";
 import {
   ApiCmsDatabase,
   CmsDatabaseId,
@@ -18,6 +22,7 @@ import {
   CmsTypeObject,
   CmsUploadedFile,
 } from "@/wab/shared/ApiSchema";
+import { assert, ensure, ensureType } from "@/wab/shared/common";
 import { PlasmicImg } from "@plasmicapp/react-web";
 import Pickr from "@simonwep/pickr";
 import "@simonwep/pickr/dist/themes/nano.min.css";
@@ -38,8 +43,6 @@ import moment from "moment";
 import * as React from "react";
 import { createContext, ReactElement, ReactNode, useContext } from "react";
 import { GrNewWindow } from "react-icons/all";
-import { useCmsRows, useCmsTableMaybe } from "./cms-contexts";
-import { getRowIdentifierNode } from "./CmsEntryDetails";
 const LazyRichTextEditor = React.lazy(
   () => import("@/wab/client/components/RichTextEditor")
 );
@@ -370,7 +373,7 @@ export function CmsImageInput(props: {
             setUploading(false);
             onChange?.(result.files[0]);
           }}
-          accept={".gif,.jpg,.jpeg,.png,.tif,.svg,.webp"}
+          accept={".gif,.jpg,.jpeg,.png,.avif,.tif,.svg,.webp"}
         />
       )}
       {isUploading && <em>Uploading...</em>}
@@ -507,6 +510,20 @@ export function CmsRichTextInput({
   );
 }
 
+export function CmsEnumInput(props: any) {
+  const { typeMeta } = useContentEntryFormContext();
+  return (
+    <Select {...props} type={"bordered"}>
+      <Select.Option value={undefined}>Unset</Select.Option>
+      {typeMeta?.options?.map((row) => (
+        <Select.Option key={row} value={row}>
+          {row}
+        </Select.Option>
+      ))}
+    </Select>
+  );
+}
+
 export function renderEntryField(type: CmsTypeName): ReactElement {
   switch (type as CmsTypeName) {
     case "ref":
@@ -533,6 +550,8 @@ export function renderEntryField(type: CmsTypeName): ReactElement {
       return <CmsColorInput />;
     case "rich-text":
       return <CmsRichTextInput />;
+    case "enum":
+      return <CmsEnumInput />;
   }
 }
 

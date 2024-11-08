@@ -1,5 +1,11 @@
-import * as classesModule from "@/wab/classes";
-import { meta } from "@/wab/classes-metas";
+import {
+  allSuccess,
+  firstResult,
+  mapAllSuccess,
+  mapSomeSuccess,
+} from "@/wab/commons/failable-utils";
+import { DeepReadonly } from "@/wab/commons/types";
+import { Bundle, BundledInst, UnsafeBundle } from "@/wab/shared/bundles";
 import {
   assert,
   check,
@@ -14,29 +20,23 @@ import {
   tuple,
   withoutNils,
   xSetDefault,
-} from "@/wab/common";
+} from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { InstUtil } from "@/wab/shared/model/InstUtil";
+import * as classesModule from "@/wab/shared/model/classes";
+import { meta } from "@/wab/shared/model/classes-metas";
 import {
-  allSuccess,
-  firstResult,
-  mapAllSuccess,
-  mapSomeSuccess,
-} from "@/wab/commons/failable-utils";
-import { DeepReadonly } from "@/wab/commons/types";
-import { DEVFLAGS } from "@/wab/devflags";
-import {
-  checkEqKeys,
   Field,
+  MetaRuntime,
+  Type,
+  checkEqKeys,
   isStrongRefField,
   isWeakRefField,
-  MetaRuntime,
   toTs,
-  Type,
-} from "@/wab/model/model-meta";
+} from "@/wab/shared/model/model-meta";
+import { conformsToType } from "@/wab/shared/model/model-util";
 import { flatten, isArray, isEmpty, isNil, isObject, uniq } from "lodash";
-import { failable, IFailable } from "ts-failable";
-import { Bundle, BundledInst, UnsafeBundle } from "./bundles";
-import { InstUtil } from "./core/InstUtil";
-import { conformsToType } from "./core/model-util";
+import { IFailable, failable } from "ts-failable";
 
 export type { Bundle, BundledInst };
 

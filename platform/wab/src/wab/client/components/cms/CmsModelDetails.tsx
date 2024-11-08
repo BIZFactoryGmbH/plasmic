@@ -1,4 +1,15 @@
 import { useRRouteMatch, UU } from "@/wab/client/cli-routes";
+import {
+  useCmsDatabase,
+  useCmsTable,
+  useMutateTable,
+} from "@/wab/client/components/cms/cms-contexts";
+import {
+  ContentEntryFormContext,
+  renderEntryField,
+  renderMaybeLocalizedInput,
+  ValueSwitch,
+} from "@/wab/client/components/cms/CmsInputs";
 import PlasmicWebhookHeader from "@/wab/client/components/webhooks/plasmic/plasmic_kit_continuous_deployment/PlasmicWebhookHeader";
 import PlasmicWebhooksItem from "@/wab/client/components/webhooks/plasmic/plasmic_kit_continuous_deployment/PlasmicWebhooksItem";
 import { Spinner } from "@/wab/client/components/widgets";
@@ -9,6 +20,7 @@ import Select from "@/wab/client/components/widgets/Select";
 import Textbox from "@/wab/client/components/widgets/Textbox";
 import { useApi } from "@/wab/client/contexts/AppContexts";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
+import MinusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Minus";
 import Trash2Icon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Trash2";
 import {
   DefaultCmsModelDetailsProps,
@@ -21,8 +33,8 @@ import {
   spawn,
   tuple,
   uniqueName,
-} from "@/wab/common";
-import { extractParamsFromPagePath } from "@/wab/components";
+} from "@/wab/shared/common";
+import { extractParamsFromPagePath } from "@/wab/shared/core/components";
 import {
   ApiCmsDatabase,
   CmsDatabaseId,
@@ -51,13 +63,6 @@ import L, { isEqual, sortBy } from "lodash";
 import * as React from "react";
 import { Prompt, useHistory } from "react-router";
 import { useBeforeUnload } from "react-use";
-import { useCmsDatabase, useCmsTable, useMutateTable } from "./cms-contexts";
-import {
-  ContentEntryFormContext,
-  renderEntryField,
-  renderMaybeLocalizedInput,
-  ValueSwitch,
-} from "./CmsInputs";
 
 export type CmsModelDetailsProps = DefaultCmsModelDetailsProps;
 
@@ -217,6 +222,11 @@ function renderModelFieldForm(
           </React.Fragment>
         )}
       </Form.Item>
+      {selectedType === "enum" && (
+        <Form.Item label={"Options"} name={[...fieldPath, "options"]}>
+          <FieldOptions fieldsPath={[...fieldPath, "options"]} />
+        </Form.Item>
+      )}
       {selectedType !== "list" && selectedType !== "object" && (
         <Form.Item
           label={"Required"}
@@ -629,6 +639,38 @@ function ModelFields({
                 Add field
               </Button>
             </div>
+          </>
+        );
+      }}
+    </Form.List>
+  );
+}
+
+function FieldOptions({ fieldsPath }: { fieldsPath: any[] }) {
+  return (
+    <Form.List name={fieldsPath}>
+      {(fields, handles) => {
+        return (
+          <>
+            {fields?.map((_field, index) => (
+              <div className="cms-option-list" key={index}>
+                <Form.Item name={index} style={{ width: "100%" }}>
+                  <Textbox styleType={"bordered"} />
+                </Form.Item>
+                <Button onClick={() => handles.remove(index)}>
+                  <Icon icon={MinusIcon} />
+                </Button>
+              </div>
+            ))}
+            <Button
+              withIcons={"startIcon"}
+              startIcon={<Icon icon={PlusIcon} />}
+              onClick={() => {
+                handles.add("");
+              }}
+            >
+              Add option
+            </Button>
           </>
         );
       }}

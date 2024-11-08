@@ -15,52 +15,25 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
   PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
   Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_pricing_css from "../plasmic_kit_pricing/plasmic_plasmic_kit_pricing.module.css"; // plasmic-import: ehckhYnyDHgCBbV47m9bkf/projectcss
+import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import projectcss from "../PP__plasmickit_dashboard.module.css"; // plasmic-import: ooL7EhXDmFQWnW9sxtchhE/projectcss
+import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicNavTeamButton.module.css"; // plasmic-import: Mql0DTa_iO/css
 
 import Icon18Icon from "./icons/PlasmicIcon__Icon18"; // plasmic-import: UfxL0BbcEe/icon
@@ -126,8 +99,6 @@ function PlasmicNavTeamButton__RenderFunc(props: {
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = useCurrentUser?.() || {};
-
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
@@ -143,6 +114,7 @@ function PlasmicNavTeamButton__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.freeTrial,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -154,7 +126,7 @@ function PlasmicNavTeamButton__RenderFunc(props: {
 
   return (
     <Stack__
-      as={"a"}
+      as={PlasmicLink__}
       data-plasmic-name={"root"}
       data-plasmic-override={overrides.root}
       data-plasmic-root={true}
@@ -177,6 +149,7 @@ function PlasmicNavTeamButton__RenderFunc(props: {
         }
       )}
       href={args.href}
+      platform={"react"}
     >
       <div
         className={classNames(projectcss.all, sty.freeBox__vFql, {
@@ -276,7 +249,7 @@ function PlasmicNavTeamButton__RenderFunc(props: {
               {"\u2022"}
             </div>
           ) : null}
-          <a
+          <PlasmicLink__
             data-plasmic-name={"link"}
             data-plasmic-override={overrides.link}
             className={classNames(
@@ -293,9 +266,10 @@ function PlasmicNavTeamButton__RenderFunc(props: {
                 [sty.linkselected]: hasVariant($state, "selected", "selected"),
               }
             )}
+            platform={"react"}
           >
             {"Free trial"}
-          </a>
+          </PlasmicLink__>
         </Stack__>
       </div>
     </Stack__>
@@ -321,6 +295,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicNavTeamButton__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

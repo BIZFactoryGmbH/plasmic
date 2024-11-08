@@ -15,66 +15,40 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
   SingleBooleanChoiceArg,
   SingleChoiceArg,
   Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
   ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import EditableResourceName from "../../components/EditableResourceName"; // plasmic-import: UttGK3xVrb/component
-import Button from "../../components/widgets/Button"; // plasmic-import: SEF-sRmSoqV5c/component
-import ShareButton from "../../components/dashboard/ShareButton"; // plasmic-import: BOKmukuncx/component
-import ProjectsFilter from "../../components/dashboard/ProjectsFilter"; // plasmic-import: mdX7wFJOmP/component
-import MenuButton from "../../components/widgets/MenuButton"; // plasmic-import: h69wHrrKtL/component
 import ProjectListItem from "../../components/ProjectListItem"; // plasmic-import: 2FvZipCkyxl/component
+import ProjectsFilter from "../../components/dashboard/ProjectsFilter"; // plasmic-import: mdX7wFJOmP/component
+import ShareButton from "../../components/dashboard/ShareButton"; // plasmic-import: BOKmukuncx/component
 import WorkspaceDataSources from "../../components/dashboard/WorkspaceDataSources"; // plasmic-import: O5AxABt3WN/component
+import Button from "../../components/widgets/Button"; // plasmic-import: SEF-sRmSoqV5c/component
+import MenuButton from "../../components/widgets/MenuButton"; // plasmic-import: h69wHrrKtL/component
 
 import { useScreenVariants as useScreenVariants_2DzYbdw5Xtx } from "../PlasmicGlobalVariant__Screen"; // plasmic-import: 2dzYbdw5Xtx/globalVariant
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
-import plasmic_plasmic_kit_pricing_css from "../plasmic_kit_pricing/plasmic_plasmic_kit_pricing.module.css"; // plasmic-import: ehckhYnyDHgCBbV47m9bkf/projectcss
 import projectcss from "../PP__plasmickit_dashboard.module.css"; // plasmic-import: ooL7EhXDmFQWnW9sxtchhE/projectcss
+import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
+import plasmic_plasmic_kit_pricing_css from "../plasmic_kit_pricing/plasmic_plasmic_kit_pricing.module.css"; // plasmic-import: ehckhYnyDHgCBbV47m9bkf/projectcss
+import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import sty from "./PlasmicWorkspaceSection.module.css"; // plasmic-import: 5cdjGaqBQ4/css
 
 import PlusIcon from "../plasmic_kit/PlasmicIcon__Plus"; // plasmic-import: -k064DlQ8k8-L/icon
-import ChevronDownsvgIcon from "../q_4_icons/icons/PlasmicIcon__ChevronDownsvg"; // plasmic-import: xZrB9_0ir/icon
+import ChevronDownsvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ChevronDownSvg"; // plasmic-import: xZrB9_0ir/icon
 
 createPlasmicElementProxy;
 
@@ -94,6 +68,7 @@ export type PlasmicWorkspaceSection__VariantsArgs = {
   canUseCmsAndDataSources?: SingleChoiceArg<
     "projects" | "dataSources" | "empty"
   >;
+
   personalWorkspace?: SingleBooleanChoiceArg<"personalWorkspace">;
 };
 type VariantPropType = keyof PlasmicWorkspaceSection__VariantsArgs;
@@ -152,6 +127,7 @@ export interface DefaultWorkspaceSectionProps {
   canUseCmsAndDataSources?: SingleChoiceArg<
     "projects" | "dataSources" | "empty"
   >;
+
   personalWorkspace?: SingleBooleanChoiceArg<"personalWorkspace">;
   className?: string;
 }
@@ -176,8 +152,6 @@ function PlasmicWorkspaceSection__RenderFunc(props: {
   const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
-
-  const currentUser = useCurrentUser?.() || {};
 
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
@@ -220,6 +194,7 @@ function PlasmicWorkspaceSection__RenderFunc(props: {
           $props.personalWorkspace,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -721,6 +696,7 @@ function PlasmicWorkspaceSection__RenderFunc(props: {
                   {"This workspace has no projects."}
                 </div>
               ),
+
               value: args.noProjectsText,
               className: classNames(sty.slotTargetNoProjectsText, {
                 [sty.slotTargetNoProjectsTextnoProjects]: hasVariant(
@@ -813,6 +789,7 @@ function PlasmicWorkspaceSection__RenderFunc(props: {
                     />
                   </React.Fragment>
                 ),
+
                 value: args.children,
               })
             : null}
@@ -988,6 +965,7 @@ const PlasmicDescendants = {
     "cmsSection",
     "newCmsButton",
   ],
+
   header: [
     "header",
     "editableName",
@@ -997,6 +975,7 @@ const PlasmicDescendants = {
     "projectsFilter",
     "moreButton",
   ],
+
   editableName: ["editableName"],
   actions: [
     "actions",
@@ -1005,6 +984,7 @@ const PlasmicDescendants = {
     "projectsFilter",
     "moreButton",
   ],
+
   newProjectButton: ["newProjectButton"],
   shareButton: ["shareButton"],
   projectsFilter: ["projectsFilter"],
@@ -1018,6 +998,7 @@ const PlasmicDescendants = {
     "databases",
     "dataSources",
   ],
+
   projectsTab: ["projectsTab"],
   dataSourcesTab: ["dataSourcesTab"],
   h3: ["h3"],
@@ -1055,6 +1036,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicWorkspaceSection__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

@@ -15,60 +15,33 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
   SingleBooleanChoiceArg,
   SingleChoiceArg,
   Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import ExpandButton from "../../components/widgets/ExpandButton"; // plasmic-import: JJhv0MV9DH/component
-import TextWithInfo from "../../../../TextWithInfo"; // plasmic-import: -EsDm7v023/component
+import TextWithInfo from "../../components/TextWithInfo"; // plasmic-import: -EsDm7v023/component
 import Button from "../../components/widgets/Button"; // plasmic-import: SEF-sRmSoqV5c/component
+import ExpandButton from "../../components/widgets/ExpandButton"; // plasmic-import: JJhv0MV9DH/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
 import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
+import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_new_design_system_former_style_controls_css from "../plasmic_kit_style_controls/plasmic_plasmic_kit_styles_pane.module.css"; // plasmic-import: gYEVvAzCcLMHDVPvuYxkFh/projectcss
-import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import sty from "./PlasmicLeftPaneHeader.module.css"; // plasmic-import: XLa52PvduIy/css
 
+import ChevronDownSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ChevronDownSvg"; // plasmic-import: xZrB9_0ir/icon
 import PlusIcon from "./PlasmicIcon__Plus"; // plasmic-import: -k064DlQ8k8-L/icon
-import ChevronDownsvgIcon from "../q_4_icons/icons/PlasmicIcon__ChevronDownsvg"; // plasmic-import: xZrB9_0ir/icon
 
 createPlasmicElementProxy;
 
@@ -153,7 +126,16 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
@@ -163,8 +145,6 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
   const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
-
-  const currentUser = useCurrentUser?.() || {};
 
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
@@ -206,6 +186,7 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.noDescription,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -534,6 +515,7 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
                     </div>
                   </TextWithInfo>
                 ),
+
                 value: args.compactTitle,
               })
             : null}
@@ -546,7 +528,7 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
               defaultContents: (
                 <Button
                   endIcon={
-                    <ChevronDownsvgIcon
+                    <ChevronDownSvgIcon
                       className={classNames(projectcss.all, sty.svg__ne1Zy)}
                       role={"img"}
                     />
@@ -564,6 +546,7 @@ function PlasmicLeftPaneHeader__RenderFunc(props: {
                   {"New token"}
                 </Button>
               ),
+
               value: args.actions,
             })}
             <ExpandButton
@@ -608,6 +591,7 @@ const PlasmicDescendants = {
     "actionsContainer",
     "expandButton2",
   ],
+
   titleContainer: ["titleContainer", "titleActionsContainer", "expandButton"],
   titleActionsContainer: ["titleActionsContainer"],
   expandButton: ["expandButton"],
@@ -635,6 +619,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicLeftPaneHeader__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

@@ -4,8 +4,9 @@ import {
   getPaddingRect,
   hasLayoutBox,
 } from "@/wab/client/dom";
-import { ensure, isHTMLElt, maybe, precisionRound } from "@/wab/common";
-import { parseCssNumericNew } from "@/wab/css";
+import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { ensure, isHTMLElt, maybe, precisionRound } from "@/wab/shared/common";
+import { parseCssNumericNew } from "@/wab/shared/css";
 import {
   DimProp,
   dimPropToSizeAxis,
@@ -13,17 +14,16 @@ import {
   oppSide,
   sideToSize,
   SizeAxis,
-} from "@/wab/geom";
+} from "@/wab/shared/geom";
 import {
   AtomicSize,
   createNumericSize,
   showSizeCss,
   Unit,
-} from "@/wab/shared/Css";
+} from "@/wab/shared/css-size";
 import { IRuleSetHelpers } from "@/wab/shared/RuleSetHelpers";
 import { Menu } from "antd";
 import * as React from "react";
-import { StudioCtx } from "./studio-ctx/StudioCtx";
 
 export class DimManip {
   constructor(

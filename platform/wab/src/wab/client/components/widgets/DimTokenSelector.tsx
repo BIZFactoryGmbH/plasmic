@@ -1,11 +1,14 @@
-import { isKnownStyleToken, StyleToken } from "@/wab/classes";
-import { FieldAriaProps } from "@/wab/client/components/aria-utils";
 import ListItem from "@/wab/client/components/ListItem";
 import ListSectionHeader from "@/wab/client/components/ListSectionHeader";
 import ListSectionSeparator from "@/wab/client/components/ListSectionSeparator";
+import { FieldAriaProps } from "@/wab/client/components/aria-utils";
 import { GeneralTokenEditModal } from "@/wab/client/components/sidebar/GeneralTokenEditModal";
 import { ValueSetState } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { Matcher } from "@/wab/client/components/view-common";
+import Chip from "@/wab/client/components/widgets/Chip";
+import { useClientTokenResolver } from "@/wab/client/components/widgets/ColorPicker/client-token-resolver";
+import DropdownOverlay from "@/wab/client/components/widgets/DropdownOverlay";
+import { Icon } from "@/wab/client/components/widgets/Icon";
 import { useOnContainerScroll } from "@/wab/client/dom-utils";
 import PencilIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Pencil";
 import { PlusCircleIcon } from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__PlusCircle";
@@ -15,44 +18,55 @@ import PlasmicDimTokenSelector, {
 import { useUndo } from "@/wab/client/shortcuts/studio/useUndo";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import {
+  TokenType,
+  derefToken,
+  mkTokenRef,
+  tokenTypeDefaults,
+  tokenTypeLabel,
+  tryParseTokenRef,
+} from "@/wab/commons/StyleToken";
+import { MaybeWrap } from "@/wab/commons/components/ReactUtil";
+import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
+import {
+  TokenValueResolver,
+  siteToAllDirectTokensOfType,
+} from "@/wab/shared/cached-selectors";
+import {
   assert,
   ensure,
   filterFalsy,
   precisionRound,
   spawn,
   unexpected,
-} from "@/wab/common";
-import { MaybeWrap } from "@/wab/commons/components/ReactUtil";
+} from "@/wab/shared/common";
+import * as css from "@/wab/shared/css";
 import {
-  derefToken,
-  mkTokenRef,
-  TokenType,
-  tokenTypeDefaults,
-  tokenTypeLabel,
-  tryParseTokenRef,
-} from "@/wab/commons/StyleToken";
-import * as css from "@/wab/css";
-import { lengthCssUnits, parseCssNumericNew, toShorthandVals } from "@/wab/css";
+  lengthCssUnits,
+  parseCssNumericNew,
+  toShorthandVals,
+} from "@/wab/shared/css";
 import {
-  siteToAllDirectTokensOfType,
-  TokenResolver,
-} from "@/wab/shared/cached-selectors";
-import { createNumericSize, isValidUnit, showSizeCss } from "@/wab/shared/Css";
-import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
-import { Placement } from "@react-types/overlays";
-import { notification, Tooltip } from "antd";
+  createNumericSize,
+  isValidUnit,
+  showSizeCss,
+} from "@/wab/shared/css-size";
+import { StyleToken, isKnownStyleToken } from "@/wab/shared/model/classes";
+import { naturalSort } from "@/wab/shared/sort";
+import { canCreateAlias } from "@/wab/shared/ui-config-utils";
+import { Tooltip, notification } from "antd";
+import type { TooltipPlacement } from "antd/es/tooltip";
 import cn from "classnames";
-import { useCombobox, UseComboboxGetItemPropsOptions } from "downshift";
+import { UseComboboxGetItemPropsOptions, useCombobox } from "downshift";
 import L from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
-import { useInteractOutside, useOverlayPosition } from "react-aria";
+import {
+  AriaPositionProps,
+  useInteractOutside,
+  useOverlayPosition,
+} from "react-aria";
 import ReactDOM from "react-dom";
 import { VariableSizeList } from "react-window";
-import Chip from "./Chip";
-import { useClientTokenResolver } from "./ColorPicker/client-token-resolver";
-import DropdownOverlay from "./DropdownOverlay";
-import { Icon } from "./Icon";
 
 export interface DimTokenSpinnerRef {
   focus: () => void;
@@ -102,14 +116,14 @@ function MiddleEllipsis({
 }
 
 export const DimTokenSpinner = observer(
-  function DimTokenSpinner(
+  React.forwardRef(function DimTokenSpinner(
     props: {
       className?: string;
       "data-test-id"?: string;
       tokenType?: TokenType;
       fieldAriaProps?: FieldAriaProps;
       studioCtx?: StudioCtx;
-      dropdownPlacement?: Placement;
+      dropdownPlacement?: AriaPositionProps["placement"];
       minDropdownWidth?: number;
       maxDropdownWidth?: number;
       autoFocus?: boolean;
@@ -121,8 +135,9 @@ export const DimTokenSpinner = observer(
       onEscape?: (e: React.KeyboardEvent) => void;
       placeholder?: string;
       disabledTooltip?: React.ReactNode | (() => React.ReactNode);
-      "data-plasmic-prop"?: string;
       tooltip?: React.ReactNode | (() => React.ReactNode);
+      tooltipPlacement?: TooltipPlacement;
+      "data-plasmic-prop"?: string;
       onFocus?: () => void;
       onBlur?: () => void;
     } & DimValueOpts,
@@ -208,7 +223,7 @@ export const DimTokenSpinner = observer(
     );
 
     const isNumberMode = !isNaN(parseFloat(inputValue));
-    const matcher = new Matcher(isNumberMode ? "" : typedInputValue ?? "");
+    const matcher = new Matcher(typedInputValue ?? "");
     const showCurrentToken = hasParsedToken && typedInputValue === undefined;
     const skipChangeOnBlur = React.useRef(false);
     const [explicitHighlightedIndex, setExplicitHighlightedIndex] =
@@ -282,10 +297,13 @@ export const DimTokenSpinner = observer(
           editableTokens.length > 0 &&
           ({ type: "edit-token", token: editableTokens[0] } as const),
 
-        // In number mode, always show all tokens; else only show tokens that match
-        ...tokens
-          .filter((t) => isNumberMode || matcher.matches(t.name))
-          .map((token) => ({ type: "token", token } as const)),
+        // show tokens that match name or value
+        ...naturalSort(
+          tokens
+            .filter((t) => matcher.matches(t.value) || matcher.matches(t.name))
+            .map((token) => ({ type: "token", token } as const)),
+          (item) => item.token.name
+        ),
       ]);
     };
 
@@ -311,10 +329,12 @@ export const DimTokenSpinner = observer(
       (x) => x.type === "action" && x.item.type === "add-token"
     );
 
+    const uiConfig = studioCtx?.getCurrentUiConfig() || {};
+    const canCreateToken = canCreateAlias(uiConfig, "token");
     if (addTokenIndex >= 0) {
       virtualItems.splice(
         addTokenIndex,
-        0,
+        canCreateToken ? 0 : 1,
         ...filterFalsy([
           addTokenIndex > 0 && ({ type: "separator" } as const),
           { type: "header" } as const,
@@ -527,7 +547,9 @@ export const DimTokenSpinner = observer(
         <MaybeWrap
           cond={!!props.tooltip}
           wrapper={(x) => (
-            <Tooltip title={props.tooltip}>{x as React.ReactElement}</Tooltip>
+            <Tooltip title={props.tooltip} placement={props.tooltipPlacement}>
+              {x as React.ReactElement}
+            </Tooltip>
           )}
         >
           <PlasmicDimTokenSelector
@@ -618,6 +640,13 @@ export const DimTokenSpinner = observer(
               style: showCurrentToken ? { width: 0, padding: 0 } : undefined,
               "data-test-id": props["data-test-id"] as any,
               "data-plasmic-prop": props["data-plasmic-prop"],
+            }}
+            existingTokensContainer={{
+              props: {
+                key: `${parsedValues
+                  .map((val) => (isKnownStyleToken(val) ? val.uuid : val))
+                  .join("-")}`,
+              },
             }}
             existingTokens={parsedValues.map((val) =>
               isKnownStyleToken(val) ? (
@@ -752,8 +781,7 @@ export const DimTokenSpinner = observer(
         )}
       </>
     );
-  },
-  { forwardRef: true }
+  })
 );
 
 interface SelectTokenItem {
@@ -815,7 +843,7 @@ interface DimTokenContextValue {
   highlightedItemIndex: number;
   tokenType?: TokenType;
   vsh?: VariantedStylesHelper;
-  resolver: TokenResolver;
+  resolver: TokenValueResolver;
 }
 
 const DimTokenContext = React.createContext<DimTokenContextValue | undefined>(
@@ -870,7 +898,13 @@ const Row = React.memo(function Row(props: {
             <ListItem
               isFocused={isFocused}
               showAddendums
-              addendum={<code>{realValue}</code>}
+              addendum={
+                <code>
+                  <MiddleEllipsis tailLength={8} matcher={matcher}>
+                    {realValue}
+                  </MiddleEllipsis>
+                </code>
+              }
               hideIcon
             >
               <MiddleEllipsis tailLength={8} matcher={matcher}>

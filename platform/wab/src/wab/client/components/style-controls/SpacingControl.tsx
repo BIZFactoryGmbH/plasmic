@@ -1,4 +1,9 @@
 import { LabeledStyleDimItem } from "@/wab/client/components/sidebar/sidebar-helpers";
+import {
+  getLabelForStyleName,
+  StyleComponent,
+  StyleComponentProps,
+} from "@/wab/client/components/style-controls/StyleComponent";
 import { DimTokenSpinnerRef } from "@/wab/client/components/widgets/DimTokenSelector";
 import { makeVariantedStylesHelperFromCurrentCtx } from "@/wab/client/utils/style-utils";
 import {
@@ -8,7 +13,7 @@ import {
   toggleSet,
   tuple,
   unexpected,
-} from "@/wab/common";
+} from "@/wab/shared/common";
 import {
   INTERACT_OUTSIDE_EXCEPTION_SELECTORS,
   OnClickAwayExcept,
@@ -19,25 +24,20 @@ import {
   lazyDerefTokenRefsWithDeps,
   TokenType,
 } from "@/wab/commons/StyleToken";
-import { getCssInitial, parseCssShorthand, showCssShorthand } from "@/wab/css";
-import { oppSide, Side, standardSides } from "@/wab/geom";
+import { getCssInitial, parseCssShorthand, showCssShorthand } from "@/wab/shared/css";
+import { oppSide, Side, standardSides } from "@/wab/shared/geom";
 import {
   createNumericSize,
   NumericSize,
   parseNumericSize,
   showSizeCss,
-} from "@/wab/shared/Css";
+} from "@/wab/shared/css-size";
 import { Popover, Tooltip } from "antd";
 import { TooltipPlacement } from "antd/lib/tooltip";
 import cn from "classnames";
 import * as Immutable from "immutable";
 import { observer } from "mobx-react";
 import { createRef, default as React, ReactNode } from "react";
-import {
-  getLabelForStyleName,
-  StyleComponent,
-  StyleComponentProps,
-} from "./StyleComponent";
 import defer = setTimeout;
 
 function closeLoop(pointsStr: /*TWZ*/ string) {

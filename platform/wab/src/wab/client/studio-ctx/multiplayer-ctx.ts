@@ -1,5 +1,6 @@
 import { PLAYER_COLORS } from "@/wab/client/components/studio/GlobalCssVariables";
-import { asyncOneAtATime, ensure, xDifference } from "@/wab/common";
+import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { asyncOneAtATime, ensure, xDifference } from "@/wab/shared/common";
 import {
   ApiUser,
   PlayerViewInfo,
@@ -7,7 +8,6 @@ import {
 } from "@/wab/shared/ApiSchema";
 import { isEqual } from "lodash";
 import { observable, runInAction } from "mobx";
-import { StudioCtx } from "./StudioCtx";
 
 interface PlayerDataBase {
   color: (typeof PLAYER_COLORS)[number];

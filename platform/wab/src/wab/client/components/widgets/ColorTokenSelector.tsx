@@ -1,21 +1,21 @@
-import { StyleToken } from "@/wab/classes";
 import { ColorSwatch } from "@/wab/client/components/style-controls/ColorSwatch";
 import { Matcher } from "@/wab/client/components/view-common";
 import { PlainLinkButton } from "@/wab/client/components/widgets";
+import { Icon } from "@/wab/client/components/widgets/Icon";
+import { IconButton } from "@/wab/client/components/widgets/IconButton";
 import { useToggleDisplayed } from "@/wab/client/dom-utils";
 import { PlusIcon } from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
 import SearchIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Search";
-import { cx } from "@/wab/common";
-import { TokenResolver } from "@/wab/shared/cached-selectors";
+import { TokenValueResolver } from "@/wab/shared/cached-selectors";
+import { cx } from "@/wab/shared/common";
+import { StyleToken } from "@/wab/shared/model/classes";
 import Chroma from "@/wab/shared/utils/color-utils";
 import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
 import { Tooltip } from "antd";
 import Downshift from "downshift";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
 import { FixedSizeList } from "react-window";
-import { Icon } from "./Icon";
-import { IconButton } from "./IconButton";
 
 const GRID_SIZE = 32;
 const ROW_SIZE = 32;
@@ -25,13 +25,22 @@ export const ColorTokenSelector = observer(function ColorTokenSelector(props: {
   onSelect: (token: StyleToken) => void;
   selectedToken?: StyleToken;
   onAddToken: () => void;
-  resolver: TokenResolver;
+  resolver: TokenValueResolver;
   className?: string;
   autoFocusSearch?: boolean;
   maxRows?: number;
   vsh?: VariantedStylesHelper;
+  hideAddToken?: boolean;
 }) {
-  const { tokens, onSelect, selectedToken, onAddToken, resolver, vsh } = props;
+  const {
+    tokens,
+    onSelect,
+    selectedToken,
+    onAddToken,
+    resolver,
+    vsh,
+    hideAddToken,
+  } = props;
   const maxRows = props.maxRows ?? 5;
   const listRef = React.useRef<FixedSizeList | null>(null);
   const [query, setQuery] = React.useState("");
@@ -118,11 +127,13 @@ export const ColorTokenSelector = observer(function ColorTokenSelector(props: {
                 }}
                 autoFocus={props.autoFocusSearch}
               />
-              <Tooltip title="Create a new color token">
-                <IconButton onClick={() => onAddToken()} type="round">
-                  <Icon icon={PlusIcon} />
-                </IconButton>
-              </Tooltip>
+              {hideAddToken ? null : (
+                <Tooltip title="Create a new color token">
+                  <IconButton onClick={() => onAddToken()} type="round">
+                    <Icon icon={PlusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </div>
             <div className="SwatchItemList mt-m" {...downshift.getMenuProps()}>
               <FixedSizeList

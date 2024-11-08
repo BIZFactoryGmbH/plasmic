@@ -1,8 +1,10 @@
-import { Dict } from "@/wab/collections";
-import { ensureArray, ensureString, ensureType } from "@/wab/common";
+import { toOpaque } from "@/wab/commons/types";
 import { uploadDataUriToS3 } from "@/wab/server/cdn/images";
 import { DbMgr } from "@/wab/server/db/DbMgr";
 import { CmsDatabase } from "@/wab/server/entities/Entities";
+import { getImageSize, isImageSupported } from "@/wab/server/image/metadata";
+import { userAnalytics, userDbMgr } from "@/wab/server/routes/util";
+import { mkApiWorkspace } from "@/wab/server/routes/workspaces";
 import { triggerWebhookOnly } from "@/wab/server/trigger-webhooks";
 import { BadRequestError } from "@/wab/shared/ApiErrors/errors";
 import {
@@ -19,12 +21,11 @@ import {
   TeamId,
   WorkspaceId,
 } from "@/wab/shared/ApiSchema";
-import imageSize from "@coderosh/image-size";
+import { Dict } from "@/wab/shared/collections";
+import { ensureArray, ensureString, ensureType } from "@/wab/shared/common";
 import { UploadedFile } from "express-fileupload";
 import { Request, Response } from "express-serve-static-core";
 import { flatten, mapValues, pick } from "lodash";
-import { userAnalytics, userDbMgr } from "./util";
-import { mkApiWorkspace } from "./workspaces";
 
 export async function listDatabases(req: Request, res: Response) {
   if (req.query.workspaceId) {
@@ -152,6 +153,16 @@ export async function createDatabase(req: Request, res: Response) {
     },
   });
   res.json(await makeApiDatabase(mgr, db));
+}
+
+export async function cloneDatabase(req: Request, res: Response) {
+  const databaseId: CmsDatabaseId = toOpaque(req.params.dbId);
+  const databaseName = req.body.name as string;
+
+  const mgr = userDbMgr(req);
+  const newDb = await mgr.cloneCmsDatabase(databaseId, databaseName);
+  const updatedDb = await mgr.getCmsDatabaseById(newDb.id);
+  res.json(await makeApiDatabase(mgr, updatedDb));
 }
 
 export async function createTable(req: Request, res: Response) {
@@ -344,8 +355,8 @@ async function upload(file: UploadedFile): Promise<CmsUploadedFile> {
     throw result.result.error;
   }
 
-  const size = file.mimetype.startsWith("image/")
-    ? await imageSize(file.data)
+  const size = isImageSupported(file.mimetype)
+    ? await getImageSize(file.data)
     : undefined;
   const imageMeta =
     size?.width && size?.height

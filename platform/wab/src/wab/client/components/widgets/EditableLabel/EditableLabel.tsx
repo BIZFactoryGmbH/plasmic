@@ -1,3 +1,4 @@
+import styles from "@/wab/client/components/widgets/EditableLabel/EditableLabel.module.scss";
 import { OnClickAway } from "@/wab/commons/components/OnClickAway";
 import { MaybeWrap } from "@/wab/commons/components/ReactUtil";
 import Tooltip from "antd/lib/tooltip";
@@ -13,7 +14,6 @@ import {
   useRef,
   useState,
 } from "react";
-import styles from "./EditableLabel.module.scss";
 
 export type EditableLabelProps = {
   onEdit?: (val: string) => boolean | void;
@@ -39,6 +39,7 @@ export type EditableLabelProps = {
   children?: React.ReactNode;
   onAbort?: () => void;
   allowEmptyString?: boolean;
+  isTextSelectable?: boolean;
 };
 
 export type EditableLabelHandles = { setEditing(editing: boolean): void };
@@ -80,11 +81,14 @@ const EditableLabel_: ForwardRefRenderFunction<
     children,
     inputBoxClassName,
     allowEmptyString,
+    isTextSelectable = false,
     ...restProps
   } = props;
 
   React.useLayoutEffect(() => {
-    if (!labelRef.current) return;
+    if (!labelRef.current) {
+      return;
+    }
     setShowTooltip(
       (labelRef.current as HTMLSpanElement).scrollWidth >
         (labelRef.current as HTMLSpanElement).offsetWidth
@@ -200,7 +204,8 @@ const EditableLabel_: ForwardRefRenderFunction<
     className: cn(
       "flex-fill",
       "text-ellipsis-wrappable",
-      _editing && styles.fullWidthLabelEditing
+      _editing && styles.fullWidthLabelEditing,
+      { "selectable-text": isTextSelectable }
     ),
     onClick: handleClick,
     onDoubleClick: handleDoubleClick,

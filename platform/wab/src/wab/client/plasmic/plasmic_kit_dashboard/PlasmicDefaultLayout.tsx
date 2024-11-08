@@ -15,75 +15,48 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
   PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
   SingleBooleanChoiceArg,
   SingleChoiceArg,
   Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
   ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import Button from "../../components/widgets/Button"; // plasmic-import: SEF-sRmSoqV5c/component
 import NavButton from "../../components/dashboard/NavButton"; // plasmic-import: 82ZzbE4hazN/component
-import FreeTrial from "../../components/FreeTrial"; // plasmic-import: p3GgKAlaQe/component
 import NavSeparator from "../../components/dashboard/NavSeparator"; // plasmic-import: cOUHQYmbvX/component
 import NavTeamSection from "../../components/dashboard/NavTeamSection"; // plasmic-import: VqaN_WL-stA/component
-import NavWorkspaceButton from "../../components/dashboard/NavWorkspaceButton"; // plasmic-import: Cma6XahJmS/component
+import FreeTrial from "../../components/FreeTrial"; // plasmic-import: p3GgKAlaQe/component
+import Button from "../../components/widgets/Button"; // plasmic-import: SEF-sRmSoqV5c/component
 
 import { useScreenVariants as useScreenVariants_2DzYbdw5Xtx } from "../PlasmicGlobalVariant__Screen"; // plasmic-import: 2dzYbdw5Xtx/globalVariant
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_pricing_css from "../plasmic_kit_pricing/plasmic_plasmic_kit_pricing.module.css"; // plasmic-import: ehckhYnyDHgCBbV47m9bkf/projectcss
+import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import projectcss from "../PP__plasmickit_dashboard.module.css"; // plasmic-import: ooL7EhXDmFQWnW9sxtchhE/projectcss
+import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicDefaultLayout.module.css"; // plasmic-import: nSkQWLjK-B/css
 
-import MarkFullColorIcon from "../plasmic_kit_design_system/PlasmicIcon__MarkFullColor"; // plasmic-import: l_n_OBLJg/icon
-import PlusIcon from "../plasmic_kit/PlasmicIcon__Plus"; // plasmic-import: -k064DlQ8k8-L/icon
-import ChevronDownsvgIcon from "../q_4_icons/icons/PlasmicIcon__ChevronDownsvg"; // plasmic-import: xZrB9_0ir/icon
-import RocketsvgIcon from "../q_4_icons/icons/PlasmicIcon__Rocketsvg"; // plasmic-import: uRQfbBjV9/icon
-import TriangleBottomIcon from "../plasmic_kit/PlasmicIcon__TriangleBottom"; // plasmic-import: A8NQUZ7Lg1OHO/icon
-import UnorderedListsvgIcon from "../q_4_icons/icons/PlasmicIcon__UnorderedListsvg"; // plasmic-import: suHkgkKOX/icon
-import GolfsvgIcon from "../q_4_icons/icons/PlasmicIcon__Golfsvg"; // plasmic-import: U5dSOeF1P/icon
-import Icon19Icon from "./icons/PlasmicIcon__Icon19"; // plasmic-import: MHEeMLIhlB/icon
-import SparklessvgIcon from "../q_4_icons/icons/PlasmicIcon__Sparklessvg"; // plasmic-import: 9Z0Cu-c5J/icon
-import UsersPlussvgIcon from "../q_4_icons/icons/PlasmicIcon__UsersPlussvg"; // plasmic-import: OqMJdWElK/icon
-import BooksvgIcon from "../q_4_icons/icons/PlasmicIcon__Booksvg"; // plasmic-import: hxRmy8Nhq/icon
 import HelpIcon from "../plasmic_kit/PlasmicIcon__Help"; // plasmic-import: -9-68IGPdLG-5/icon
+import PlusIcon from "../plasmic_kit/PlasmicIcon__Plus"; // plasmic-import: -k064DlQ8k8-L/icon
+import TriangleBottomIcon from "../plasmic_kit/PlasmicIcon__TriangleBottom"; // plasmic-import: A8NQUZ7Lg1OHO/icon
+import MarkFullColorIcon from "../plasmic_kit_design_system/PlasmicIcon__MarkFullColor"; // plasmic-import: l_n_OBLJg/icon
+import BooksvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__BookSvg"; // plasmic-import: hxRmy8Nhq/icon
+import ChevronDownsvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ChevronDownSvg"; // plasmic-import: xZrB9_0ir/icon
+import GolfsvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__GolfSvg"; // plasmic-import: U5dSOeF1P/icon
+import RocketsvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__RocketSvg"; // plasmic-import: uRQfbBjV9/icon
+import SparklessvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__SparklesSvg"; // plasmic-import: 9Z0Cu-c5J/icon
+import UnorderedListsvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__UnorderedListSvg"; // plasmic-import: suHkgkKOX/icon
+import UsersPlussvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__UsersPlusSvg"; // plasmic-import: OqMJdWElK/icon
 
 createPlasmicElementProxy;
 
@@ -180,8 +153,6 @@ function PlasmicDefaultLayout__RenderFunc(props: {
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = useCurrentUser?.() || {};
-
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
@@ -217,6 +188,7 @@ function PlasmicDefaultLayout__RenderFunc(props: {
           $props.newProjectButtonAsDropdown,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -265,7 +237,7 @@ function PlasmicDefaultLayout__RenderFunc(props: {
             ),
           })}
         >
-          <a
+          <PlasmicLink__
             data-plasmic-name={"headerLogoLink"}
             data-plasmic-override={overrides.headerLogoLink}
             className={classNames(
@@ -274,6 +246,7 @@ function PlasmicDefaultLayout__RenderFunc(props: {
               sty.headerLogoLink
             )}
             href={"/"}
+            platform={"react"}
           >
             <MarkFullColorIcon
               data-plasmic-name={"headerLogo"}
@@ -281,7 +254,7 @@ function PlasmicDefaultLayout__RenderFunc(props: {
               className={classNames(projectcss.all, sty.headerLogo)}
               role={"img"}
             />
-          </a>
+          </PlasmicLink__>
           <Stack__
             as={"div"}
             data-plasmic-name={"headerActions"}
@@ -775,6 +748,7 @@ const PlasmicDescendants = {
     "userButton",
     "main",
   ],
+
   header: [
     "header",
     "headerWrapper",
@@ -786,6 +760,7 @@ const PlasmicDescendants = {
     "upgradeButton",
     "freeTrial",
   ],
+
   headerWrapper: [
     "headerWrapper",
     "headerLogoLink",
@@ -796,6 +771,7 @@ const PlasmicDescendants = {
     "upgradeButton",
     "freeTrial",
   ],
+
   headerLogoLink: ["headerLogoLink", "headerLogo"],
   headerLogo: ["headerLogo"],
   headerActions: [
@@ -805,6 +781,7 @@ const PlasmicDescendants = {
     "upgradeButton",
     "freeTrial",
   ],
+
   newProjectButton: ["newProjectButton", "text"],
   text: ["text"],
   upgradeButton: ["upgradeButton"],
@@ -823,6 +800,7 @@ const PlasmicDescendants = {
     "userButton",
     "main",
   ],
+
   sidebar: [
     "sidebar",
     "nav",
@@ -835,6 +813,7 @@ const PlasmicDescendants = {
     "helpButton",
     "userButton",
   ],
+
   nav: ["nav", "allProjectsButton", "myProjectsButton", "startersButton"],
   allProjectsButton: ["allProjectsButton"],
   myProjectsButton: ["myProjectsButton"],
@@ -846,6 +825,7 @@ const PlasmicDescendants = {
     "helpButton",
     "userButton",
   ],
+
   newTeamButton: ["newTeamButton"],
   documentationButton: ["documentationButton"],
   helpButton: ["helpButton"],
@@ -885,6 +865,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicDefaultLayout__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

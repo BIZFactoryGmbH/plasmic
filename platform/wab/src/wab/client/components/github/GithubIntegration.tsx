@@ -1,5 +1,10 @@
 import { AppCtx } from "@/wab/client/app-ctx";
 import { GithubConnect } from "@/wab/client/components/auth/GithubConnect";
+import styles from "@/wab/client/components/github/GithubIntegration.module.scss";
+import {
+  DefaultGithubIntegrationProps,
+  PlasmicGithubIntegration,
+} from "@/wab/client/components/github/plasmic/plasmic_kit_continuous_deployment/PlasmicGithubIntegration";
 import { reactConfirm } from "@/wab/client/components/quick-modals";
 import Button from "@/wab/client/components/widgets/Button";
 import {
@@ -12,7 +17,7 @@ import {
   useAsyncStrict,
 } from "@/wab/client/hooks/useAsyncStrict";
 import InfoIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Info";
-import { assertNever, ensure, spawn } from "@/wab/common";
+import { assertNever, ensure, spawn } from "@/wab/shared/common";
 import GatsbyIcon from "@/wab/commons/images/gatsby.svg";
 import NextjsIcon from "@/wab/commons/images/nextjs.svg";
 import ReactIcon from "@/wab/commons/images/react.svg";
@@ -25,15 +30,10 @@ import {
   GitSyncPlatform,
   GitSyncScheme,
 } from "@/wab/shared/ApiSchema";
-import { isValidSubdomainPart } from "@/wab/strs";
+import { isValidSubdomainPart } from "@/wab/shared/strs";
 import { Tooltip } from "antd";
 import * as React from "react";
 import { useRef, useState } from "react";
-import styles from "./GithubIntegration.module.scss";
-import {
-  DefaultGithubIntegrationProps,
-  PlasmicGithubIntegration,
-} from "./plasmic/plasmic_kit_continuous_deployment/PlasmicGithubIntegration";
 
 const defaultAction: GitSyncAction = "commit";
 const defaultFramework: GitSyncPlatform = "nextjs";

@@ -1,13 +1,11 @@
-import {
-  CustomCode,
-  ensureKnownCustomCode,
-  ObjectPath,
-  TplNode,
-} from "@/wab/classes";
 import { isTplCodeComponentStyleable } from "@/wab/client/code-components/code-components";
 import { useAppRoles } from "@/wab/client/components/app-auth/app-auth-contexts";
 import ContextMenuIndicator from "@/wab/client/components/ContextMenuIndicator/ContextMenuIndicator";
 import { MenuBuilder } from "@/wab/client/components/menu-builder";
+import { BoolPropEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/BoolPropEditor";
+import { DataPickerEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/DataPickerEditor";
+import { FallbackEditor } from "@/wab/client/components/sidebar-tabs/ComponentPropsSection";
+import S from "@/wab/client/components/sidebar-tabs/VisibilitySection.module.scss";
 import {
   LabeledItem,
   LabeledItemRow,
@@ -28,7 +26,7 @@ import {
   makeVariantedStylesHelperFromCurrentCtx,
 } from "@/wab/client/utils/style-utils";
 import { getVisibilityChoicesForTpl } from "@/wab/client/utils/tpl-client-utils";
-import { ensureInstance } from "@/wab/common";
+import { ensureInstance } from "@/wab/shared/common";
 import { isTokenRef, TokenType } from "@/wab/commons/StyleToken";
 import {
   clone,
@@ -37,8 +35,14 @@ import {
   extractValueSavedFromDataPicker,
   isFallbackSet,
   tryExtractJson,
-} from "@/wab/exprs";
+} from "@/wab/shared/core/exprs";
 import { computeDefinedIndicator } from "@/wab/shared/defined-indicator";
+import {
+  CustomCode,
+  ensureKnownCustomCode,
+  ObjectPath,
+  TplNode,
+} from "@/wab/shared/model/classes";
 import {
   isPrivateStyleVariant,
   tryGetVariantSetting,
@@ -50,15 +54,11 @@ import {
   hasVisibilitySetting,
   TplVisibility,
 } from "@/wab/shared/visibility-utils";
-import { isTplCodeComponent } from "@/wab/tpls";
+import { isTplCodeComponent } from "@/wab/shared/core/tpls";
 import { Menu } from "antd";
 import cn from "classnames";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
-import { BoolPropEditor } from "./ComponentProps/BoolPropEditor";
-import { DataPickerEditor } from "./ComponentProps/DataPickerEditor";
-import { FallbackEditor } from "./ComponentPropsSection";
-import S from "./VisibilitySection.module.scss";
 
 export const VisibilitySection = observer(VisibilitySection_);
 
@@ -363,7 +363,11 @@ function VisibilitySection_(props: {
             isSet={isFallbackSet(customCode)}
             onUnset={() => {
               const clonedExpr = clone(customCode);
-              let newExpr = ensureInstance(clonedExpr, ObjectPath, CustomCode);
+              const newExpr = ensureInstance(
+                clonedExpr,
+                ObjectPath,
+                CustomCode
+              );
               newExpr.fallback = undefined;
               _setCustomCond(newExpr);
             }}
@@ -373,7 +377,7 @@ function VisibilitySection_(props: {
               <BoolPropEditor
                 onChange={(val) => {
                   const clonedExpr = clone(customCode);
-                  let newExpr = ensureInstance(
+                  const newExpr = ensureInstance(
                     clonedExpr,
                     ObjectPath,
                     CustomCode

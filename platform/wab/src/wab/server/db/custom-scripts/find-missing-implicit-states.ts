@@ -1,15 +1,15 @@
-import { isKnownTplComponent, TplComponent } from "@/wab/classes";
 import { unbundleSite } from "@/wab/server/db/bundle-migration-utils";
 import { getMigratedBundle } from "@/wab/server/db/BundleMigrator";
 import { DbMgr, SUPER_USER } from "@/wab/server/db/DbMgr";
 import { Bundler } from "@/wab/shared/bundler";
+import { isKnownTplComponent, TplComponent } from "@/wab/shared/model/classes";
 import { EntityManager } from "typeorm";
 
 export async function findMissingImplicitStates(em: EntityManager) {
   const dbMgr = new DbMgr(em, SUPER_USER);
   const badProjects: string[] = [];
   let processedProjects = 0;
-  let numberOfProjects = await dbMgr.countAllProjects();
+  const numberOfProjects = await dbMgr.countAllProjects();
 
   const printData = () => {
     console.log("....................");

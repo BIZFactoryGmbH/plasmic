@@ -1,11 +1,11 @@
+import MultiplayerCursor from "@/wab/client/components/canvas/Multiplayer/MultiplayerCursor";
 import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewportCtx } from "@/wab/client/studio-ctx/ViewportCtx";
-import { Pt } from "@/wab/geom";
+import { Pt } from "@/wab/shared/geom";
 import { getArenaType, getArenaUuidOrName } from "@/wab/shared/Arenas";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { PerfectCursor } from "perfect-cursors";
 import * as React from "react";
-import MultiplayerCursor from "./MultiplayerCursor";
 
 export const PlayerCursors = observer(function PlayerCursors() {
   const studioCtx = useStudioCtx();
@@ -94,7 +94,9 @@ const AnimatedCursor = observer(function AnimatedCursor(props: {
   const rCursor = React.useRef<HTMLDivElement>(null);
   const animateCursor = React.useCallback((p: number[]) => {
     const elm = rCursor.current;
-    if (!elm) return;
+    if (!elm) {
+      return;
+    }
     elm.style.setProperty(
       "transform",
       `translate3d(${p[0]}px, ${p[1]}px, 0px)`
@@ -122,7 +124,9 @@ function usePerfectCursor(cb: (point: number[]) => void, point?: number[]) {
   const [pc] = React.useState(() => new PerfectCursor(cb));
 
   React.useLayoutEffect(() => {
-    if (point) pc.addPoint(point);
+    if (point) {
+      pc.addPoint(point);
+    }
     return () => pc.dispose();
   }, [pc]);
 

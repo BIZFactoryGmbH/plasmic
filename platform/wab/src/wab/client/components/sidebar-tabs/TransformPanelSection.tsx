@@ -15,8 +15,8 @@ import {
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import GearIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Gear";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { arrayMoveIndex } from "@/wab/collections";
-import { maybe, spawn, uniqueKey } from "@/wab/common";
+import { arrayMoveIndex } from "@/wab/shared/collections";
+import { maybe, spawn, uniqueKey } from "@/wab/shared/common";
 import { removeFromArray } from "@/wab/commons/collections";
 import { joinCssValues, splitCssValue } from "@/wab/shared/RuleSetHelpers";
 import {
@@ -26,9 +26,9 @@ import {
   parseOrigin,
   parseSelfPerspective,
   Transform,
-} from "@/wab/transform-utils";
+} from "@/wab/shared/core/transform-utils";
 import { capitalize } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 
 export const TransformPanelSection = observer(
@@ -101,8 +101,9 @@ export const TransformPanelSection = observer(
 
     const updateSelfPerspective = (newSelfPerspective: string | undefined) => {
       const transformString = transforms.map(fromTransformObjToString);
-      if (newSelfPerspective)
+      if (newSelfPerspective) {
         transformString.unshift(`perspective(${newSelfPerspective})`);
+      }
       setsProp("transform", maybeArrayNone(transformString));
     };
 

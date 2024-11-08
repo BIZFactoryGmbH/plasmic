@@ -1,11 +1,4 @@
 import {
-  ArenaFrame,
-  Site,
-  TplComponent,
-  Variant,
-  VariantGroup,
-} from "@/wab/classes";
-import {
   arrayEqIgnoreOrder,
   filterMapKeys,
   mapsEq,
@@ -17,13 +10,20 @@ import {
   replaceObj,
   tuple,
   withoutNils,
-} from "@/wab/common";
-import { allComponentVariants } from "@/wab/components";
-import { allGlobalVariants } from "@/wab/sites";
+} from "@/wab/shared/common";
+import { allComponentVariants } from "@/wab/shared/core/components";
+import { ensureValidCombo, isPrivateStyleVariant } from "@/wab/shared/Variants";
+import {
+  ArenaFrame,
+  Site,
+  TplComponent,
+  Variant,
+  VariantGroup,
+} from "@/wab/shared/model/classes";
+import { allGlobalVariants } from "@/wab/shared/core/sites";
 import L from "lodash";
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { computed, observable } from "mobx";
-import { ensureValidCombo, isPrivateStyleVariant } from "./Variants";
 
 /**
  * A class that tracks the targeted variants as well as

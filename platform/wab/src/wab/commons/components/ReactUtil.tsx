@@ -1,4 +1,4 @@
-import { cx, filterFalsy, spawn, tuple, withoutNils } from "@/wab/common";
+import { cx, filterFalsy, spawn, tuple, withoutNils } from "@/wab/shared/common";
 import { ReadablePromise } from "@/wab/commons/control";
 import { assignIn, groupBy, isFunction, isNil } from "lodash";
 import React, { SyntheticEvent, useState } from "react";
@@ -41,7 +41,9 @@ export const swallowingClick =
   <T extends HTMLElement>(f?: (event: React.MouseEvent<T>) => void) =>
   (event: React.MouseEvent<T>) => {
     event.stopPropagation();
-    if (f) f(event);
+    if (f) {
+      f(event);
+    }
   };
 
 export function joinReactNodes(

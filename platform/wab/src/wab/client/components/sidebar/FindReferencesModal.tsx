@@ -1,30 +1,41 @@
-import { ArenaFrame, Component, Mixin, StyleToken } from "@/wab/classes";
 import ListSectionSeparator from "@/wab/client/components/ListSectionSeparator";
 import { menuSection } from "@/wab/client/components/menu-builder";
+import { MixinPopup } from "@/wab/client/components/sidebar/MixinControls";
+import ReferenceItem from "@/wab/client/components/sidebar/ReferenceItem";
+import { SidebarModal } from "@/wab/client/components/sidebar/SidebarModal";
+import { TokenEditModal } from "@/wab/client/components/sidebar/TokenEditModal";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import ComponentIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Component";
 import MixinIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Mixin";
 import TokenIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Token";
 import PlasmicFindReferencesModal from "@/wab/client/plasmic/plasmic_kit_find_references_modal/PlasmicFindReferencesModal";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensure, spawn } from "@/wab/common";
-import { getComponentDisplayName, isPageComponent } from "@/wab/components";
 import { FRAME_LOWER } from "@/wab/shared/Labels";
-import { extractComponentUsages, getArenaFromFrame } from "@/wab/sites";
+import { ensure, spawn } from "@/wab/shared/common";
+import {
+  getComponentDisplayName,
+  isPageComponent,
+} from "@/wab/shared/core/components";
+import {
+  extractComponentUsages,
+  getArenaFromFrame,
+} from "@/wab/shared/core/sites";
 import {
   DefaultStyle,
   extractMixinUsages,
   extractTokenUsages,
-} from "@/wab/styles";
+} from "@/wab/shared/core/styles";
+import {
+  ArenaFrame,
+  Component,
+  Mixin,
+  StyleToken,
+} from "@/wab/shared/model/classes";
 import { Menu } from "antd";
 import L, { sortBy } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { VariableSizeList } from "react-window";
-import { MixinPopup } from "./MixinControls";
-import ReferenceItem from "./ReferenceItem";
-import { SidebarModal } from "./SidebarModal";
-import { TokenEditModal } from "./TokenEditModal";
 
 const enum ItemType {
   page = "page",
@@ -307,6 +318,7 @@ function getReferenceItemMenuRenderer({
     return (
       <Menu onClick={(e) => e.domEvent.stopPropagation()}>
         {menuSection(
+          "references",
           <Menu.Item key="references" onClick={onFindReferences}>
             Find all references
           </Menu.Item>

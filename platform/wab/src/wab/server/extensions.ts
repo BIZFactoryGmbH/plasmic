@@ -1,16 +1,16 @@
-import { DEVFLAGS } from "@/wab/devflags";
+import { Config } from "@/wab/server/config";
+import { Actor } from "@/wab/server/db/DbMgr";
+import { Mailer } from "@/wab/server/emails/Mailer";
+import { Team, User as UserEnt } from "@/wab/server/entities/Entities";
+import { WabPromStats } from "@/wab/server/promstats";
+import { TimingStore } from "@/wab/server/timing-util";
+import { PlasmicWorkerPool } from "@/wab/server/workers/pool";
+import { Analytics } from "@/wab/shared/analytics/Analytics";
 import { ProjectIdAndToken } from "@/wab/shared/ApiSchema";
 import { Bundler } from "@/wab/shared/bundler";
-import Analytics from "analytics-node";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import socketio from "socket.io";
 import { Connection, EntityManager } from "typeorm";
-import { Config } from "./config";
-import { Actor } from "./db/DbMgr";
-import { Mailer } from "./emails/Mailer";
-import { Team, User as UserEnt } from "./entities/Entities";
-import { WabPromStats } from "./promstats";
-import { TimingStore } from "./timing-util";
-import { PlasmicWorkerPool } from "./workers/pool";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -42,6 +42,7 @@ declare global {
       promLabels: {
         projectId?: string;
       };
+      analytics: Analytics;
     }
     export interface Response {
       isClosedBeforeFulfilled?: boolean;

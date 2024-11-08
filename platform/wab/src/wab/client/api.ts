@@ -1,5 +1,17 @@
-/** @format */
-
+import { analytics } from "@/wab/client/analytics";
+import { ensureIsTopFrame, isHostFrame } from "@/wab/client/cli-routes";
+import { LocalClipboardAction } from "@/wab/client/clipboard/local";
+import {
+  SerializableClipboardData,
+  serializeClipboardItems,
+} from "@/wab/client/clipboard/ReadableClipboard";
+import { storageViewAsKey } from "@/wab/client/components/app-auth/ViewAsButton";
+import { PushPullQueue } from "@/wab/commons/asyncutil";
+import { PromisifyMethods } from "@/wab/commons/promisify-methods";
+import { transformErrors } from "@/wab/shared/ApiErrors/errors";
+import { ApiUser } from "@/wab/shared/ApiSchema";
+import { fullName } from "@/wab/shared/ApiSchemaUtil";
+import { Bundler } from "@/wab/shared/bundler";
 import {
   assert,
   ensure,
@@ -8,19 +20,14 @@ import {
   omitNils,
   swallow,
   truncateText,
-} from "@/wab/common";
-import { PushPullQueue } from "@/wab/commons/asyncutil";
-import { PromisifyMethods } from "@/wab/commons/promisify-methods";
+} from "@/wab/shared/common";
 import {
   DEVFLAGS,
   flattenInsertableIconGroups,
   flattenInsertableTemplates,
-} from "@/wab/devflags";
-import { transformErrors } from "@/wab/shared/ApiErrors/errors";
-import { ApiUser } from "@/wab/shared/ApiSchema";
-import { fullName } from "@/wab/shared/ApiSchemaUtil";
-import { Bundler } from "@/wab/shared/bundler";
+} from "@/wab/shared/devflags";
 import { LowerHttpMethod } from "@/wab/shared/HttpClientUtil";
+import { PLEXUS_STORAGE_KEY } from "@/wab/shared/insertables";
 import {
   PkgInfo,
   SharedApi,
@@ -30,15 +37,7 @@ import * as Sentry from "@sentry/browser";
 import { proxy, ProxyMarked } from "comlink";
 import $ from "jquery";
 import L, { pick } from "lodash";
-import LogRocket from "logrocket";
 import io, { Socket } from "socket.io-client";
-import { ensureIsTopFrame, isHostFrame } from "./cli-routes";
-import {
-  ClipboardAction,
-  parseClipboardItems,
-  ParsedClipboardData,
-} from "./clipboard";
-import { storageViewAsKey } from "./components/app-auth/ViewAsButton";
 
 const fullApiPath = (url: /*TWZ*/ string) => `/api/v1/${L.trimStart(url, "/")}`;
 
@@ -105,9 +104,12 @@ export const ajax = async (
       .fail((xhr, txtStatus, err) => {
         const error =
           swallow(() => {
-            const { error: apiError } = JSON.parse(xhr.responseText);
-            let transformed = transformErrors(apiError);
-            if (!noErrorTransform && !(transformed instanceof Error)) {
+            const response = JSON.parse(xhr.responseText);
+            if (noErrorTransform) {
+              return response;
+            }
+            let transformed = transformErrors(response.error);
+            if (!(transformed instanceof Error)) {
               // The error was JSON-parsible, but not one of the known
               // ApiErrors. So it is now just a JSON object, not an Error.
               // We create an UnknownApiError for it instead.
@@ -150,11 +152,10 @@ export class Api extends SharedApi {
   setUser = setUser;
 
   clearUser() {
-    analytics.reset();
+    analytics().setAnonymousUser();
     Sentry.configureScope((scope) => {
       scope.setUser({});
     });
-    LogRocket.startNewSession();
   }
 
   async req(
@@ -308,8 +309,8 @@ export class Api extends SharedApi {
   }
 
   async readNavigatorClipboard(
-    lastAction: ClipboardAction
-  ): Promise<ParsedClipboardData> {
+    lastAction: LocalClipboardAction
+  ): Promise<SerializableClipboardData> {
     assert(!isHostFrame(), "Should only run in the top frame");
 
     let permission: PermissionStatus;
@@ -330,7 +331,13 @@ export class Api extends SharedApi {
       "Your browser does not support Clipboard API"
     );
     const items = await navigator.clipboard.read();
-    return await parseClipboardItems(items, lastAction);
+    return await serializeClipboardItems(items, lastAction);
+  }
+
+  async whitelistProjectIdToCopy(projectId: string) {
+    assert(!isHostFrame(), "Should only run in the top frame");
+
+    this.addStorageItem(`copy/${projectId}`, JSON.stringify(+new Date()));
   }
 }
 
@@ -443,6 +450,7 @@ export function filteredApi(
     storageViewAsKey(projectId),
   ];
   const whitelistedLocalStorageKeyPrefixes = [
+    PLEXUS_STORAGE_KEY,
     "plasmic.tours.",
     "plasmic.focused.",
     "plasmic.leftTabKey",
@@ -533,17 +541,39 @@ export function filteredApi(
       return f(key);
     },
     getModelUpdates: checkProjectIdInFirstArg,
-    getSiteInfo: (f) => (siteId, opts) => {
+    getSiteInfo: (f) => async (siteId, opts) => {
       // The only projects we need to fetch are the site itself and the
       // insertable templates (imported projects use `getPkgVersion`).
-      assert(
-        [projectId, ...insertableProjectIds].includes(siteId),
-        "Unexpected projectId " + siteId
+
+      const isKnownProject = [projectId, ...insertableProjectIds].includes(
+        siteId
       );
+      if (isKnownProject) {
+        return f(siteId, opts);
+      }
+
+      // In case the user has copied some elements from another project we
+      // check how long ago the user copied the elements. If it's been more
+      // than 1 day, we don't need to fetch the project.
+      const errorMsg = `Unexpected projectId ${siteId}`;
+
+      const value = await apiProxy.getStorageItem(`copy/${siteId}`);
+      if (!value) {
+        throw new Error(errorMsg);
+      }
+
+      const diff = new Date().getTime() - new Date(+value).getTime();
+      const diffInDays = diff / (1000 * 3600 * 24);
+
+      if (diffInDays > 1) {
+        throw new Error(errorMsg);
+      }
+
       return f(siteId, opts);
     },
     cloneProject: checkProjectIdInFirstArg,
     saveProjectRevChanges: checkProjectIdInFirstArg,
+    computeNextProjectVersion: checkProjectIdInFirstArg,
     publishProject: checkProjectIdInFirstArg,
     listPkgVersionsWithoutData:
       (f) =>
@@ -565,6 +595,7 @@ export function filteredApi(
     deleteBranch: checkProjectIdInFirstArg,
     getComments: checkProjectIdInFirstArg,
     postComment: checkProjectIdInFirstArg,
+    editComment: checkProjectIdInFirstArg,
     deleteComment: checkProjectIdInFirstArg,
     deleteThread: checkProjectIdInFirstArg,
     updateNotificationSettings: checkProjectIdInFirstArg,
@@ -591,6 +622,7 @@ export function filteredApi(
         });
       },
     setMainBranchProtection: checkProjectIdInFirstArg,
+    whitelistProjectIdToCopy: checkProjectIdInFirstArg,
   };
 
   // Start with all methods marked as forbidden
@@ -624,11 +656,10 @@ export function setUser(user: ApiUser) {
     fullName: fullName(user),
     domain: email.split("@")[1],
   });
-  analytics.identify(id, traits);
+  analytics().setUser(id);
   Sentry.configureScope((scope) => {
     scope.setUser({ id, ...traits });
   });
-  LogRocket.identify(id, traits);
 }
 
 export function invalidationKey(method: string, ...args: any[]) {

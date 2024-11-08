@@ -1,10 +1,11 @@
 import { usePreviewCtx } from "@/wab/client/components/live/PreviewCtx";
+import VariantsMenu from "@/wab/client/components/top-bar/VariantsMenu";
 import {
   DefaultVariantsComboSelectProps,
   PlasmicVariantsComboSelect,
 } from "@/wab/client/plasmic/plasmic_kit_top_bar/PlasmicVariantsComboSelect";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensure, xGroupBy } from "@/wab/common";
+import { ensure, xGroupBy } from "@/wab/shared/common";
 import {
   getAllVariantsForTpl,
   isBaseVariant,
@@ -15,11 +16,10 @@ import {
 } from "@/wab/shared/Variants";
 import { Dropdown } from "antd";
 import { defer } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import VariantsMenu from "./VariantsMenu";
 
-interface VariantsComboSelectProps extends DefaultVariantsComboSelectProps {}
+type VariantsComboSelectProps = DefaultVariantsComboSelectProps;
 
 const VariantsComboSelect = observer(function VariantsComboSelect(
   props: VariantsComboSelectProps

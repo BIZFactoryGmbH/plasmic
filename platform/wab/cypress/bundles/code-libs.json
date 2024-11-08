@@ -18,9 +18,9 @@
           "defaultStyle": { "__ref": "9DQpdp26V81I" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "OmtBUmj0nGd7": {
           "uuid": "QIcNIXhlzrpm",
@@ -87,7 +87,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -109,9 +109,9 @@
           "defaultStyle": { "__ref": "OZ_btUzqjPF5" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "X_yDTZJQWR96": {
           "uuid": "P6JzkGokSLSp",
@@ -178,7 +178,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -200,9 +200,9 @@
           "defaultStyle": { "__ref": "-2dJzCBUSv8z" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "iio2m_jx__ic": {
           "uuid": "BLbShoUWiWWh",
@@ -269,7 +269,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -291,9 +291,9 @@
           "defaultStyle": { "__ref": "eTjlvi_jYdeh" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "qTaF_bFqvCXU": {
           "uuid": "-x4WqJTOfRUn",
@@ -360,7 +360,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -382,9 +382,9 @@
           "defaultStyle": { "__ref": "obRkPpBAKpaq" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "l3wyAVaUohe2": {
           "uuid": "lJpS406iw3U_",
@@ -451,7 +451,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -473,9 +473,9 @@
           "defaultStyle": { "__ref": "DXXMxQyQ67GG" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "ga6vkkjoy1Hz": {
           "uuid": "Dp_Vmt_bCXNr",
@@ -542,7 +542,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -564,9 +564,9 @@
           "defaultStyle": { "__ref": "FzNl1v8A3WSe" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "52j-rHexq18o": {
           "uuid": "amZ-zax6wCza",
@@ -633,7 +633,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -655,9 +655,9 @@
           "defaultStyle": { "__ref": "_yifD1KTrRru" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "uWFEcIn6Gqbp": {
           "uuid": "ow7DaPyzbQkm",
@@ -736,7 +736,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -758,9 +758,9 @@
           "defaultStyle": { "__ref": "mTtFUZhil0Is" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "gPuotvzgf9XA": {
           "uuid": "-ohsa6ehLi69",
@@ -839,7 +839,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -861,9 +861,9 @@
           "defaultStyle": { "__ref": "8toNjfF3wlW6" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "BvFU6ZnbB6fE": {
           "uuid": "RvgvnhvUUdmj",
@@ -930,7 +930,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -952,9 +952,9 @@
           "defaultStyle": { "__ref": "CcuVOzVSOyoW" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "RXcSoE_YEa0f": {
           "uuid": "q5rUDCm8a-dm",
@@ -1021,7 +1021,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1043,9 +1043,9 @@
           "defaultStyle": { "__ref": "khZ_kGVNJ88I" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "vE7sNZ6erZjh": {
           "uuid": "OjsIUK9fBaqw",
@@ -1112,7 +1112,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1134,9 +1134,9 @@
           "defaultStyle": { "__ref": "rbfIn12dtTfE" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "Q0rNbUWGhaAi": {
           "uuid": "jf8Tm1dWSxmw",
@@ -1203,7 +1203,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1225,9 +1225,9 @@
           "defaultStyle": { "__ref": "NyaqjH-_cx0R" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "wiDAcIpyrpIt": {
           "uuid": "jMge8mCZKoCH",
@@ -1294,7 +1294,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1316,9 +1316,9 @@
           "defaultStyle": { "__ref": "RJZ4Te7P1E8g" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "vkHCZzI44LVK": {
           "uuid": "PxCR-JNW3OLm",
@@ -1397,7 +1397,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1419,9 +1419,9 @@
           "defaultStyle": { "__ref": "LwzQIuq6jJFs" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "ttQHQwUs8gb2": {
           "uuid": "c73zsXYBl1zD",
@@ -1488,7 +1488,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1510,9 +1510,9 @@
           "defaultStyle": { "__ref": "dXB1W5qaYprf" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "2huIDl_a0_ow": {
           "uuid": "3lcXmQV6MUm7",
@@ -1579,7 +1579,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1601,9 +1601,9 @@
           "defaultStyle": { "__ref": "eDX2rKZPdjqE" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "gIwSjShPjAY5": {
           "uuid": "qLRv6Rlf_Y_L",
@@ -1670,7 +1670,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1692,9 +1692,9 @@
           "defaultStyle": { "__ref": "XK9lfwRkqVJm" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "mj6LfX2--GWQ": {
           "uuid": "aYp3DIbQaRKh",
@@ -1761,7 +1761,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1783,9 +1783,9 @@
           "defaultStyle": { "__ref": "N68wRUqg0jEF" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "-CVGhMBkm39j": {
           "uuid": "Yh91xc6bzKH6",
@@ -1852,7 +1852,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1921,8 +1921,8 @@
         "3091304": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "3091305": {
           "type": { "__ref": "3091307" },
@@ -2068,6 +2068,8 @@
           "displayName": "Condition Guard",
           "importName": "ConditionGuard",
           "description": "Ensure some condition, or else run an interaction. Examples: ensure all users have a database row, or require new users to setup a profile.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2081,6 +2083,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "3935001": {
@@ -2131,9 +2134,9 @@
           "defaultStyle": { "__ref": "3935062" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "3935062": {
           "name": "Default Typography",
@@ -2238,6 +2241,8 @@
           "displayName": "Embed HTML",
           "importName": "Embed",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "7682015" },
@@ -2251,6 +2256,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "7682008": { "name": "code", "uuid": "ARXptWIBzB", "__type": "Var" },
@@ -2399,6 +2405,8 @@
           "displayName": "Data Provider",
           "importName": "DataProvider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2412,6 +2420,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "11490009": { "name": "name", "uuid": "GXFVFWfyxZl", "__type": "Var" },
@@ -2436,8 +2445,8 @@
         "11490016": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "11490017": {
           "param": { "__ref": "11490005" },
@@ -2606,6 +2615,8 @@
           "displayName": "Iframe",
           "importName": "Iframe",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "34442167" },
@@ -2619,6 +2630,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "34442070": {
@@ -2810,6 +2822,8 @@
           "displayName": "HTML Video",
           "importName": "Video",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "39447001" },
@@ -2823,6 +2837,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "34442160": { "name": "src", "uuid": "6-acOUSDbVf", "__type": "Var" },
@@ -2935,6 +2950,8 @@
           "displayName": "Side Effect",
           "importName": "SideEffect",
           "description": "Run actions on load, unload, and when data changes.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2948,6 +2965,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "169KSwIlWIPK": {
@@ -3125,6 +3143,8 @@
           "displayName": "Timer",
           "importName": "Timer",
           "description": "Run something periodically",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3138,6 +3158,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "tY8MGiZAhddF": {
@@ -3375,7 +3396,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -3397,9 +3418,9 @@
           "defaultStyle": { "__ref": "Lil7EmBu70nR" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "YaH5yOkOuXCR": {
           "uuid": "nnfejcEYApPs",
@@ -3740,6 +3761,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3753,6 +3776,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "hKsdzIkEtrB3": {
@@ -3885,6 +3909,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3898,6 +3924,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "L6NdkzTQ3wv5": { "name": "text", "__type": "Text" },
@@ -3951,8 +3978,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "fRX6i9xWeQeD" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "g2JO4s11woP8": {
           "name": "children",
@@ -4167,7 +4194,6 @@
           "uuid": "UgGpORNyVTXI",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "sg4LBAF4vCab" },
           "lang": "English",
           "pinnedVariants": {},
@@ -4908,7 +4934,7 @@
         "unYEfNHe7XRn": {
           "uuid": "fmU7vKRr4Net",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -4918,7 +4944,7 @@
         "98bCPPxdZwa4": {
           "uuid": "e8rAHDbpUbYG",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -4928,7 +4954,7 @@
         "NlNWf7-MImkI": {
           "uuid": "YBWrgvpLC8qU",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -4938,7 +4964,7 @@
         "uxKEiZcqedp9": {
           "uuid": "v3NnWK02rkOS",
           "name": "",
-          "selectors": ["Pressed"],
+          "selectors": [":active"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -5058,8 +5084,8 @@
         "-vaHlI4w3CtU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "feiKaLSDUy8K": {
           "name": "children",
@@ -5081,8 +5107,8 @@
         "Bv_aTzNajWUx": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "X0FIQw9WhmmB": {
           "name": "start icon",
@@ -5092,8 +5118,8 @@
         "IdLEfAUeaxxO": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "FRHt0pDC4wxX": {
           "name": "end icon",
@@ -7961,7 +7987,6 @@
           "uuid": "BXM20u5mVyic",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Gg9h19hyJrYl" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7979,7 +8004,6 @@
           "uuid": "hWbJrLHixE0j",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "s4nS273sFSXW" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7997,7 +8021,6 @@
           "uuid": "EpNeUF23DeWJ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "jP1JZouOlWwz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8015,7 +8038,6 @@
           "uuid": "UDQLCc6ipIWB",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "vFQRkTE-nQ8f" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8033,7 +8055,6 @@
           "uuid": "VL0eRhmIC-Dv",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "-1UpYhnlCaE4" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8051,7 +8072,6 @@
           "uuid": "-0gfvJlaiIw6",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "zyeZFTvFx91G" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8069,7 +8089,6 @@
           "uuid": "EsYJ0oYxYGOw",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "YH1WFOUcQm8Y" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8087,7 +8106,6 @@
           "uuid": "M-hQ0lV6LLtT",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "mjzpOFMoZ_MY" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8105,7 +8123,6 @@
           "uuid": "7IAd1pFu28tY",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "hUvqdTO0rLiS" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8123,7 +8140,6 @@
           "uuid": "pqavAj4e7VnQ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "GCVSH72a1PHz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8141,7 +8157,6 @@
           "uuid": "CMiebi4ZIy_U",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Sihvyp-a4ecc" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8159,7 +8174,6 @@
           "uuid": "4n3sMNhTUwgM",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "KR0fAanc9Pt2" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8177,7 +8191,6 @@
           "uuid": "-m-JHf-CXOxK",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "PDADfg7SAD2o" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8195,7 +8208,6 @@
           "uuid": "dq1DMIpALfmx",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "M1NXLhdxHuDY" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8213,7 +8225,6 @@
           "uuid": "Sm7556Q9DQED",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "x4r-_e1aZKV7" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8231,7 +8242,6 @@
           "uuid": "G9PCbHRMJ2aZ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "djvg0U_Rxh5x" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8249,7 +8259,6 @@
           "uuid": "f8Bm5vsJBh9c",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "D0hbOBjRZ_Aw" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8267,7 +8276,6 @@
           "uuid": "njjAJRWdz18v",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "NuE0pu2R579A" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8285,7 +8293,6 @@
           "uuid": "Wrjug4WvlIVD",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "uiu2RxG5U64e" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8303,7 +8310,6 @@
           "uuid": "V7ekCBbJoYg_",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "lxSHDEvieRVz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8321,7 +8327,6 @@
           "uuid": "EoHAyL1lc3IN",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "dvN928mDkb33" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8339,7 +8344,6 @@
           "uuid": "LONzXRcWtDrp",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "bu5xK351vZxV" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8357,7 +8361,6 @@
           "uuid": "WG7OAybymF3o",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "VwA0i8X-ajII" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8375,7 +8378,6 @@
           "uuid": "yLw19Fg4bGt2",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "B32tZpa_WEmI" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8393,7 +8395,6 @@
           "uuid": "MVvfZ5kcHcSZ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Qb0UCzEKQ82O" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8411,7 +8412,6 @@
           "uuid": "6XqpFBIw62QG",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Td5IGQvXSFeN" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8429,7 +8429,6 @@
           "uuid": "QZfEIKdq5L-f",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "U6EnRUIuorVV" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8450,7 +8449,6 @@
           "uuid": "cZmhfT5lXRm-",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "dZl7R3wm-6C0" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8471,7 +8469,6 @@
           "uuid": "4zwJFo6fRUmL",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "7kRHDcTA3HXv" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8492,7 +8489,6 @@
           "uuid": "yEvThLdyrsg0",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "ckJBPg6YGNmz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8513,7 +8509,6 @@
           "uuid": "2Zmy3-cxR--P",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "XIzoybab3p_4" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8534,7 +8529,6 @@
           "uuid": "rLKw2otyregx",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Hr4bnWL6hu1L" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8555,7 +8549,6 @@
           "uuid": "Y8QBiWED4rM7",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "XvqalIjOI_1V" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8576,7 +8569,6 @@
           "uuid": "T7jgBv7DgA9o",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "hZAfla85lktL" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8597,7 +8589,6 @@
           "uuid": "2uuAp4dclD4F",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "AQMJykQop546" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8618,7 +8609,6 @@
           "uuid": "4U3a5pivFMHt",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "zNfT24UhSWAJ" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8639,7 +8629,6 @@
           "uuid": "HRvb_aNOdEme",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "ptyzzFwKwVci" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8660,7 +8649,6 @@
           "uuid": "mB3HyrarXyyb",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "TOGu0F_146bW" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8681,7 +8669,6 @@
           "uuid": "pyKKuLIZSqRR",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "7bchaelY0fyo" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8702,7 +8689,6 @@
           "uuid": "yI2B5AqxgHrQ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "1uN9cKpBTJu9" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8723,7 +8709,6 @@
           "uuid": "ZP4Ltcr6KWh1",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Y8DVFfDn7pMb" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8744,7 +8729,6 @@
           "uuid": "Nok9TrDhMgjL",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "6PSqOFf8ycm-" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8765,7 +8749,6 @@
           "uuid": "ov2Jn9ov1ZlE",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "d3AwK_hRrlRd" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8786,7 +8769,6 @@
           "uuid": "woD3FcTrYmZg",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "H-slF076PELU" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8807,7 +8789,6 @@
           "uuid": "gbFk2KtyWbpz",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "lMM-N2cvSFHJ" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8828,7 +8809,6 @@
           "uuid": "jz3plPYODgzu",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "gpvnQJbbXcwx" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8849,7 +8829,6 @@
           "uuid": "pSKFwru5kAxE",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "N9DJ3uO4oN_W" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8870,7 +8849,6 @@
           "uuid": "beZnGB1Qa6uA",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "h1GTnE9k3nRf" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8891,7 +8869,6 @@
           "uuid": "ab02fScuCcvF",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "jmI143OfRMNf" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8912,7 +8889,6 @@
           "uuid": "lx7fYY18v78A",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Qe_rsUgRC19l" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8933,7 +8909,6 @@
           "uuid": "PCQZAOKhmPtQ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "eynaWG2ACmAq" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8954,7 +8929,6 @@
           "uuid": "WKZoT_EQUzUG",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "UUdv2vpeKQCA" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8975,7 +8949,6 @@
           "uuid": "52ceBhmC6YhU",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "ar7xsmnoSWBC" },
           "lang": "English",
           "pinnedVariants": {},
@@ -8996,7 +8969,6 @@
           "uuid": "nRgkTEjQkRFr",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "RFsTpTVKAnFs" },
           "lang": "English",
           "pinnedVariants": {},
@@ -9017,7 +8989,6 @@
           "uuid": "GBCtlmEtlli8",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "JJEaW3CkR8bD" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11910,7 +11881,7 @@
         "ea54091c-dcfb-47e2-86b4-fe360c62f6ec",
         "7bfdcdde-66e0-469e-9022-02955a3f8f15"
       ],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

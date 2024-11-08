@@ -1,35 +1,30 @@
-import { ArenaFrame } from "@/wab/classes";
 import { CanvasTransformedBox } from "@/wab/client/components/canvas/CanvasTransformedBox";
 import { useRerenderOnUserBodyChange } from "@/wab/client/components/canvas/UserBodyObserver";
 import { hasLayoutBox } from "@/wab/client/dom";
-import WarningIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__WarningTrianglesvg";
+import WarningIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__WarningTriangleSvg";
 import { globalHookCtx } from "@/wab/client/react-global-hook/globalHook";
 import { RightTabKey, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { assert } from "@/wab/common";
+import { AnyArena } from "@/wab/shared/Arenas";
+import { maybePropTypeToDisplayName } from "@/wab/shared/code-components/code-components";
+import { assert } from "@/wab/shared/common";
 import {
   CodeComponent,
   getComponentDisplayName,
   isCodeComponent,
-} from "@/wab/components";
-import { AnyArena } from "@/wab/shared/Arenas";
-import { maybePropTypeToDisplayName } from "@/wab/shared/code-components/code-components";
+} from "@/wab/shared/core/components";
 import {
-  flattenVals,
   InvalidArgMeta,
-  isValComponent,
   ValComponent,
-  ValidationType,
-} from "@/wab/val-nodes";
+  flattenVals,
+  getInvalidArgErrorMessage,
+  isValComponent,
+} from "@/wab/shared/core/val-nodes";
+import { ArenaFrame } from "@/wab/shared/model/classes";
 import { Tooltip } from "antd";
 import $ from "jquery";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
-
-const getErrorMessage = (invalidArg: InvalidArgMeta) =>
-  invalidArg.validationType === ValidationType.Required
-    ? "Required"
-    : invalidArg.message ?? "Invalid Value";
 
 const TooltipMessage = ({
   component,
@@ -51,7 +46,7 @@ const TooltipMessage = ({
               component._meta.props[invalidArg.param.variable.name]
             )) ??
             invalidArg.param.variable.name}
-          : {getErrorMessage(invalidArg)}
+          : {getInvalidArgErrorMessage(invalidArg)}
         </li>
       ))}
     </ul>

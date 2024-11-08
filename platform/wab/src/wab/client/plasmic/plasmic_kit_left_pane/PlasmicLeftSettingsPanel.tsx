@@ -15,55 +15,21 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
-  hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
-  renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
-  useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import LeftSearchPanel from "../../components/studio/LeftSearchPanel"; // plasmic-import: TqAPn0srTq/component
 import LeftPaneHeader from "../../components/studio/LeftPaneHeader"; // plasmic-import: XLa52PvduIy/component
-import TextWithInfo from "../../../../TextWithInfo"; // plasmic-import: -EsDm7v023/component
+import LeftSearchPanel from "../../components/studio/LeftSearchPanel"; // plasmic-import: TqAPn0srTq/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_new_design_system_former_style_controls_css from "../plasmic_kit_style_controls/plasmic_plasmic_kit_styles_pane.module.css"; // plasmic-import: gYEVvAzCcLMHDVPvuYxkFh/projectcss
+import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import sty from "./PlasmicLeftSettingsPanel.module.css"; // plasmic-import: EeT-6P6YTW/css
 
@@ -85,7 +51,6 @@ export type PlasmicLeftSettingsPanel__OverridesType = {
   leftPaneHeader?: Flex__<typeof LeftPaneHeader>;
   text?: Flex__<"div">;
   content?: Flex__<"div">;
-  globalVariableContent?: Flex__<"div">;
 };
 
 export interface DefaultLeftSettingsPanelProps {
@@ -102,7 +67,16 @@ function PlasmicLeftSettingsPanel__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
@@ -112,8 +86,6 @@ function PlasmicLeftSettingsPanel__RenderFunc(props: {
   const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
-
-  const currentUser = useCurrentUser?.() || {};
 
   return (
     <div
@@ -167,30 +139,16 @@ function PlasmicLeftSettingsPanel__RenderFunc(props: {
         data-plasmic-override={overrides.content}
         className={classNames(projectcss.all, sty.content)}
       />
-
-      <div
-        data-plasmic-name={"globalVariableContent"}
-        data-plasmic-override={overrides.globalVariableContent}
-        className={classNames(projectcss.all, sty.globalVariableContent)}
-      />
     </div>
   ) as React.ReactElement | null;
 }
 
 const PlasmicDescendants = {
-  root: [
-    "root",
-    "leftSearchPanel",
-    "leftPaneHeader",
-    "text",
-    "content",
-    "globalVariableContent",
-  ],
+  root: ["root", "leftSearchPanel", "leftPaneHeader", "text", "content"],
   leftSearchPanel: ["leftSearchPanel"],
   leftPaneHeader: ["leftPaneHeader", "text"],
   text: ["text"],
   content: ["content"],
-  globalVariableContent: ["globalVariableContent"],
 } as const;
 type NodeNameType = keyof typeof PlasmicDescendants;
 type DescendantsType<T extends NodeNameType> =
@@ -201,7 +159,6 @@ type NodeDefaultElementType = {
   leftPaneHeader: typeof LeftPaneHeader;
   text: "div";
   content: "div";
-  globalVariableContent: "div";
 };
 
 type ReservedPropsType = "variants" | "args" | "overrides";
@@ -268,7 +225,6 @@ export const PlasmicLeftSettingsPanel = Object.assign(
     leftPaneHeader: makeNodeComponent("leftPaneHeader"),
     text: makeNodeComponent("text"),
     content: makeNodeComponent("content"),
-    globalVariableContent: makeNodeComponent("globalVariableContent"),
 
     // Metadata about props expected for PlasmicLeftSettingsPanel
     internalVariantProps: PlasmicLeftSettingsPanel__VariantProps,

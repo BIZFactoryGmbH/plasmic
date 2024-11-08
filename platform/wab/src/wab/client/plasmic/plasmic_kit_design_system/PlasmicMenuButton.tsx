@@ -13,35 +13,28 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
   SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
+
 import IconButton from "../../components/widgets/IconButton"; // plasmic-import: LPry-TF4j22a/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import projectcss from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicMenuButton.module.css"; // plasmic-import: h69wHrrKtL/css
 
-import DotsVerticalsvgIcon from "../q_4_icons/icons/PlasmicIcon__DotsVerticalsvg"; // plasmic-import: joYBQwH-P/icon
-import ChevronDownsvgIcon from "../q_4_icons/icons/PlasmicIcon__ChevronDownsvg"; // plasmic-import: xZrB9_0ir/icon
+import ChevronDownSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ChevronDownSvg"; // plasmic-import: xZrB9_0ir/icon
+import DotsVerticalSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__DotsVerticalSvg"; // plasmic-import: joYBQwH-P/icon
 
 createPlasmicElementProxy;
 
@@ -72,7 +65,7 @@ type ArgPropType = keyof PlasmicMenuButton__ArgsType;
 export const PlasmicMenuButton__ArgProps = new Array<ArgPropType>("hoverText");
 
 export type PlasmicMenuButton__OverridesType = {
-  root?: p.Flex<typeof IconButton>;
+  root?: Flex__<typeof IconButton>;
 };
 
 export interface DefaultMenuButtonProps {
@@ -94,20 +87,27 @@ function PlasmicMenuButton__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "stepUp",
@@ -135,9 +135,10 @@ function PlasmicMenuButton__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.size,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -151,7 +152,7 @@ function PlasmicMenuButton__RenderFunc(props: {
       data-plasmic-root={true}
       data-plasmic-for-node={forNode}
       children2={
-        <ChevronDownsvgIcon
+        <ChevronDownSvgIcon
           className={classNames(projectcss.all, sty.svg___5FElZ)}
           role={"img"}
         />
@@ -181,12 +182,17 @@ function PlasmicMenuButton__RenderFunc(props: {
           : undefined
       }
     >
-      <DotsVerticalsvgIcon
+      <DotsVerticalSvgIcon
         className={classNames(projectcss.all, sty.svg__jeWc1, {
           [sty.svgtype_seamless__jeWc1Z4VSy]: hasVariant(
             $state,
             "type",
             "seamless"
+          ),
+          [sty.svgwithBackgroundHover__jeWc1Jm7Jz]: hasVariant(
+            $state,
+            "withBackgroundHover",
+            "withBackgroundHover"
           ),
         })}
         role={"img"}
@@ -210,6 +216,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicMenuButton__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

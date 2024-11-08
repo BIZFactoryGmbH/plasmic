@@ -1,20 +1,24 @@
-import {
-  ensure,
-  ensureType,
-  filterFalsy,
-  uncheckedCast,
-  xGroupBy,
-} from "@/wab/common";
-import { checkPermissions, ForbiddenError } from "@/wab/server/db/DbMgr";
+import { ForbiddenError, checkPermissions } from "@/wab/server/db/DbMgr";
 import { prepareTeamSupportUrls as doPrepareTeamSupportUrls } from "@/wab/server/discourse/prepareTeamSupportUrls";
-import { sendShareEmail } from "@/wab/server/emails/Emails";
-import {
-  Project,
-  PromotionCode,
-  Team,
-  Workspace,
-} from "@/wab/server/entities/Entities";
+import { sendShareEmail } from "@/wab/server/emails/share-email";
+import { Project, Team, Workspace } from "@/wab/server/entities/Entities";
 import { isTeamOnFreeTrial } from "@/wab/server/freeTrial";
+import { customCreateTeam } from "@/wab/server/routes/custom-routes";
+import { mkApiProject } from "@/wab/server/routes/projects";
+import { getPromotionCodeCookie } from "@/wab/server/routes/promo-code";
+import {
+  maybeTriggerPaywall,
+  passPaywall,
+  resetStripeCustomer,
+  syncDataWithStripe,
+} from "@/wab/server/routes/team-plans";
+import {
+  getUser,
+  superDbMgr,
+  userAnalytics,
+  userDbMgr,
+} from "@/wab/server/routes/util";
+import { mkApiWorkspace } from "@/wab/server/routes/workspaces";
 import {
   ApiPermission,
   ApiTeam,
@@ -29,8 +33,8 @@ import {
   JoinTeamResponse,
   ListFeatureTiersResponse,
   ListTeamProjectsResponse,
-  ListTeamsResponse,
   ListTeamWorkspacesResponse,
+  ListTeamsResponse,
   PurgeUserFromTeamRequest,
   Revoke,
   TeamId,
@@ -38,28 +42,26 @@ import {
   WorkspaceId,
 } from "@/wab/shared/ApiSchema";
 import {
-  createTaggedResourceId,
+  ensure,
+  ensureType,
+  filterFalsy,
+  uncheckedCast,
+  xGroupBy,
+} from "@/wab/shared/common";
+import {
   ResourceId,
   ResourceType,
+  createTaggedResourceId,
+  pluralizeResourceId,
 } from "@/wab/shared/perms";
 import { mergeUiConfigs } from "@/wab/shared/ui-config-utils";
 import {
   createProjectUrl,
   createTeamUrl,
   createWorkspaceUrl,
-} from "@/wab/urls";
+} from "@/wab/shared/urls";
 import { Request, Response } from "express-serve-static-core";
 import L from "lodash";
-import { customCreateTeam } from "./custom-routes";
-import { mkApiProject } from "./projects";
-import {
-  maybeTriggerPaywall,
-  passPaywall,
-  resetStripeCustomer,
-  syncDataWithStripe,
-} from "./team-plans";
-import { getUser, superDbMgr, userAnalytics, userDbMgr } from "./util";
-import { mkApiWorkspace } from "./workspaces";
 
 export function mkApiTeam(team: Team): ApiTeam {
   return L.assign(
@@ -87,6 +89,7 @@ export function mkApiTeam(team: Team): ApiTeam {
       "whiteLabelName",
     ]),
     {
+      parentTeamId: team.parentTeamId,
       featureTier: team.featureTier || team.parentTeam?.featureTier || null,
       uiConfig: mergeUiConfigs(team.parentTeam?.uiConfig, team.uiConfig),
       onTrial: isTeamOnFreeTrial(team),
@@ -125,9 +128,7 @@ export async function createTeam(req: Request, res: Response) {
   const teamName = rawName
     ? rawName
     : `${ensure(req.user, "User must be authenticated").firstName}'s Team`;
-  const promotionCode = req.cookies["promo_code"]
-    ? (JSON.parse(req.cookies["promo_code"]) as PromotionCode)
-    : undefined;
+  const promotionCode = getPromotionCodeCookie(req);
   const extendedFreeTrial = promotionCode
     ? (await superMgr.getPromotionCodeById(promotionCode.id))?.trialDays
     : undefined;
@@ -258,8 +259,8 @@ export async function changeResourcePermissions(req: Request, res: Response) {
           : createTeamUrl(host, id);
 
       for (const { email, accessLevel } of toGrant) {
-        await mgr.grantResourcePermissionByEmail(
-          taggedResourceId,
+        await mgr.grantResourcesPermissionByEmail(
+          pluralizeResourceId(taggedResourceId),
           email,
           accessLevel,
           requireSignUp
@@ -312,7 +313,10 @@ export async function changeResourcePermissions(req: Request, res: Response) {
           : await mgr.getTeamById(taggedResourceId.id);
       resourcesById[taggedResourceId.id] = resource;
       const emails = toRevoke.map(({ email }) => email);
-      await mgr.revokeResourcePermissionsByEmail(taggedResourceId, emails);
+      await mgr.revokeResourcesPermissionsByEmail(
+        pluralizeResourceId(taggedResourceId),
+        emails
+      );
     }
   };
   await handleRevoke("project", (r) => r.projectId);

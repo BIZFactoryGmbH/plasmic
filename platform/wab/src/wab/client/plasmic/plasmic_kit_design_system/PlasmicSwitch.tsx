@@ -13,26 +13,21 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
+import {
+  Flex as Flex__,
+  SingleBooleanChoiceArg,
+  StrictProps,
+  classNames,
+  createPlasmicElementProxy,
+  deriveRenderOpts,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
+  useTrigger,
+} from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import * as pp from "@plasmicapp/react-web";
-import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
-  StrictProps,
-  deriveRenderOpts,
-  ensureGlobalVariants,
-} from "@plasmicapp/react-web";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -78,10 +73,10 @@ export const PlasmicSwitch__ArgProps = new Array<ArgPropType>(
 );
 
 export type PlasmicSwitch__OverridesType = {
-  root?: p.Flex<"div">;
-  toggle?: p.Flex<"div">;
-  thumb?: p.Flex<"div">;
-  labelContainer?: p.Flex<"div">;
+  root?: Flex__<"div">;
+  toggle?: Flex__<"div">;
+  thumb?: Flex__<"div">;
+  labelContainer?: Flex__<"div">;
 };
 
 export interface DefaultSwitchProps extends pp.SwitchProps {
@@ -100,20 +95,27 @@ function PlasmicSwitch__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "noLabel",
@@ -136,9 +138,10 @@ function PlasmicSwitch__RenderFunc(props: {
         onChangeProp: "onChange",
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -213,7 +216,7 @@ function PlasmicSwitch__RenderFunc(props: {
             ),
           })}
         >
-          {p.renderPlasmicSlot({
+          {renderPlasmicSlot({
             defaultContents: "Enter some text",
             value: args.children,
             className: classNames(sty.slotTargetChildren, {
@@ -280,6 +283,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicSwitch__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

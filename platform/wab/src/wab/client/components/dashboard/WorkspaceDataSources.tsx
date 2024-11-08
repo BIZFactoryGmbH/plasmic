@@ -1,4 +1,5 @@
 import { AppCtx } from "@/wab/client/app-ctx";
+import DataSource from "@/wab/client/components/dashboard/DataSource";
 import { DataSourceModal } from "@/wab/client/components/modals/DataSourceModal";
 import { Matcher } from "@/wab/client/components/view-common";
 import {
@@ -6,10 +7,9 @@ import {
   PlasmicWorkspaceDataSources,
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicWorkspaceDataSources";
 import { ApiDataSource, WorkspaceId } from "@/wab/shared/ApiSchema";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import * as React from "react";
-import DataSource from "./DataSource";
 
 export interface WorkspaceDataSourcesProps
   extends DefaultWorkspaceDataSourcesProps {
@@ -34,7 +34,7 @@ function WorkspaceDataSources_(
   ref: HTMLElementRefOf<"div">
 ) {
   const [isEditing, setIsEditing] = React.useState<"new" | ApiDataSource>();
-  const showTutorialDBs = isCoreTeamEmail(
+  const showTutorialDBs = isAdminTeamEmail(
     appCtx.selfInfo?.email,
     appCtx.appConfig
   );

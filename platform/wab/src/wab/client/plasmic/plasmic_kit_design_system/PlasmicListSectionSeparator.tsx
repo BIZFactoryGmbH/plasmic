@@ -13,25 +13,17 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -56,8 +48,8 @@ type ArgPropType = keyof PlasmicListSectionSeparator__ArgsType;
 export const PlasmicListSectionSeparator__ArgProps = new Array<ArgPropType>();
 
 export type PlasmicListSectionSeparator__OverridesType = {
-  root?: p.Flex<"div">;
-  freeBox?: p.Flex<"div">;
+  root?: Flex__<"div">;
+  freeBox?: Flex__<"div">;
 };
 
 export interface DefaultListSectionSeparatorProps {
@@ -75,20 +67,27 @@ function PlasmicListSectionSeparator__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "center",
@@ -97,9 +96,10 @@ function PlasmicListSectionSeparator__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.center,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -153,6 +153,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicListSectionSeparator__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

@@ -1,5 +1,3 @@
-import { Expr, isKnownTplNode, isKnownTplSlot, TplNode } from "@/wab/classes";
-import { TplClip } from "@/wab/client/clipboard";
 import {
   getPreferredInsertLocs,
   InsertRelLoc,
@@ -35,15 +33,15 @@ import {
   LINK_ICON,
   PASSWORD_INPUT_ICON,
   SLOT_ICON,
-  TEXTAREA_ICON,
   TEXT_ICON,
+  TEXTAREA_ICON,
   VERT_STACK_ICON,
 } from "@/wab/client/icons";
 import { renderCantAddMsg } from "@/wab/client/messages/parenting-msgs";
 import LockIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__Lock";
 import UnlockIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__Unlock";
 import VerticalDashIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__VerticalDash";
-import RepeatingsvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__Repeatingsvg";
+import RepeatingsvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__RepeatingSvg";
 import { DragInsertState, StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
 import { TutorialEventsType } from "@/wab/client/tours/tutorials/tutorials-events";
@@ -51,22 +49,44 @@ import {
   canSetDisplayNone,
   getSlotSelectionDisplayName,
 } from "@/wab/client/utils/tpl-client-utils";
-import { assert, ensure, maybe, unexpected } from "@/wab/common";
 import {
   swallowingClick,
   useChanged,
   useForwardedRef,
 } from "@/wab/commons/components/ReactUtil";
-import { isCodeComponent } from "@/wab/components";
-import { tryExtractLit } from "@/wab/exprs";
-import { Selectable } from "@/wab/selection";
 import { AnyArena } from "@/wab/shared/Arenas";
+import { assert, ensure, maybe, unexpected } from "@/wab/shared/common";
+import { isCodeComponent } from "@/wab/shared/core/components";
+import { tryExtractLit } from "@/wab/shared/core/exprs";
+import { Selectable } from "@/wab/shared/core/selection";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import * as Tpls from "@/wab/shared/core/tpls";
+import {
+  clone,
+  getTplOwnerComponent,
+  isCodeComponentRoot,
+  isTplTagOrComponent,
+  isTplVariantable,
+} from "@/wab/shared/core/tpls";
+import {
+  bestValForTpl,
+  ValComponent,
+  ValNode,
+  ValSlot,
+} from "@/wab/shared/core/val-nodes";
+import { asTpl } from "@/wab/shared/core/vals";
 import { EffectiveVariantSetting } from "@/wab/shared/effective-variant-setting";
 import { CanvasEnv } from "@/wab/shared/eval";
 import {
   ContainerLayoutType,
   getRshContainerType,
 } from "@/wab/shared/layoututils";
+import {
+  Expr,
+  isKnownTplNode,
+  isKnownTplSlot,
+  TplNode,
+} from "@/wab/shared/model/classes";
 import {
   canAddChildrenAndWhy,
   canAddSiblingsAndWhy,
@@ -86,18 +106,7 @@ import {
 import { $$$ } from "@/wab/shared/TplQuery";
 import { isBaseVariant, isVariantSettingEmpty } from "@/wab/shared/Variants";
 import { TplVisibility } from "@/wab/shared/visibility-utils";
-import { SlotSelection } from "@/wab/slots";
 import { selectionControlsColor } from "@/wab/styles/css-variables";
-import * as Tpls from "@/wab/tpls";
-import {
-  clone,
-  getTplOwnerComponent,
-  isCodeComponentRoot,
-  isTplTagOrComponent,
-  isTplVariantable,
-} from "@/wab/tpls";
-import { bestValForTpl, ValComponent, ValNode, ValSlot } from "@/wab/val-nodes";
-import { asTpl } from "@/wab/vals";
 import { notification, Tooltip } from "antd";
 import cx from "classnames";
 import $ from "jquery";
@@ -110,6 +119,8 @@ import pluralize from "pluralize";
 import * as React from "react";
 import { FixedSizeList } from "react-window";
 
+import { TplClip } from "@/wab/client/clipboard/local";
+import { isElementWithComments } from "@/wab/client/components/comments/utils";
 import {
   getNodeSummary,
   OutlineCtx,
@@ -118,7 +129,12 @@ import {
   OutlineNodeKey,
 } from "@/wab/client/components/sidebar-tabs/OutlineCtx";
 import BoltIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Bolt";
-import { INTERACTIVE_CAP, REPEATED_CAP } from "@/wab/shared/Labels";
+import SpeechBubblesvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__SpeechBubbleSvg";
+import {
+  COMMENTS_LOWER,
+  INTERACTIVE_CAP,
+  REPEATED_CAP,
+} from "@/wab/shared/Labels";
 
 function RepIcon() {
   return (
@@ -132,6 +148,14 @@ function ActionIcon() {
   return (
     <Tooltip title={`${INTERACTIVE_CAP} element`}>
       <Icon icon={BoltIcon} />
+    </Tooltip>
+  );
+}
+
+function CommentIcon() {
+  return (
+    <Tooltip title={`Element with ${COMMENTS_LOWER}`}>
+      <Icon icon={SpeechBubblesvgIcon} />
     </Tooltip>
   );
 }
@@ -169,6 +193,7 @@ const TplTreeNode = observer(function TplTreeNode(props: {
     isDropParent,
   } = props;
 
+  const studioCtx = viewCtx.studioCtx;
   const component = $$$(item).owningComponent();
   const isInFrame = !!viewCtx
     .componentStackFrames()
@@ -370,6 +395,18 @@ const TplTreeNode = observer(function TplTreeNode(props: {
     }
   ).get();
 
+  const hasComment = computed(
+    () => {
+      if (!isKnownTplNode(item)) {
+        return false;
+      }
+      return isElementWithComments(studioCtx, item);
+    },
+    {
+      name: "hasComment",
+    }
+  ).get();
+
   const visibilityDataCond = effectiveVs.get()?.dataCond;
   const canvasEnv = isKnownTplNode(item)
     ? viewCtx.getCanvasEnvForTpl(item)
@@ -524,12 +561,27 @@ const TplTreeNode = observer(function TplTreeNode(props: {
     return outlineCtx.matcher.boldSnippets(label);
   };
 
+  const IconWrapper = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <div
+        className={cx({
+          tpltree__label__icon: true,
+          "tpltree__label__icon--tag": Tpls.isTplTag(item),
+          "tpltree__label__icon--component": Tpls.isTplComponent(item),
+          "tpltree__label__icon--slot": Tpls.isTplSlot(item),
+        })}
+      >
+        {children}
+      </div>
+    );
+  };
+
   const renderRep = () => {
     if (hasRep) {
       return (
-        <div className="tpltree__label__icon tpltree__label__icon--tag">
+        <IconWrapper>
           <RepIcon />
-        </div>
+        </IconWrapper>
       );
     }
     return null;
@@ -538,9 +590,20 @@ const TplTreeNode = observer(function TplTreeNode(props: {
   const renderInteractive = () => {
     if (hasInteraction) {
       return (
-        <div className="tpltree__label__icon tpltree__label__icon--tag">
+        <IconWrapper>
           <ActionIcon />
-        </div>
+        </IconWrapper>
+      );
+    }
+    return null;
+  };
+
+  const renderCommentIcon = () => {
+    if (hasComment) {
+      return (
+        <IconWrapper>
+          <CommentIcon />
+        </IconWrapper>
       );
     }
     return null;
@@ -552,7 +615,7 @@ const TplTreeNode = observer(function TplTreeNode(props: {
         const meta = viewCtx.studioCtx.getCodeComponentMeta(item.component);
         if (meta && (meta as any).treeLabel) {
           const { componentPropValues, ccContextData } =
-            viewCtx.getComponentPropValuesAndContextData(item);
+            viewCtx.getComponentEvalContext(item);
           return (meta as any).treeLabel(componentPropValues, ccContextData);
         }
       }
@@ -813,6 +876,7 @@ const TplTreeNode = observer(function TplTreeNode(props: {
         >
           {icon}
         </div>
+        {renderCommentIcon()}
         {!codeComponentRoot && !codeComponentSlot && (
           <>
             {renderRep()}
@@ -1416,7 +1480,7 @@ export class TreeDndManager {
             insertedNodes.push(tplClip.node);
           }
         } else {
-          const pastedNode = target.viewCtx.getViewOps().pasteClip({
+          const pastedNode = target.viewCtx.getViewOps().pasteTplClip({
             clip: {
               ...tplClip,
               node:

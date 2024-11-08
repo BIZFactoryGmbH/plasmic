@@ -7,32 +7,28 @@ import {
 import { U, UU } from "@/wab/client/cli-routes";
 import type FullCodeEditor from "@/wab/client/components/coding/FullCodeEditor";
 import { smartRender } from "@/wab/client/components/pages/admin/admin-util";
+import { AdminBranchingInspector } from "@/wab/client/components/pages/admin/AdminBranchingInspector";
 import {
   AdminCtxProvider,
   useAdminCtx,
 } from "@/wab/client/components/pages/admin/AdminCtx";
+import { AdminTeamsView } from "@/wab/client/components/pages/admin/AdminTeamsView";
 import { AdminUsersView } from "@/wab/client/components/pages/admin/AdminUsersView";
 import {
   LinkButton,
   SearchBox,
   Spinner,
 } from "@/wab/client/components/widgets";
+import { Modal } from "@/wab/client/components/widgets/Modal";
 import { downloadBlob, getUploadedFile } from "@/wab/client/dom-utils";
 import { useAsyncStrict } from "@/wab/client/hooks/useAsyncStrict";
 import CheckIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Check";
 import CircleCloseIcon from "@/wab/client/plasmic/plasmic_kit_design_system/icons/PlasmicIcon__CircleClose";
 import { stepsToCypress } from "@/wab/client/tours/tutorials/tutorials-helpers";
 import { STUDIO_ONBOARDING_TUTORIALS } from "@/wab/client/tours/tutorials/tutorials-meta";
-import { assert, spawn, tryRemove, uncheckedCast } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
-import {
-  ApiFeatureTier,
-  ApiProjectRevision,
-  BillingFrequency,
-  StripeCustomerId,
-  StripeSubscriptionId,
-  TeamId,
-} from "@/wab/shared/ApiSchema";
+import { ApiFeatureTier, ApiProjectRevision } from "@/wab/shared/ApiSchema";
+import { assert, spawn, tryRemove } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { PkgVersionInfo } from "@/wab/shared/SharedApi";
 import {
   Button,
@@ -42,7 +38,6 @@ import {
   Input,
   InputNumber,
   notification,
-  Select,
   Table,
   TablePaginationConfig,
   Tabs,
@@ -51,9 +46,7 @@ import TextArea from "antd/lib/input/TextArea";
 import L from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal } from "src/wab/client/components/widgets/Modal";
 import useSWR from "swr/immutable";
-import { AdminTeamsView } from "./AdminTeamsView";
 
 export default function AdminPage({ nonAuthCtx }: { nonAuthCtx: NonAuthCtx }) {
   return (
@@ -123,7 +116,6 @@ function AdminPageTabs() {
           children: (
             <div className="flex-col gap-xxxlg">
               <FeatureTierControls />
-              <TeamTierControls />
               <PromotionCode />
             </div>
           ),
@@ -136,10 +128,20 @@ function AdminPageTabs() {
               <CreateTutorialDb />
               <ResetTutorialDb />
               <TourCypressTest />
+              <DownloadPkgForPkgMgr />
               <DownloadPlumePkg />
               <ImportProjectsFromProd />
               <CopilotFeedbackView />
               <AppAuthMetrics />
+            </div>
+          ),
+        },
+        {
+          key: "branching-inspect",
+          label: "Branching inspector",
+          children: (
+            <div className="flex-col gap-xxxlg">
+              <AdminBranchingInspector />
             </div>
           ),
         },
@@ -419,6 +421,28 @@ function ImportProjectsFromProd() {
     </div>
   );
 }
+
+function downloadForPkgMgr(
+  pkg: PkgVersionInfo,
+  depPkgs: PkgVersionInfo[] | undefined,
+  fileName: string
+) {
+  const blob = new Blob(
+    [
+      JSON.stringify(
+        [...(depPkgs || []), pkg].map((pkgVersion) => [
+          pkgVersion.id,
+          pkgVersion.model,
+        ])
+      ),
+    ],
+    {
+      type: "text/plain;charset=utf-8",
+    }
+  );
+  downloadBlob(blob, `${fileName}-master-pkg.json`);
+}
+
 function DownloadPlumePkg() {
   const nonAuthCtx = useNonAuthCtx();
   const download = async (type: "latest" | "current") => {
@@ -426,11 +450,9 @@ function DownloadPlumePkg() {
     const { pkg } = await (type === "current"
       ? appCtx.api.getPlumePkg()
       : appCtx.api.getLatestPlumePkg());
-    const blob = new Blob([JSON.stringify(pkg.model)], {
-      type: "text/plain;charset=utf-8",
-    });
-    downloadBlob(blob, "plume-master-pkg.json");
+    downloadForPkgMgr(pkg, undefined, "plume");
   };
+
   return (
     <div>
       <h2>Download Plume pkg as json</h2>
@@ -440,6 +462,43 @@ function DownloadPlumePkg() {
       <Button onClick={() => download("current")}>
         Download currently used
       </Button>
+    </div>
+  );
+}
+
+function DownloadPkgForPkgMgr() {
+  const nonAuthCtx = useNonAuthCtx();
+  const [projectId, setProjectId] = useState("");
+  const download = async () => {
+    const appCtx = await loadAppCtx(nonAuthCtx);
+    const { depPkgs, pkg } = await appCtx.api.getPkgVersionByProjectId(
+      projectId,
+      "latest"
+    );
+
+    downloadForPkgMgr(
+      pkg,
+      depPkgs,
+      pkg.model.map[pkg.model.root].name
+        .replace(/[^a-zA-Z0-9\s]/g, "")
+        .replace(/\s+/g, "-")
+        .toLowerCase()
+    );
+  };
+  return (
+    <div>
+      <h2>Download pkg as json for pkg-mgr</h2>
+      <Form>
+        <Form.Item name="projectId" label="Project ID">
+          <Input
+            type={"input"}
+            value={projectId}
+            placeholder="Project Id"
+            onChange={(e) => setProjectId(e.target.value)}
+          />
+        </Form.Item>
+        <Button onClick={() => download()}>Download latest version</Button>
+      </Form>
     </div>
   );
 }
@@ -610,19 +669,17 @@ function DevFlagControls() {
 
 export function FeatureTierControls() {
   const nonAuthCtx = useNonAuthCtx();
+  const { listFeatureTiers } = useAdminCtx();
+
   // Viewing table
   const [query, setQuery] = useState<string | undefined>("");
-  const [reloadCount, setReloadCount] = useState(0);
   // New tier submission form
   const [newTierData, setNewTierData] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Get tiers
-  const tiersResp = useAsyncStrict(async () => {
-    return await nonAuthCtx.api.listAllFeatureTiers();
-  }, [nonAuthCtx, reloadCount]);
-  const tiers = tiersResp.value?.tiers ?? [];
+  const tiers = listFeatureTiers.value ?? [];
   const keysToDisplay: string[] = tiers.length > 0 ? Object.keys(tiers[0]) : [];
   // Removes certain keys in-place
   [
@@ -649,7 +706,7 @@ export function FeatureTierControls() {
       setError(e.toString());
     } finally {
       setSubmitting(false);
-      setReloadCount((prev) => prev + 1);
+      listFeatureTiers.retry();
     }
   }
 
@@ -701,243 +758,6 @@ export function FeatureTierControls() {
           Add
         </Button>
       </form>
-    </div>
-  );
-}
-
-/**
- * Makes it easy to change an existing team's tier
- * - Note that you need
- */
-function TeamTierControls() {
-  const nonAuthCtx = useNonAuthCtx();
-  const [error, setError] = useState("");
-  const [teamId, setTeamId] = React.useState<TeamId | undefined>();
-  const [featureTierName, setFeatureTierName] = React.useState<
-    string | undefined
-  >();
-  const [seats, setSeats] = React.useState<number | undefined>();
-  const [billingFrequency, setBillingFreq] = React.useState<
-    BillingFrequency | undefined
-  >();
-  const [billingEmail, setBillingEmail] = React.useState<string | undefined>();
-  const [stripeCustomerId, setStripeCustomerId] = React.useState<
-    StripeCustomerId | undefined
-  >();
-  const [stripeSubscriptionId, setStripeSubscriptionId] = React.useState<
-    StripeSubscriptionId | undefined
-  >();
-
-  spawn(nonAuthCtx.api.listCurrentFeatureTiers({ includeLegacyTiers: true }));
-
-  return (
-    <div>
-      <h2>Modify team billing</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <h2>Upgrade a team from free tier</h2>
-      <p></p>
-      <ul>
-        <li>
-          1. First manually create a Stripe customer and subscription for them.
-          If Enterprise, select the right combination of products based on what
-          was negotiated. If you plan on charging, make sure you send the user
-          the invoice when making the subscription.
-        </li>
-        <li>2. Populate every field in this form</li>
-        <li>
-          Warning: If you run this on a team that's already on a paid tier, it
-          will NOT cancel the existing subscription
-        </li>
-      </ul>
-      <Form
-        onFinish={async () => {
-          if (!teamId) {
-            return setError("Missing Team ID");
-          } else if (!featureTierName) {
-            return setError("Missing Feature Tier");
-          } else if (!seats) {
-            return setError("Missing Seats");
-          } else if (!billingFrequency) {
-            return setError("Missing Billing Frequency");
-          } else if (!billingEmail) {
-            return setError("Missing Billing Email");
-          } else if (!stripeCustomerId) {
-            return setError("Missing Stripe Customer ID");
-          } else if (!stripeSubscriptionId) {
-            return setError("Missing Stripe Subscription ID");
-          }
-          const { tiers } = await nonAuthCtx.api.listCurrentFeatureTiers({
-            includeLegacyTiers: true,
-          });
-          const tier = tiers.find(
-            (t) => t.name.toLowerCase() === featureTierName.toLowerCase()
-          );
-          if (!tier) {
-            return setError(`Cannot find a tier with name ${featureTierName}`);
-          }
-          await nonAuthCtx.api.upgradeTeamAsAdmin({
-            teamId,
-            featureTierId: tier.id,
-            seats,
-            billingFrequency,
-            billingEmail,
-            stripeCustomerId,
-            stripeSubscriptionId,
-          });
-          setError("");
-          notification.info({
-            message: `Upgraded Team ${teamId}`,
-          });
-        }}
-      >
-        <Input
-          type={"input"}
-          value={teamId}
-          placeholder="Team ID"
-          onChange={(e) => setTeamId(uncheckedCast<TeamId>(e.target.value))}
-        />
-        <Select
-          style={{ width: 120 }}
-          onChange={(v: string) => setFeatureTierName(v)}
-        >
-          {[
-            ...DEVFLAGS.featureTierNames.slice(0, -1),
-            ...DEVFLAGS.newFeatureTierNames,
-          ].map((name) => (
-            <Select.Option value={name}>{name}</Select.Option>
-          ))}
-        </Select>
-        <Input
-          type={"input"}
-          value={seats}
-          placeholder="Number of Seats"
-          onChange={(e) => setSeats(parseInt(e.target.value))}
-        />
-        <Select
-          style={{ width: 120 }}
-          onChange={(v: BillingFrequency) => setBillingFreq(v)}
-        >
-          <Select.Option value="month">Monthly</Select.Option>
-          <Select.Option value="year">Yearly</Select.Option>
-        </Select>
-        <Input
-          type={"input"}
-          value={billingEmail}
-          placeholder="Billing Email"
-          onChange={(e) => setBillingEmail(e.target.value)}
-        />
-        <Input
-          type={"input"}
-          value={stripeCustomerId}
-          placeholder="Stripe Customer Id"
-          onChange={(e) =>
-            setStripeCustomerId(uncheckedCast<StripeCustomerId>(e.target.value))
-          }
-        />
-        <Input
-          type={"input"}
-          value={stripeSubscriptionId}
-          placeholder="Stripe Subscription Id"
-          onChange={(e) =>
-            setStripeSubscriptionId(
-              uncheckedCast<StripeSubscriptionId>(e.target.value)
-            )
-          }
-        />
-        <Button htmlType={"submit"}>Upgrade team </Button>
-      </Form>
-
-      <br />
-
-      <h2>Change team tier</h2>
-      <p>
-        Note: only use this on teams on an existing paid tier. Team will be
-        billed according to the new tier pricing. (Useful for testing enterprise
-        on dev server)
-      </p>
-      <Form
-        onFinish={async () => {
-          if (!teamId) {
-            return setError("Missing Team ID");
-          } else if (!featureTierName) {
-            return setError("Missing Feature Tier");
-          } else if (!seats) {
-            return setError("Missing Seats");
-          }
-          const { tiers } = await nonAuthCtx.api.listCurrentFeatureTiers();
-          const tier = tiers.find(
-            (t) => t.name.toLowerCase() === featureTierName.toLowerCase()
-          );
-          if (!tier) {
-            return setError(`Cannot find a tier with name ${featureTierName}`);
-          }
-          const { team } = await nonAuthCtx.api.getTeam(teamId);
-          const result = await nonAuthCtx.api.changeSubscription({
-            teamId,
-            featureTierId: tier.id,
-            billingFrequency: team.billingFrequency ?? "month",
-            seats,
-          });
-          if (result.type !== "success") {
-            return setError("Error changing subscription");
-          }
-          setError("");
-          notification.info({
-            message: `Updated Team ${teamId}`,
-          });
-        }}
-      >
-        <Input
-          type={"input"}
-          value={teamId}
-          placeholder="Team ID"
-          onChange={(e) => setTeamId(uncheckedCast<TeamId>(e.target.value))}
-        />
-        <Select
-          style={{ width: 120 }}
-          onChange={(v: string) => setFeatureTierName(v)}
-        >
-          {[
-            ...DEVFLAGS.featureTierNames.slice(0, -1),
-            ...DEVFLAGS.newFeatureTierNames,
-          ].map((name) => (
-            <Select.Option value={name}>{name}</Select.Option>
-          ))}
-        </Select>
-        <Input
-          type={"input"}
-          value={seats}
-          placeholder="Number of Seats"
-          onChange={(e) => setSeats(parseInt(e.target.value))}
-        />
-        <Button htmlType={"submit"}>Change plan</Button>
-      </Form>
-
-      <br />
-
-      <h2>Cancel a team plan</h2>
-      <p>Note: only use this on teams on an existing paid tier</p>
-      <Form
-        onFinish={async () => {
-          if (!teamId) {
-            setError("Missing Team ID");
-            return;
-          }
-          await nonAuthCtx.api.cancelSubscription(teamId);
-          setError("");
-          notification.info({
-            message: `Done cancelling ${teamId}`,
-          });
-        }}
-      >
-        <Input
-          type={"input"}
-          value={teamId}
-          placeholder="Team ID"
-          onChange={(e) => setTeamId(uncheckedCast<TeamId>(e.target.value))}
-        />
-        <Button htmlType={"submit"}>Cancel plan</Button>
-      </Form>
     </div>
   );
 }

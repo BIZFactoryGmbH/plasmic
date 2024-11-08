@@ -2487,6 +2487,8 @@
           "displayName": "Select",
           "importName": "AntdSelect",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2500,6 +2502,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "placeholder": "Select..." },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971161": {
@@ -2572,6 +2575,8 @@
           "displayName": "Option",
           "importName": "AntdOption",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2585,6 +2590,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "children": "Option" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971166": {
@@ -2658,6 +2664,8 @@
           "displayName": "Option Group",
           "importName": "AntdOptionGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2691,6 +2699,7 @@
             ],
             "label": "Group label"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971171": {
@@ -2894,6 +2903,8 @@
           "displayName": "Table",
           "importName": "AntdTable",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2907,6 +2918,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971183": {
@@ -3060,6 +3072,8 @@
           "displayName": "Column",
           "importName": "AntdColumn",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3073,6 +3087,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "title": "Column Name" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971192": {
@@ -3146,6 +3161,8 @@
           "displayName": "Column Group",
           "importName": "AntdColumnGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3159,6 +3176,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "title": "Column Group Name" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971197": {
@@ -3322,6 +3340,8 @@
           "displayName": "Checkbox",
           "importName": "AntdCheckbox",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3337,6 +3357,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Checkbox" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971208": {
@@ -3460,6 +3481,8 @@
           "displayName": "Checkbox Group",
           "importName": "AntdCheckboxGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3473,6 +3496,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971216": {
@@ -3585,6 +3609,8 @@
           "displayName": "Radio",
           "importName": "AntdRadio",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3600,6 +3626,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Radio" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971223": {
@@ -3712,6 +3739,8 @@
           "displayName": "Radio Button",
           "importName": "AntdRadioButton",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3727,6 +3756,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Radio" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971230": {
@@ -3850,6 +3880,8 @@
           "displayName": "Radio Group",
           "importName": "AntdRadioGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "AlkzFAR9M3f_" },
@@ -3882,6 +3914,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971238": {
@@ -4194,6 +4227,8 @@
           "displayName": "Modal",
           "importName": "AntdModal",
           "description": "[See tutorial video](https://www.youtube.com/watch?v=TkjxNJIFun8)",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4215,6 +4250,7 @@
               "props": { "children": { "type": "text", "value": "Show modal" } }
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971256": {
@@ -4488,6 +4524,8 @@
           "displayName": "Button",
           "importName": "AntdButton",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4503,6 +4541,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Button" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971271": {
@@ -4656,6 +4695,8 @@
           "displayName": "Menu",
           "importName": "AntdMenu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4682,6 +4723,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971280": {
@@ -4834,6 +4876,8 @@
           "displayName": "Menu Item",
           "importName": "AntdMenuItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4849,6 +4893,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Menu item" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971289": {
@@ -4922,6 +4967,8 @@
           "displayName": "Item Group",
           "importName": "AntdMenuItemGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4940,6 +4987,7 @@
               { "type": "component", "name": "plasmic-antd5-menu-item" }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971294": {
@@ -4991,6 +5039,8 @@
           "displayName": "Menu Divider",
           "importName": "AntdMenuDivider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5004,6 +5054,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971298": {
@@ -5117,6 +5168,8 @@
           "displayName": "Sub Menu",
           "importName": "AntdSubMenu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5150,6 +5203,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971305": {
@@ -5323,6 +5377,8 @@
           "displayName": "Dropdown",
           "importName": "AntdDropdown",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5356,6 +5412,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971316": {
@@ -5659,6 +5716,8 @@
           "displayName": "Form",
           "importName": "FormWrapper",
           "description": "[Learn how to use forms](https://docs.plasmic.app/learn/forms/)",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "fLMMUo-rt58C" },
@@ -5682,6 +5741,7 @@
               }
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971333": {
@@ -5995,6 +6055,8 @@
           "displayName": "Form Field",
           "importName": "FormItemWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "1JEcQ8-plItD" },
@@ -6011,6 +6073,7 @@
             "label": { "type": "text", "value": "Label" },
             "children": { "type": "component", "name": "plasmic-antd5-input" }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971352": {
@@ -6083,6 +6146,8 @@
           "displayName": "Form Field Group",
           "importName": "FormGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6096,6 +6161,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971357": {
@@ -6188,6 +6254,8 @@
           "displayName": "Form List",
           "importName": "FormListWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6233,6 +6301,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971363": {
@@ -6564,6 +6633,8 @@
           "displayName": "Input",
           "importName": "AntdInput",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6577,6 +6648,7 @@
           "styleSections": null,
           "helpers": { "__ref": "35971864" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971382": {
@@ -6739,6 +6811,8 @@
           "displayName": "Password Input",
           "importName": "AntdPassword",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6752,6 +6826,7 @@
           "styleSections": null,
           "helpers": { "__ref": "35971880" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971393": {
@@ -6914,6 +6989,8 @@
           "displayName": "Text Area",
           "importName": "AntdTextArea",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6927,6 +7004,7 @@
           "styleSections": null,
           "helpers": { "__ref": "35971896" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971404": {
@@ -7318,6 +7396,8 @@
           "displayName": "Number Input",
           "importName": "AntdInputNumber",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -7331,6 +7411,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971426": {
@@ -7494,6 +7575,8 @@
           "displayName": "Upload",
           "importName": "UploadWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -7515,6 +7598,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971436": {
@@ -7827,6 +7911,8 @@
           "displayName": "Ant Design System Settings",
           "importName": "AntdConfigProvider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -7840,6 +7926,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35971453": {
@@ -7872,8 +7959,8 @@
         "35971460": {
           "name": "renderable",
           "params": [{ "__ref": "35971998" }, { "__ref": "35971999" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971461": {
           "name": "placeholder",
@@ -7883,8 +7970,8 @@
         "35971462": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971463": {
           "name": "suffixIcon",
@@ -7894,8 +7981,8 @@
         "35971464": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971465": { "name": "open", "uuid": "PoRfoAy7mELz", "__type": "Var" },
         "35971466": { "name": "bool", "__type": "BoolType" },
@@ -7979,6 +8066,7 @@
         "35971488": {
           "name": "className",
           "selectors": [{ "__ref": "35972002" }, { "__ref": "35972003" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "35971489": {
@@ -7999,6 +8087,7 @@
         "35971492": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "35971493": {
@@ -8013,6 +8102,7 @@
             { "__ref": "35972005" },
             { "__ref": "35972006" }
           ],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "35971495": {
@@ -8023,6 +8113,7 @@
         "35971496": {
           "name": "className",
           "selectors": [{ "__ref": "35972007" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "35971497": {
@@ -8112,8 +8203,8 @@
         "35971513": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971514": {
           "name": "label",
@@ -8123,8 +8214,8 @@
         "35971515": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971516": {
           "param": { "__ref": "35971166" },
@@ -8165,8 +8256,8 @@
         "35971522": {
           "name": "renderable",
           "params": [{ "__ref": "35972024" }, { "__ref": "35972025" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971523": {
           "name": "bordered",
@@ -8252,8 +8343,8 @@
         "35971538": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971539": {
           "name": "dataIndex",
@@ -8329,8 +8420,8 @@
         "35971553": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971554": {
           "name": "children",
@@ -8340,8 +8431,8 @@
         "35971555": {
           "name": "renderable",
           "params": [{ "__ref": "35972037" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971556": {
           "param": { "__ref": "35971192" },
@@ -8454,8 +8545,8 @@
         "35971580": {
           "name": "renderable",
           "params": [{ "__ref": "35972046" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971581": {
           "name": "onChange",
@@ -8597,8 +8688,8 @@
         "35971610": {
           "name": "renderable",
           "params": [{ "__ref": "35972056" }, { "__ref": "35972057" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971611": {
           "name": "onChange",
@@ -8640,8 +8731,8 @@
         "35971618": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971619": {
           "name": "title",
@@ -8651,8 +8742,8 @@
         "35971620": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971621": {
           "name": "footer",
@@ -8662,8 +8753,8 @@
         "35971622": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971623": {
           "name": "closeIcon",
@@ -8673,8 +8764,8 @@
         "35971624": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971625": { "name": "onOk", "uuid": "NmkvUwu9V_oF", "__type": "Var" },
         "35971626": { "name": "func", "params": [], "__type": "FunctionType" },
@@ -8833,8 +8924,8 @@
         "35971669": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971670": {
           "name": "onClick",
@@ -8879,8 +8970,8 @@
         "35971676": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971677": { "name": "mode", "uuid": "SBIhXNbGAYsA", "__type": "Var" },
         "35971678": {
@@ -8917,8 +9008,8 @@
             { "__ref": "35972077" },
             { "__ref": "35972078" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971685": {
           "name": "onSelect",
@@ -9023,8 +9114,8 @@
         "35971706": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971707": {
           "name": "children",
@@ -9039,8 +9130,8 @@
             { "__ref": "35972090" },
             { "__ref": "35972091" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971709": {
           "param": { "__ref": "35971289" },
@@ -9104,8 +9195,8 @@
         "35971720": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971721": {
           "name": "children",
@@ -9120,8 +9211,8 @@
             { "__ref": "35972100" },
             { "__ref": "35972101" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971723": {
           "param": { "__ref": "35971300" },
@@ -9239,8 +9330,8 @@
         "35971746": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971747": {
           "name": "initialValues",
@@ -9456,8 +9547,8 @@
         "35971816": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971817": {
           "param": { "__ref": "35971353" },
@@ -9487,8 +9578,8 @@
         "35971820": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971821": { "name": "name", "uuid": "PDHhGsT6CrUD", "__type": "Var" },
         "35971822": { "name": "text", "__type": "Text" },
@@ -9584,8 +9675,8 @@
         "35971848": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971849": {
           "name": "suffix",
@@ -9595,8 +9686,8 @@
         "35971850": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971851": {
           "name": "addonAfter",
@@ -9606,8 +9697,8 @@
         "35971852": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971853": {
           "name": "addonBefore",
@@ -9617,8 +9708,8 @@
         "35971854": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971855": {
           "name": "onChange",
@@ -9847,8 +9938,8 @@
         "35971912": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971913": {
           "name": "suffix",
@@ -9858,8 +9949,8 @@
         "35971914": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971915": {
           "name": "addonAfter",
@@ -9869,8 +9960,8 @@
         "35971916": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971917": {
           "name": "addonBefore",
@@ -9880,8 +9971,8 @@
         "35971918": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971919": {
           "name": "maxLength",
@@ -10016,8 +10107,8 @@
         "35971945": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971946": {
           "name": "maxCount",
@@ -10219,8 +10310,8 @@
         "35971994": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35971995": {
           "param": { "__ref": "35971449" },
@@ -10270,31 +10361,37 @@
         "35972002": {
           "selector": ":component .ant-select-selector.ant-select-selector",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972003": {
           "selector": ":component .ant-select-selector:hover",
           "label": "Hovered",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972004": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972005": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option-active",
           "label": "Focused",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972006": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option-selected",
           "label": "Selected",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972007": {
           "selector": ":component .ant-select-selector .ant-select-selection-placeholder",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "35972009": {
@@ -11452,9 +11549,9 @@
           "defaultStyle": { "__ref": "39174009" },
           "styles": [],
           "layout": { "__ref": "39174165" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "39174009": {
           "name": "Default Typography",
@@ -12986,8 +13083,8 @@
         "JMeoMw-1wzeu": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "bYGga7IiX-et": {
           "name": "renderFunc",
@@ -12997,31 +13094,32 @@
             { "__ref": "CdNH1hlcwOEl" }
           ],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "TQqFQ1J2ZENU": { "name": "bool", "__type": "BoolType" },
         "AszWlBuM4Nak": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "4zL_1AlZMgdq": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "5MUUEC-tKAgU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "X-QeNVmDw-Oz": {
           "name": "className",
           "selectors": [{ "__ref": "as-FzvWX_vUF" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "R4NtMLcaW4D3": {
@@ -13035,14 +13133,14 @@
         "nNBtxIbZCI_Y": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "BI9dMn9pQGw2": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "PnuShEWMRyOF": {
           "name": "renderFunc",
@@ -13053,8 +13151,8 @@
             { "__ref": "Zwp38Mc8T1hx" },
             { "__ref": "Sdw1Y54sJ_Jf" }
           ],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "JMBXJnursvH8": {
           "name": "choice",
@@ -13068,8 +13166,8 @@
         "yTPqhBD3T97k": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "rY9iXWC1DyyO": { "name": "any", "__type": "AnyType" },
         "cZFu8EHUI5cw": {
@@ -13119,14 +13217,14 @@
         "CBBkIOFTmzAh": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "DRPyUcMc7M_e": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "DybutsChc0ix": { "name": "text", "__type": "Text" },
         "q00Cwjx6QjQW": { "name": "any", "__type": "AnyType" },
@@ -13273,6 +13371,8 @@
           "displayName": "Switch",
           "importName": "AntdSwitch",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -13286,6 +13386,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "yjJDr2SinQvU": {
@@ -13628,6 +13729,8 @@
           "displayName": "Date/Time Picker",
           "importName": "AntdDatePicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -13641,6 +13744,7 @@
           "styleSections": null,
           "helpers": { "__ref": "pEkKnFJBEZoc" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "RzO-ps15THeb": {
@@ -14215,6 +14319,8 @@
           "displayName": "Date Range Picker",
           "importName": "AntdDateRangePicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14228,6 +14334,7 @@
           "styleSections": null,
           "helpers": { "__ref": "wLgDynwr37SI" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "xjrKiWtQn4Fr": {
@@ -14455,6 +14562,8 @@
           "displayName": "Color Picker",
           "importName": "AntdColorPicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14468,6 +14577,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "uWur4ZMAJ8IU": {
@@ -14859,6 +14969,8 @@
           "displayName": "Drawer",
           "importName": "AntdDrawer",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14875,6 +14987,7 @@
             "children": { "type": "vbox", "children": ["Drawer content"] },
             "title": "Drawer title"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "psT3gih7YY8B": {
@@ -15117,6 +15230,8 @@
           "displayName": "Steps",
           "importName": "AntdSteps",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15130,6 +15245,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "mgSL-7vLKjmG": {
@@ -15286,6 +15402,8 @@
           "displayName": "Tooltip",
           "importName": "AntdTooltip",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15304,6 +15422,7 @@
               "value": "This text element is wrapped in a Tooltip component"
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Ilb8sEKxCjz5": {
@@ -15455,6 +15574,8 @@
           "displayName": "Avatar",
           "importName": "AntdAvatar",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15468,6 +15589,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "CEjG4KAfwBad": {
@@ -15580,6 +15702,8 @@
           "displayName": "AvatarGroup",
           "importName": "AntdAvatarGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15644,6 +15768,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "8CmmHM5XsAil": {
@@ -16142,6 +16267,8 @@
           "displayName": "Tree",
           "importName": "AntdTree",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -16155,6 +16282,7 @@
           "styleSections": null,
           "helpers": { "__ref": "Uk-Tm2BQizOp" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Ib2lHJJaYsgC": {
@@ -16653,6 +16781,8 @@
           "displayName": "Directory Tree",
           "importName": "AntdDirectoryTree",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -16666,6 +16796,7 @@
           "styleSections": null,
           "helpers": { "__ref": "9wAR9QIZGAgK" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "tuUoPo6sopY3": {
@@ -17077,6 +17208,8 @@
           "displayName": "Collapse",
           "importName": "AntdSingleCollapse",
           "description": "Accordion, but with a single collapsible block.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "iHFvm-5rjF8G" },
@@ -17093,6 +17226,7 @@
             "label2": "Collapse Header",
             "children": "Collapsible text..."
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Z2ebSNxmtS2S": {
@@ -17400,6 +17534,8 @@
           "displayName": "Accordion",
           "importName": "AntdAccordion",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "DjMzJP-7aH2Q" },
@@ -17434,6 +17570,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "FjFIxiJ0MSTo": {
@@ -17672,6 +17809,8 @@
           "displayName": "Accordion Item",
           "importName": "AntdAccordionItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -17688,6 +17827,7 @@
             "label2": "Collapse Header",
             "children": "Collapsible text..."
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "jN6Okjrp4-bE": {
@@ -18037,6 +18177,8 @@
           "displayName": "Popover",
           "importName": "AntdPopover",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -18054,6 +18196,7 @@
             "content": "Popover contents",
             "title": "Popover title"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "HO89gVzD6fJP": {
@@ -18563,6 +18706,8 @@
           "displayName": "Tabs",
           "importName": "AntdTabs",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "O-feRCrrylMV" },
@@ -18597,6 +18742,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "VVEmCCIXu2G0": {
@@ -18733,6 +18879,8 @@
           "displayName": "Tab Item",
           "importName": "AntdTabItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -18746,6 +18894,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "label": "Tab" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "3WJsCWCtWZpQ": {
@@ -19093,6 +19242,8 @@
           "displayName": "Rate",
           "importName": "AntdRate",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -19106,6 +19257,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "symbols": ["1", "2", "3", "4", "5"] },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "2VQo2y90d5BH": {
@@ -19669,6 +19821,8 @@
           "displayName": "Slider",
           "importName": "AntdSingleSlider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "a1R3ovjEMGbl" },
@@ -19693,6 +19847,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "kxraKbVhav-X": {
@@ -20307,6 +20462,8 @@
           "displayName": "Range Slider",
           "importName": "AntdRangeSlider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "XeMbicK2iVJg" },
@@ -20331,6 +20488,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "TtMVVim1pgWP": {
@@ -20403,6 +20561,8 @@
           "displayName": "Slider Mark",
           "importName": "AntdSliderMark",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -20416,6 +20576,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "MGoRv266UrLy": { "name": "any", "__type": "AnyType" },
@@ -20462,6 +20623,7 @@
         "rSQ2vAMjzDZI": {
           "name": "className",
           "selectors": [{ "__ref": "lGPCm1twCLpK" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "o4FErIFAVqnl": {
@@ -20478,6 +20640,7 @@
         "BKhBllkLyHvI": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "6kiw8QYotqBu": {
@@ -20509,6 +20672,7 @@
         "ngTNWuHpLbxD": {
           "name": "className",
           "selectors": [{ "__ref": "ZUzEyWZTpwfz" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "Fm6edZ__DkZa": {
@@ -20522,6 +20686,7 @@
             { "__ref": "PZEyUA2z0Ddb" },
             { "__ref": "zVBMbeUfc_pW" }
           ],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "IaRv9AitBQw_": {
@@ -20572,8 +20737,8 @@
         "R3TxLFBAjE-W": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "EFaRdpUBU0uT": {
           "name": "submitSlot",
@@ -20712,6 +20877,7 @@
         "as-FzvWX_vUF": {
           "selector": ":modal .ant-modal-close",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "tPSbZ-8utj0B": {
@@ -20829,6 +20995,7 @@
         "Ll57IQrGm_xZ": {
           "name": "className",
           "selectors": [{ "__ref": "IlQlKGRKrS92" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "dcIeVHmNKSDa": {
@@ -20839,6 +21006,7 @@
         "LMS--wgrj4kv": {
           "name": "className",
           "selectors": [{ "__ref": "mncxdd5R4O6y" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "lQmKPs1hgSs3": {
@@ -20849,6 +21017,7 @@
         "ufa1Kac-AVq7": {
           "name": "className",
           "selectors": [{ "__ref": "sG1n8_ZKC3rz" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "NZ_NrO7ALMoz": {
@@ -20859,6 +21028,7 @@
         "rfava1oR5ifh": {
           "name": "className",
           "selectors": [{ "__ref": "oKWRDS59iz-f" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "yR4K5zxqhsHx": {
@@ -21052,8 +21222,8 @@
         "c1EW1G4gOH_s": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "UDs3lUUJjGWN": {
           "name": "renderExtraFooter",
@@ -21079,6 +21249,7 @@
         "BFIM7A0S8B8Z": {
           "name": "className",
           "selectors": [{ "__ref": "8-meSUBmCpZM" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "tmgdw18b6Z7t": {
@@ -21089,6 +21260,7 @@
         "2XvBLI9EhYgx": {
           "name": "className",
           "selectors": [{ "__ref": "t_A3gKED382n" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "DovweVJGuzHx": {
@@ -21099,6 +21271,7 @@
         "tznqUiatdA1N": {
           "name": "className",
           "selectors": [{ "__ref": "PpyrcekI54Uj" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "qPMkB2wBWpHQ": {
@@ -21109,6 +21282,7 @@
         "XbWjVTRsM5E4": {
           "name": "className",
           "selectors": [{ "__ref": "pyc0r6ZSD5N-" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "LodSj7znOXG-": {
@@ -21155,8 +21329,8 @@
         "rL_nalmunUfk": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "OdaCmmI-H9tK": {
           "name": "children",
@@ -21182,8 +21356,8 @@
         "h14ZojSCiqXH": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "PNMf7IYINbCK": {
           "name": "showText",
@@ -21280,8 +21454,8 @@
         "c5KXRzYWVjAZ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "9z5_xtNsUjn7": {
           "name": "children",
@@ -21291,8 +21465,8 @@
         "FfMNCX94LUwE": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "Iww9PPkS-kXs": {
           "name": "title",
@@ -21302,8 +21476,8 @@
         "elVjwviIiCmR": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "2j6Z1wwKD8hP": {
           "name": "footer",
@@ -21313,8 +21487,8 @@
         "JZ_3SyRAQfvY": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "_sPe-CxVw2J0": {
           "name": "closeIcon",
@@ -21344,6 +21518,7 @@
         "Te0DbCAAoG5a": {
           "name": "className",
           "selectors": [{ "__ref": "XjwunJDdf-Ga" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "H4P9MzNCPy1k": {
@@ -21354,6 +21529,7 @@
         "zBOiNEXcCRE3": {
           "name": "className",
           "selectors": [{ "__ref": "-tOwVQzT1Itm" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "OlmRfNASv1tI": {
@@ -21364,6 +21540,7 @@
         "LyinYW9bX3jL": {
           "name": "className",
           "selectors": [{ "__ref": "Pvc0LDzjpiQZ" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "TMQriUp3FGT6": {
@@ -21374,6 +21551,7 @@
         "pgJw2jAOHRrN": {
           "name": "className",
           "selectors": [{ "__ref": "yxl5gx_8qdmr" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "JYBvfyuOL6Nr": {
@@ -21384,6 +21562,7 @@
         "VyiwA5VkXFgu": {
           "name": "className",
           "selectors": [{ "__ref": "uH3JedyvzP2H" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "j89Mwnaxo2tZ": {
@@ -21394,6 +21573,7 @@
         "WmWvd37wRp4S": {
           "name": "className",
           "selectors": [{ "__ref": "7AjBcvQ2cBV4" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "zDWevopR7-dB": {
@@ -21404,6 +21584,7 @@
         "uA_nremyqKbC": {
           "name": "className",
           "selectors": [{ "__ref": "Np9QrnjMjYiI" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "wozAXPpZRdp8": {
@@ -21578,8 +21759,8 @@
         "7spBQ9KAEH-P": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "PRnewt9eRFGU": {
           "name": "children",
@@ -21589,6 +21770,7 @@
         "U9Qn4SQ_xiL2": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "n9IIGJMYKXWm": {
@@ -21610,8 +21792,8 @@
         "yw3SRU9tMYtq": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "BDKmNrtWYVKc": {
           "name": "title",
@@ -21743,8 +21925,8 @@
         "0IqxNuzHpnv-": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "2llKrH3PDhJv": {
           "name": "children",
@@ -21912,8 +22094,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "3LX1mYDs5-4w" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "DnwfrEjzHw1-": {
           "name": "titleRender",
@@ -22119,8 +22301,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "4naUXR4yi7k9" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "Uk420uL-Rh8k": {
           "name": "titleRender",
@@ -22253,8 +22435,8 @@
         "a_wmI9vCsA1V": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "GQxFK9BeU8PX": {
           "name": "label2",
@@ -22264,8 +22446,8 @@
         "jAZCp0-Ae7dX": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "xpN1StHOTomV": {
           "name": "extra",
@@ -22286,6 +22468,7 @@
         "tNGA65f7_q5i": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "S_AXe57lScnA": {
@@ -22296,8 +22479,8 @@
         "YgBSYsL7dv7c": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "-xZQK24U_Qtd": {
           "name": "children",
@@ -22324,8 +22507,8 @@
         "Ym7IWSid3mp8": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "6vG9Yq_SN5dh": {
           "name": "expandIcon",
@@ -22441,8 +22624,8 @@
         "YYo5TBwgPq_f": {
           "name": "renderable",
           "params": [{ "__ref": "YNojk-mL4qs4" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qVgpKemLRHH7": {
           "name": "items",
@@ -22491,8 +22674,8 @@
         "e8BJ2dWWx0E0": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "wihJRqh0JBmg": {
           "name": "expandIcon",
@@ -22618,8 +22801,8 @@
         "mQ-QRs9uKi_Q": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "YcyXz0sPZoDQ": {
           "name": "label2",
@@ -22629,8 +22812,8 @@
         "uXQ22EiPHpik": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "YZIGDJci2dkE": {
           "name": "extra",
@@ -22651,6 +22834,7 @@
         "xCYbzr6Zsu7S": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "uzuoyli9BpIl": {
@@ -22661,8 +22845,8 @@
         "YU8BTE1rAcL1": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "RWyDyDFw0Q6y": {
           "name": "children",
@@ -22727,8 +22911,8 @@
         "d4B5lWBXnlir": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "eE83NRjdA2tR": {
           "name": "children",
@@ -22748,6 +22932,7 @@
         "G_WbK5faQ2Tz": {
           "name": "className",
           "selectors": [{ "__ref": "5PVZp8dA_sbG" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "hW24q4tjPASl": {
@@ -22758,6 +22943,7 @@
         "A6395JzvcGrs": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "Z_DZXmeGY7Wg": {
@@ -22768,8 +22954,8 @@
         "D5OFW3bngX60": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "Sf7Ws1nl6bhq": {
           "name": "content",
@@ -22790,8 +22976,8 @@
         "MHGjWPoXxH8a": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "1HXtAcuKxkuJ": {
           "name": "title",
@@ -22973,8 +23159,8 @@
         "RvpWcBwVb8da": {
           "name": "renderable",
           "params": [{ "__ref": "rfAam9uxauhh" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "-G8kQEbUBIE-": {
           "name": "items",
@@ -22994,8 +23180,8 @@
         "OEsDFG5zcOpW": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "pI5P2ZrEqxFI": {
           "name": "tabBarExtraContentLeft",
@@ -23005,8 +23191,8 @@
         "jCBO0WHFAAMw": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "XA5tfFQWpR3r": {
           "name": "tabBarExtraContentRight",
@@ -23080,6 +23266,7 @@
         "etqCP4F_6y1N": {
           "name": "className",
           "selectors": [{ "__ref": "RsQGcoGs0xLv" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "3ES1WOOj_4jD": {
@@ -23100,6 +23287,7 @@
         "5SStulqr0Yiw": {
           "name": "className",
           "selectors": [{ "__ref": "IrcsbHKcSBeB" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "kHE2hQWC0IAA": {
@@ -23201,8 +23389,8 @@
         "yNEU32rdfUGF": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "TFIENqitsXBw": {
           "name": "label",
@@ -23212,8 +23400,8 @@
         "7U0Jd5tEuKIU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "5A05D7Sx4Hta": {
           "name": "children",
@@ -23270,8 +23458,8 @@
         "q_9wbo0hDtAK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "ApXJi_9ood4n": {
           "name": "character",
@@ -23287,8 +23475,8 @@
         "9NQgC0RYS5_C": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "dOBf7ryX_5jg": {
           "name": "symbols",
@@ -23457,8 +23645,8 @@
         "Ra3DRyXl1HbQ": {
           "name": "renderable",
           "params": [{ "__ref": "29x9L4EUKBot" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qTbJSsXvBWLm": {
           "name": "stylableMarks",
@@ -23568,6 +23756,7 @@
         "9Bp7PoeXYXRx": {
           "name": "className",
           "selectors": [{ "__ref": "v3qCa5ULh56k" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "bebp8qi5rPja": {
@@ -23578,6 +23767,7 @@
         "MpnFsoLVvV-4": {
           "name": "className",
           "selectors": [{ "__ref": "0TpJyFc5NBhT" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "2NZEPxzei2Id": {
@@ -23588,6 +23778,7 @@
         "70QZxn7UNPZ2": {
           "name": "className",
           "selectors": [{ "__ref": "xPEN0pzhJ4E3" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "4P3b3H1sbzS3": {
@@ -23598,6 +23789,7 @@
         "AQ59UYZZ2PGp": {
           "name": "className",
           "selectors": [{ "__ref": "Wvw9ccijMnY2" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "xnubqv3lVtqT": {
@@ -23608,6 +23800,7 @@
         "UYCKcfObTF7u": {
           "name": "className",
           "selectors": [{ "__ref": "Kz7XSiUwRpz9" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "O1EDuEAl3S8-": {
@@ -23618,6 +23811,7 @@
         "1bUoj5ubGEKu": {
           "name": "className",
           "selectors": [{ "__ref": "CFkdrYl0e7_A" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "zBeqoTRSImq3": {
@@ -23721,8 +23915,8 @@
         "nCz5LiCyhBpK": {
           "name": "renderable",
           "params": [{ "__ref": "w6INxzpldO8-" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "haBDQ1lGxPGC": {
           "name": "stylableMarks",
@@ -23832,6 +24026,7 @@
         "EyvsoD4D08Pv": {
           "name": "className",
           "selectors": [{ "__ref": "v8MRMRLNs7dA" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "nQWqc6hQb-SG": {
@@ -23842,6 +24037,7 @@
         "PLR3tNJ3KjpS": {
           "name": "className",
           "selectors": [{ "__ref": "XVE58H5VaBOa" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "tv-6rYv0HS6c": {
@@ -23852,6 +24048,7 @@
         "53OPwpbUtIjo": {
           "name": "className",
           "selectors": [{ "__ref": "Qu4HuqpUX4uv" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "Rm0tFoNtirK9": {
@@ -23862,6 +24059,7 @@
         "S03dwZSTOu-w": {
           "name": "className",
           "selectors": [{ "__ref": "yziK4DN2XZz1" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "l5cxvTJ96LoD": {
@@ -23872,6 +24070,7 @@
         "Tt8BYhdd8NOZ": {
           "name": "className",
           "selectors": [{ "__ref": "5XTgxCCXJkdJ" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "vINcMrfwZ5CZ": {
@@ -23882,6 +24081,7 @@
         "pqvv4s1P3uzd": {
           "name": "className",
           "selectors": [{ "__ref": "GNmmiaKMwBvS" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "fRpKiSRWTGJa": {
@@ -23929,8 +24129,8 @@
         "H0gBxkkgNEZG": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "a4lnhYN-JzlL": {
           "name": "children",
@@ -23960,21 +24160,25 @@
         "lGPCm1twCLpK": {
           "selector": ":modal .ant-modal-content",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "ZUzEyWZTpwfz": {
           "selector": ":dropdownMenu.ant-dropdown-menu",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "PZEyUA2z0Ddb": {
           "selector": ":dropdownMenu.ant-dropdown-menu .ant-dropdown-menu-item",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "zVBMbeUfc_pW": {
           "selector": ":dropdownMenu.ant-dropdown-menu .ant-dropdown-menu-item-active",
           "label": "Focused",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "uPbziEfG9YYj": { "values": {}, "mixins": [], "__type": "RuleSet" },
@@ -24003,21 +24207,25 @@
         "IlQlKGRKrS92": {
           "selector": ":datePickerPopup .ant-picker-panel-container",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "mncxdd5R4O6y": {
           "selector": ":datePickerPopup .ant-picker-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "sG1n8_ZKC3rz": {
           "selector": ":datePickerPopup .ant-picker-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "oKWRDS59iz-f": {
           "selector": ":datePickerPopup .ant-picker-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "XoGrhb6kvYAR": {
@@ -24028,21 +24236,25 @@
         "8-meSUBmCpZM": {
           "selector": ":dateRangePickerPopup .ant-picker-panel-container",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "t_A3gKED382n": {
           "selector": ":dateRangePickerPopup .ant-picker-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "PpyrcekI54Uj": {
           "selector": ":dateRangePickerPopup .ant-picker-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "pyc0r6ZSD5N-": {
           "selector": ":dateRangePickerPopup .ant-picker-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "0cDzN1mDtUkD": {
@@ -24112,36 +24324,43 @@
         "XjwunJDdf-Ga": {
           "selector": ":drawer .ant-drawer-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "-tOwVQzT1Itm": {
           "selector": ":drawer .ant-drawer-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Pvc0LDzjpiQZ": {
           "selector": ":drawer .ant-drawer-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "yxl5gx_8qdmr": {
           "selector": ":drawer .ant-drawer-title",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "uH3JedyvzP2H": {
           "selector": ":drawer .ant-drawer-mask",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "7AjBcvQ2cBV4": {
           "selector": ":drawer .ant-drawer-content-wrapper",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Np9QrnjMjYiI": {
           "selector": ":drawer .ant-drawer-close",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "1pQc-jpkoR02": {
@@ -24519,6 +24738,7 @@
         "5PVZp8dA_sbG": {
           "selector": ":popover.ant-popover .ant-popover-inner",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "1zUSGYb_84d-": {
@@ -24574,11 +24794,13 @@
         "RsQGcoGs0xLv": {
           "selector": ":tabs.ant-tabs .ant-tabs-nav",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "IrcsbHKcSBeB": {
           "selector": ":tabsDropdown.ant-tabs-dropdown .ant-tabs-dropdown-menu",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "IjiUQd__gaYR": {
@@ -24737,31 +24959,37 @@
         "v3qCa5ULh56k": {
           "selector": ":slider.ant-slider .ant-slider-rail",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "0TpJyFc5NBhT": {
           "selector": ":slider.ant-slider .ant-slider-track",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "xPEN0pzhJ4E3": {
           "selector": ":slider.ant-slider .ant-slider-handle::after",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Wvw9ccijMnY2": {
           "selector": ":slider.ant-slider .ant-slider-dot",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Kz7XSiUwRpz9": {
           "selector": ":slider.ant-slider .ant-slider-dot.ant-slider-dot-active",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "CFkdrYl0e7_A": {
           "selector": ":slider.ant-slider .ant-slider-tooltip",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "4WIimYFG26FR": {
@@ -24802,31 +25030,37 @@
         "v8MRMRLNs7dA": {
           "selector": ":slider.ant-slider .ant-slider-rail",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "XVE58H5VaBOa": {
           "selector": ":slider.ant-slider .ant-slider-track",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Qu4HuqpUX4uv": {
           "selector": ":slider.ant-slider .ant-slider-handle::after",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "yziK4DN2XZz1": {
           "selector": ":slider.ant-slider .ant-slider-dot",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "5XTgxCCXJkdJ": {
           "selector": ":slider.ant-slider .ant-slider-dot.ant-slider-dot-active",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "GNmmiaKMwBvS": {
           "selector": ":slider.ant-slider .ant-slider-tooltip",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Qp0sBr6ztUB_": {
@@ -24943,6 +25177,8 @@
           "displayName": "Segmented Option",
           "importName": "AntdSegmentedOption",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -24956,6 +25192,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "NlSRDsoJyR7X": {
@@ -25027,6 +25264,8 @@
           "displayName": "Segmented",
           "importName": "AntdSegmented",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -25095,6 +25334,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4xvPi1parDz7": {
@@ -25198,8 +25438,8 @@
         "NefNPnBGEnsK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "LqTA_bB2ZZmT": {
           "name": "children",
@@ -25431,8 +25671,8 @@
         "eR7CW4yYgCo2": {
           "name": "renderable",
           "params": [{ "__ref": "VKiyrdufpv60" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "9Xj-6kGeoq-u": {
           "name": "optionsSlot",
@@ -25542,6 +25782,8 @@
           "displayName": "Progress",
           "importName": "AntdProgress",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -25555,6 +25797,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "TrtD-Zj07xvq": {
@@ -25650,6 +25893,8 @@
           "displayName": "Pagination",
           "importName": "AntdPagination",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -25663,6 +25908,7 @@
           "styleSections": null,
           "helpers": { "__ref": "aCXgtkxywjPH" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "5soTE8wED8mR": {
@@ -26773,6 +27019,7 @@
         "bogAFoxAnCPN": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "mHxO3dCVFilS": { "name": "text", "__type": "Text" },
@@ -26804,8 +27051,8 @@
         "on-3eNUVA9Zk": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "5htLV_l1t8eS": {
           "name": "trigger",
@@ -26938,7 +27185,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -27377,7 +27624,6 @@
           "uuid": "vHrWUmtgCg",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "2411535" },
           "lang": "English",
           "pinnedVariants": {},
@@ -27395,7 +27641,6 @@
           "uuid": "mpTrGwwh3z",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "2411536" },
           "lang": "English",
           "pinnedVariants": {},
@@ -27648,6 +27893,8 @@
           "displayName": "Badge",
           "importName": "Badge",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": "containerClassName",
           "refProp": null,
           "defaultStyles": { "__ref": "2755214" },
@@ -27661,6 +27908,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "2755208": { "name": "name", "uuid": "61AddL0Qz-", "__type": "Var" },
@@ -27989,7 +28237,6 @@
           "uuid": "4-VrLc3JQ0",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "3109060" },
           "lang": "English",
           "pinnedVariants": {},
@@ -28308,7 +28555,6 @@
           "uuid": "CxGAP6XuV5",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "3451068" },
           "lang": "English",
           "pinnedVariants": {},
@@ -28856,7 +29102,7 @@
         "4030525": {
           "uuid": "UZe2N6561Zq",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -28866,7 +29112,7 @@
         "4030526": {
           "uuid": "265Bpg0MMux",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -28876,7 +29122,7 @@
         "4030527": {
           "uuid": "kXjryEl6PbT",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -28886,7 +29132,7 @@
         "4030528": {
           "uuid": "INGGOQEV4qj",
           "name": "",
-          "selectors": ["Pressed"],
+          "selectors": [":active"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -29020,8 +29266,8 @@
         "4030546": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "4030547": {
           "name": "end icon",
@@ -29031,8 +29277,8 @@
         "4030548": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "4030549": {
           "name": "Is Disabled",
@@ -31643,7 +31889,6 @@
           "uuid": "tX0XvlPAXPk",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031099" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31661,7 +31906,6 @@
           "uuid": "ZZosViA4Z5N",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031100" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31679,7 +31923,6 @@
           "uuid": "-shPFzbhtEx",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031101" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31697,7 +31940,6 @@
           "uuid": "oenMj5xPYsV",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031102" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31715,7 +31957,6 @@
           "uuid": "SbswdDvpQVx",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031103" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31733,7 +31974,6 @@
           "uuid": "p4g6u4RZLLh",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031104" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31751,7 +31991,6 @@
           "uuid": "eH6YXrtAFfM",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031105" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31769,7 +32008,6 @@
           "uuid": "RBEwPBuUVC_",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031106" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31787,7 +32025,6 @@
           "uuid": "ROjX9jeBAav",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031107" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31805,7 +32042,6 @@
           "uuid": "9Luj7Ltg3WL",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031108" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31823,7 +32059,6 @@
           "uuid": "asm_lzMs77p",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031109" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31841,7 +32076,6 @@
           "uuid": "Da0U3y8wYc2",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031110" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31859,7 +32093,6 @@
           "uuid": "5TulsY8k3qa",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031111" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31877,7 +32110,6 @@
           "uuid": "EGWQX4ZT4GD",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031112" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31895,7 +32127,6 @@
           "uuid": "R-UgaNse8jo",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031113" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31913,7 +32144,6 @@
           "uuid": "X2RIYNTiE6G",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031114" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31931,7 +32161,6 @@
           "uuid": "4qTibugtN2D",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031115" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31949,7 +32178,6 @@
           "uuid": "trmuEsyeTJB",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031116" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31967,7 +32195,6 @@
           "uuid": "WQ4MSeYrX3s",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031117" },
           "lang": "English",
           "pinnedVariants": {},
@@ -31985,7 +32212,6 @@
           "uuid": "mISFPqXi9pM",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031118" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32003,7 +32229,6 @@
           "uuid": "CwgpakDKqDX",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031119" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32021,7 +32246,6 @@
           "uuid": "QuD5e11c2VY",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031120" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32039,7 +32263,6 @@
           "uuid": "P71N16xEU3U",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031121" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32057,7 +32280,6 @@
           "uuid": "MQXINT0fi9k",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031122" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32075,7 +32297,6 @@
           "uuid": "vaPAZFyEHCi",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031123" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32093,7 +32314,6 @@
           "uuid": "Jcg-bQZjNhN",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031124" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32111,7 +32331,6 @@
           "uuid": "94vK7jq7Rro",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031125" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32129,7 +32348,6 @@
           "uuid": "AqKteMG8P5W",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031126" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32147,7 +32365,6 @@
           "uuid": "l7JEQqsgGEY",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031127" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32165,7 +32382,6 @@
           "uuid": "431XII20lbp",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031128" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32183,7 +32399,6 @@
           "uuid": "s1SEbZpxcC-",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031129" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32201,7 +32416,6 @@
           "uuid": "Q0t2bwOgPgE",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031130" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32219,7 +32433,6 @@
           "uuid": "9JFWTz1XHPp",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031131" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32237,7 +32450,6 @@
           "uuid": "_1Rg5MOceIc",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031132" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32255,7 +32467,6 @@
           "uuid": "bvPAeRS3NG3",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031133" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32273,7 +32484,6 @@
           "uuid": "q3oCOlOBTHn",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031134" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32291,7 +32501,6 @@
           "uuid": "UaGsRso1O8k",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031135" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32309,7 +32518,6 @@
           "uuid": "F3eQG7hx8Au",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031136" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32327,7 +32535,6 @@
           "uuid": "aGf0Pzb61jh",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031137" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32345,7 +32552,6 @@
           "uuid": "QUDRwYB5nT5",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031138" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32363,7 +32569,6 @@
           "uuid": "i8I4T0rhXEu",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031139" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32381,7 +32586,6 @@
           "uuid": "ql1KzDn7Ar1",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031140" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32399,7 +32603,6 @@
           "uuid": "b92NaIitva9",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031141" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32417,7 +32620,6 @@
           "uuid": "3NBkCtY65dU",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031142" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32435,7 +32637,6 @@
           "uuid": "WFdvhtLXKCS",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031143" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32453,7 +32654,6 @@
           "uuid": "HOi-MB3Lc-N",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031144" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32471,7 +32671,6 @@
           "uuid": "7I4m2z7syYz",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031145" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32489,7 +32688,6 @@
           "uuid": "3RPFkN5QaXI",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031146" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32507,7 +32705,6 @@
           "uuid": "o7Id3cZRLEp",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031147" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32525,7 +32722,6 @@
           "uuid": "DWYXqhW4QdX",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031148" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32543,7 +32739,6 @@
           "uuid": "wIpCk6jG8HY",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031149" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32561,7 +32756,6 @@
           "uuid": "egUDzG1enZr",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031150" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32579,7 +32773,6 @@
           "uuid": "ztXPAI0cFov",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031151" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32597,7 +32790,6 @@
           "uuid": "IySPEh5UHMx",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031152" },
           "lang": "English",
           "pinnedVariants": {},
@@ -32615,7 +32807,6 @@
           "uuid": "BUAzObc4RH0",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "4031153" },
           "lang": "English",
           "pinnedVariants": {},
@@ -34241,7 +34432,6 @@
           "uuid": "8Zz8JW-_wN",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "4031353" },
           "lang": "English",
           "pinnedVariants": {},
@@ -34259,7 +34449,6 @@
           "uuid": "4f22hsWhlw",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "4031354" },
           "lang": "English",
           "pinnedVariants": {},
@@ -34457,6 +34646,8 @@
           "displayName": "Function Prop Type",
           "importName": "FunctionBodyPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -34470,6 +34661,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4437808": {
@@ -34810,7 +35002,6 @@
           "uuid": "00IvId4DZs",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "5844134" },
           "lang": "English",
           "pinnedVariants": {},
@@ -34828,7 +35019,6 @@
           "uuid": "_7vi4xx_ws",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "5844135" },
           "lang": "English",
           "pinnedVariants": {},
@@ -34897,14 +35087,14 @@
         "6281201": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "6281202": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "6281203": {
           "exprs": [
@@ -35036,7 +35226,6 @@
           "uuid": "W-JCImuv7E",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "6289008" },
           "lang": "English",
           "pinnedVariants": {},
@@ -35229,7 +35418,6 @@
           "uuid": "6KsvE3dbIn",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "6289051" },
           "lang": "English",
           "pinnedVariants": {},
@@ -35655,6 +35843,8 @@
           "displayName": "GraphQL Prop Type",
           "importName": "GraphQLPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -35668,6 +35858,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "8388006": { "name": "data", "uuid": "zDf9fUwg5L", "__type": "Var" },
@@ -35815,7 +36006,6 @@
           "uuid": "uS1yjsyxkb",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "9525018" },
           "lang": "English",
           "pinnedVariants": {},
@@ -36039,7 +36229,6 @@
           "uuid": "IRos4dG1E1",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "9962038" },
           "lang": "English",
           "pinnedVariants": {},
@@ -36077,6 +36266,7 @@
         "16166001": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "16991003": {
@@ -36827,9 +37017,9 @@
             { "__ref": "18894154" }
           ],
           "layout": { "__ref": "18894165" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "18894009": {
           "name": "Default Typography",
@@ -37295,6 +37485,8 @@
           "displayName": "Data Selector Prop Type",
           "importName": "DataSelectorPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37308,6 +37500,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19468006": {
@@ -37608,6 +37801,8 @@
           "displayName": "Code Prop Type",
           "importName": "CodePropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37621,6 +37816,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199013": {
@@ -37692,6 +37888,8 @@
           "displayName": "String Prop Type",
           "importName": "StringPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37705,6 +37903,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199018": {
@@ -37756,6 +37955,8 @@
           "displayName": "Rich Text Prop Type",
           "importName": "RichTextPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37769,6 +37970,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199023": {
@@ -37800,6 +38002,8 @@
           "displayName": "Card Picker Prop Type",
           "importName": "CardPickerPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37813,6 +38017,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199026": {
@@ -37864,6 +38069,8 @@
           "displayName": "Class Prop Type",
           "importName": "ClassPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37877,6 +38084,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199030": {
@@ -37928,6 +38136,8 @@
           "displayName": "Color Prop Type",
           "importName": "ColorPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -37941,6 +38151,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199034": {
@@ -37992,6 +38203,8 @@
           "displayName": "Theme Reset Class Prop Type",
           "importName": "ThemeResetClassPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -38005,6 +38218,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "21199038": {
@@ -38327,6 +38541,8 @@
           "displayName": "Number Prop Type",
           "importName": "NumberPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -38340,6 +38556,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "27402008": { "name": "number", "uuid": "cHw19BKVTh", "__type": "Var" },
@@ -38682,6 +38899,8 @@
           "displayName": "Choice Prop Type",
           "importName": "ChoicePropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -38695,6 +38914,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "29838009": {
@@ -38875,6 +39095,8 @@
           "displayName": "Array Prop Type",
           "importName": "ArrayPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -38888,6 +39110,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "30045006": { "name": "array", "uuid": "IARuj6azpg", "__type": "Var" },
@@ -39143,7 +39366,6 @@
           "uuid": "_Xsn9DLA_Q",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "32832035" },
           "lang": "English",
           "pinnedVariants": {},
@@ -39280,6 +39502,8 @@
           "displayName": "Custom Prop Type",
           "importName": "CustomPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -39293,6 +39517,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35118006": {
@@ -39491,6 +39716,8 @@
           "displayName": "Event Handler Prop Type",
           "importName": "EventHandlerPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -39504,6 +39731,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "38612007": {
@@ -39678,7 +39906,6 @@
           "uuid": "iEWwLgSDNg",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "39779015" },
           "lang": "English",
           "pinnedVariants": { "T_xukK_SM": true },
@@ -39732,7 +39959,6 @@
           "uuid": "zJhSnbDxtk",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "39779021" },
           "lang": "English",
           "pinnedVariants": { "XDX_JyaYT": true },
@@ -39844,6 +40070,8 @@
           "displayName": "RefActions1 Prop Type",
           "importName": "RefAction1",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -39857,6 +40085,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "40396006": {
@@ -39888,6 +40117,8 @@
           "displayName": "RefActions2 Prop Type",
           "importName": "RefAction2",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -39901,6 +40132,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "40396009": {
@@ -40523,7 +40755,7 @@
         "41233066": {
           "uuid": "l9syvG80rmB",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -40533,7 +40765,7 @@
         "41233067": {
           "uuid": "n2rvyVQlC3j",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -40543,7 +40775,7 @@
         "41233068": {
           "uuid": "QmutDIGaybs",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -40553,7 +40785,7 @@
         "41233069": {
           "uuid": "6SpH_o-UdOP",
           "name": "",
-          "selectors": ["Pressed"],
+          "selectors": [":active"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -41117,8 +41349,8 @@
         "41233120": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233121": {
           "name": "placeholder",
@@ -41128,8 +41360,8 @@
         "41233122": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233123": {
           "name": "Show placeholder",
@@ -41151,8 +41383,8 @@
         "41233128": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233129": {
           "name": "Is disabled",
@@ -41643,15 +41875,15 @@
         "41233194": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233195": { "name": "title", "uuid": "lmpiMTjXuA7", "__type": "Var" },
         "41233196": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233197": {
           "name": "No title",
@@ -41751,8 +41983,8 @@
         "41233208": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "41233209": {
           "name": "Relative placement",
@@ -43727,7 +43959,6 @@
           "uuid": "D_qa97anlkx",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233743" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43745,7 +43976,6 @@
           "uuid": "eJ7vi-mrkAX",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233744" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43763,7 +43993,6 @@
           "uuid": "18S6LKMSzu9",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233745" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43781,7 +44010,6 @@
           "uuid": "OF5yQS9zH-U",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233746" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43799,7 +44027,6 @@
           "uuid": "4UCfsCDwfmF",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233747" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43817,7 +44044,6 @@
           "uuid": "c9fHYVX94ll",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233748" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43835,7 +44061,6 @@
           "uuid": "uMG7e2kTU05",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233749" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43853,7 +44078,6 @@
           "uuid": "y4EP_VqD5AV",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233750" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43871,7 +44095,6 @@
           "uuid": "CoQPoIMx0ZF",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233751" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43889,7 +44112,6 @@
           "uuid": "mjUy2vZWY9_",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233752" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43907,7 +44129,6 @@
           "uuid": "JKFcWJ4rHS4",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233753" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43925,7 +44146,6 @@
           "uuid": "dhGC6XtC2S_",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233754" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43943,7 +44163,6 @@
           "uuid": "L3jqDlaCMyg",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233755" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43961,7 +44180,6 @@
           "uuid": "o6v8ywJqaVf",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233756" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43979,7 +44197,6 @@
           "uuid": "SdHxHvL9KJ1",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233757" },
           "lang": "English",
           "pinnedVariants": {},
@@ -43997,7 +44214,6 @@
           "uuid": "ETmnbGIekHF",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233758" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44015,7 +44231,6 @@
           "uuid": "3V1Wv2whogr",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233759" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44033,7 +44248,6 @@
           "uuid": "atpBg37laqf",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233760" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44051,7 +44265,6 @@
           "uuid": "v9EJj2Vg-Aj",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233761" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44069,7 +44282,6 @@
           "uuid": "pj8jTIL1Lf9",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233762" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44087,7 +44299,6 @@
           "uuid": "0WXCZMuhMKA",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233763" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44105,7 +44316,6 @@
           "uuid": "ygXZ8bX-FMQ",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233764" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44123,7 +44333,6 @@
           "uuid": "8-avJI_T7S6",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233765" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44141,7 +44350,6 @@
           "uuid": "1OOViYqlDtn",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233766" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44159,7 +44367,6 @@
           "uuid": "ayj-LIrIlWl",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233767" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44177,7 +44384,6 @@
           "uuid": "HhxA0O-CzTJ",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233768" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44195,7 +44401,6 @@
           "uuid": "agdbWW1spLA",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233769" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44213,7 +44418,6 @@
           "uuid": "1JKMZh1Dki2",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233770" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44231,7 +44435,6 @@
           "uuid": "YlBTLHSJWfd",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233771" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44249,7 +44452,6 @@
           "uuid": "ZmhRom94N5L",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233772" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44267,7 +44469,6 @@
           "uuid": "VhJIlB07ASc",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233773" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44285,7 +44486,6 @@
           "uuid": "ol3qrYXtSp_",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233774" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44303,7 +44503,6 @@
           "uuid": "hwpmo9isWZK",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233775" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44321,7 +44520,6 @@
           "uuid": "8ppCDdSsaaH",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233776" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44339,7 +44537,6 @@
           "uuid": "JQKtY0y1ZsZ",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233777" },
           "lang": "English",
           "pinnedVariants": {},
@@ -44357,7 +44554,6 @@
           "uuid": "c8T7qAC_VtC",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "41233778" },
           "lang": "English",
           "pinnedVariants": {},
@@ -46183,6 +46379,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -46196,6 +46394,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "42010010": {
@@ -46328,6 +46527,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -46341,6 +46542,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "42010018": { "name": "title", "uuid": "AHnU_MEB5I", "__type": "Var" },
@@ -46383,8 +46585,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "42010040" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "42010033": {
           "name": "pageSize",
@@ -46546,7 +46748,6 @@
           "uuid": "gFdNRYrQEA",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010066" },
           "lang": "English",
           "pinnedVariants": {},
@@ -46679,7 +46880,6 @@
           "uuid": "ManSHuNfQM",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010086" },
           "lang": "English",
           "pinnedVariants": {},
@@ -46812,7 +47012,6 @@
           "uuid": "fDIShStSx9",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010106" },
           "lang": "English",
           "pinnedVariants": {},
@@ -46945,7 +47144,6 @@
           "uuid": "v5eqB_Ybqg",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010126" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47078,7 +47276,6 @@
           "uuid": "aKolboJoOj",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010146" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47211,7 +47408,6 @@
           "uuid": "zKUsiX6O27",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010166" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47344,7 +47540,6 @@
           "uuid": "IQu_OvABQj",
           "width": 500,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010186" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47477,7 +47672,6 @@
           "uuid": "3eXO91tSTK",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010206" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47610,7 +47804,6 @@
           "uuid": "3gWom6wHI9",
           "width": 600,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010226" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47747,7 +47940,6 @@
           "uuid": "PeHC91mJrd",
           "width": 500,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010246" },
           "lang": "English",
           "pinnedVariants": {},
@@ -47880,7 +48072,6 @@
           "uuid": "8JrKBulXtK",
           "width": 500,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010266" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48013,7 +48204,6 @@
           "uuid": "Q6tNUh5tJ4",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010286" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48146,7 +48336,6 @@
           "uuid": "TEXn9ovbWl",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010306" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48279,7 +48468,6 @@
           "uuid": "A8ibkwhk71",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010326" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48423,7 +48611,6 @@
           "uuid": "E1CJAXx9sL",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010346" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48556,7 +48743,6 @@
           "uuid": "vT5_kg5Uq4",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010392" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48689,7 +48875,6 @@
           "uuid": "NonvfmcRnn",
           "width": 700,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010412" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48822,7 +49007,6 @@
           "uuid": "DscNgzsWaI",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010432" },
           "lang": "English",
           "pinnedVariants": {},
@@ -48955,7 +49139,6 @@
           "uuid": "HJRHPR31z3",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010452" },
           "lang": "English",
           "pinnedVariants": {},
@@ -49098,7 +49281,6 @@
           "uuid": "-xDBqOsChR",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "42010472" },
           "lang": "English",
           "pinnedVariants": {},
@@ -49560,6 +49742,8 @@
           "displayName": "Image URL Prop Type",
           "importName": "ImageUrlPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -49573,6 +49757,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "52435006": {
@@ -49807,7 +49992,6 @@
           "uuid": "9ga7WjzjFY",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477026" },
           "lang": "English",
           "pinnedVariants": {},
@@ -49940,7 +50124,6 @@
           "uuid": "eYgfGES5kg",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477046" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50073,7 +50256,6 @@
           "uuid": "LQaJsUgfAM",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477086" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50206,7 +50388,6 @@
           "uuid": "LljuaGdpiZ",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477106" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50339,7 +50520,6 @@
           "uuid": "aApXR4o5MX",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477126" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50472,7 +50652,6 @@
           "uuid": "j80SFR0D4Y",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477146" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50609,7 +50788,6 @@
           "uuid": "EMW_QCqGzx",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "59477166" },
           "lang": "English",
           "pinnedVariants": {},
@@ -50727,6 +50905,8 @@
           "displayName": "Object Prop Type",
           "importName": "ObjectPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -50740,6 +50920,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "63065006": {
@@ -50865,6 +51046,8 @@
           "displayName": "Boolean Prop Type",
           "importName": "BooleanPropType",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -50878,6 +51061,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "65487006": {
@@ -52179,7 +52363,7 @@
         "DuESJECNxPHt": { "tpl": [], "__type": "VirtualRenderExpr" }
       },
       "deps": ["968565bc-2862-4179-aa20-deebd3879e08"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

@@ -287,7 +287,6 @@
           "uuid": "zQhkERTEWrlqY",
           "width": 1440,
           "height": 768,
-          "viewportHeight": 1024,
           "container": { "__ref": "39429068" },
           "lang": "English",
           "pinnedVariants": {},
@@ -341,7 +340,6 @@
           "uuid": "1IIxwoL6TCvp3",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "39429075" },
           "lang": "English",
           "pinnedVariants": {},
@@ -396,9 +394,9 @@
             { "__ref": "39429232" }
           ],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "39429079": {
           "name": "Default Typography",
@@ -1237,6 +1235,8 @@
           "displayName": "Head",
           "importName": "PlasmicHead",
           "description": "Used to add page metadata to HTML <head />.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1250,6 +1250,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "62876009": { "name": "title", "uuid": "VyIm0_aYsK", "__type": "Var" },
@@ -1399,7 +1400,6 @@
           "uuid": "tt5nKbs_yr",
           "width": 1440,
           "height": 1024,
-          "viewportHeight": 1024,
           "container": { "__ref": "62876043" },
           "lang": "English",
           "pinnedVariants": {},
@@ -1417,7 +1417,6 @@
           "uuid": "mZZ0FIotAH",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "62876044" },
           "lang": "English",
           "pinnedVariants": {},
@@ -1475,7 +1474,7 @@
         "62876048": { "values": {}, "mixins": [], "__type": "RuleSet" }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

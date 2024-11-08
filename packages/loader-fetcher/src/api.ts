@@ -76,36 +76,46 @@ export interface SegmentSlice extends Slice {
   cond: any;
 }
 
-export interface ExperimentSplit {
+interface BareSplit {
   id: string;
   projectId: string;
+  name: string;
   externalId?: string;
+  description?: string;
+  pagesPaths: string[];
+}
+
+export interface ExperimentSplit extends BareSplit {
   type: "experiment";
   slices: ExperimentSlice[];
 }
 
-export interface SegmentSplit {
-  id: string;
-  projectId: string;
-  externalId?: string;
+export interface SegmentSplit extends BareSplit {
   type: "segment";
   slices: SegmentSlice[];
 }
 
 export type Split = ExperimentSplit | SegmentSplit;
 
-export interface LoaderBundleOutput {
+interface ApiLoaderBundleOutput {
   modules: {
     browser: (CodeModule | AssetModule)[];
     server: (CodeModule | AssetModule)[];
   };
-  external: string[];
   components: ComponentMeta[];
   globalGroups: GlobalGroupMeta[];
   projects: ProjectMeta[];
   activeSplits: Split[];
   bundleKey: string | null;
   deferChunksByDefault: boolean;
+  disableRootLoadingBoundaryByDefault: boolean;
+}
+
+export interface LoaderBundleOutput extends ApiLoaderBundleOutput {
+  // A map from project ID to the list of component IDs that are not included in the bundle
+  // this is used to know which components exist in the project, which allow us to properly
+  // handle bundle merging being aware of the deleted components.
+  filteredIds: Record<string, string[]>;
 }
 
 export interface LoaderHtmlOutput {
@@ -131,6 +141,15 @@ export const isBrowser =
   typeof window !== "undefined" &&
   window != null &&
   typeof window.document !== "undefined";
+
+export function transformApiLoaderBundleOutput(
+  bundle: ApiLoaderBundleOutput
+): LoaderBundleOutput {
+  return {
+    ...bundle,
+    filteredIds: Object.fromEntries(bundle.projects.map((p) => [p.id, []])),
+  };
+}
 
 export class Api {
   private host: string;
@@ -172,7 +191,7 @@ export class Api {
       i18nTagPrefix?: string;
       skipHead?: boolean;
     }
-  ) {
+  ): Promise<LoaderBundleOutput> {
     const { platform, preview } = opts;
     const query = new URLSearchParams([
       ["platform", platform ?? "react"],
@@ -239,7 +258,9 @@ export class Api {
         );
       }
 
-      const json = (await this.parseJsonResponse(resp)) as LoaderBundleOutput;
+      const json = transformApiLoaderBundleOutput(
+        (await this.parseJsonResponse(resp)) as ApiLoaderBundleOutput
+      );
       this.lastResponse = {
         bundle: json,
         key: nextLocation,
@@ -261,7 +282,7 @@ export class Api {
       );
     }
     const json = await this.parseJsonResponse(resp);
-    return json as LoaderBundleOutput;
+    return transformApiLoaderBundleOutput(json as ApiLoaderBundleOutput);
   }
 
   private async parseJsonResponse(resp: Response) {

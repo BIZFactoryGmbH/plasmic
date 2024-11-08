@@ -1,3 +1,8 @@
+import { PublicLink } from "@/wab/client/components/PublicLink";
+import { absorb, uncontrollable } from "@/wab/client/components/view-common";
+import { Icon } from "@/wab/client/components/widgets/Icon";
+import { IconButton } from "@/wab/client/components/widgets/IconButton";
+import { Textbox, TextboxRef } from "@/wab/client/components/widgets/Textbox";
 import { plasmicIFrameMouseDownEvent } from "@/wab/client/definitions/events";
 import { useFocusOnDisplayed } from "@/wab/client/dom-utils";
 import { VERT_MENU_ICON } from "@/wab/client/icons";
@@ -9,17 +14,8 @@ import SearchIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Search";
 import TrashIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Trash";
 import DragGripIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__DragGrip";
 import {
-  cx,
-  ensure,
-  ensureKey,
-  isCurrentlyWithinPath,
-  isReactKey,
-  makeCancelable,
-  maybe,
-} from "@/wab/common";
-import {
-  createFakeEvent,
   MaybeWrap,
+  createFakeEvent,
   swallowClick,
   useReadablePromise,
 } from "@/wab/commons/components/ReactUtil";
@@ -28,6 +24,13 @@ import {
   XDraggableEventHandler,
 } from "@/wab/commons/components/XDraggable";
 import { ReadablePromise } from "@/wab/commons/control";
+import {
+  cx,
+  ensure,
+  isCurrentlyWithinPath,
+  makeCancelable,
+  maybe,
+} from "@/wab/shared/common";
 import { Dropdown, Table, Tooltip } from "antd";
 import classNames from "classnames";
 import { isKeyHotkey } from "is-hotkey";
@@ -38,17 +41,11 @@ import { CSSProperties, Key, ReactElement, ReactNode } from "react";
 import {
   DragDropContext,
   Draggable,
-  Droppable,
   DropResult,
+  Droppable,
 } from "react-beautiful-dnd";
 import { createPortal } from "react-dom";
 import { FaUpload } from "react-icons/fa";
-import { Omit } from "utility-types";
-import { PublicLink } from "./PublicLink";
-import { absorb, uncontrollable } from "./view-common";
-import { Icon } from "./widgets/Icon";
-import { IconButton } from "./widgets/IconButton";
-import { Textbox, TextboxRef } from "./widgets/Textbox";
 
 export type HTMLIProps = Omit<JSX.IntrinsicElements["i"], "ref">;
 export class DropdownArrow extends React.Component<HTMLIProps, {}> {
@@ -159,45 +156,6 @@ interface Option<T extends {} = {}> {
   key?: Key;
   contents: () => ReactNode;
   value: T;
-}
-
-interface NormalizedOption<T extends {} = {}> {
-  key: Key;
-  contents: () => ReactNode;
-  value: T;
-}
-
-type OptionSpec<T = any> = string | Option<T>;
-
-function normalizeOptions(rawOptions: OptionSpec[]): NormalizedOption[] {
-  // Either keys are supplied, or values or valid keys, or we use indexes.
-  // If only some keys are supplied, throw an error.
-  // If only some values are valid keys, then always use indexes.
-  // This is too implicit for my taste, I think it would be cleaner to
-  // migrate all consumers to pass explicit keys.
-  const options = rawOptions.map((opt) =>
-    isReactKey(opt) ? { key: opt, value: opt, contents: () => opt } : opt
-  );
-  const alreadyKeyed = options.filter(
-    (opt): opt is NormalizedOption => !!opt.key
-  );
-  if (alreadyKeyed.length === options.length) {
-    return alreadyKeyed;
-  }
-  if (alreadyKeyed.length > 0) {
-    throw new Error(
-      "options should either all have keys or none of them" +
-        " should have keys, but only some of them have keys."
-    );
-  }
-  const useValuesAsKeys = options.every((opt) => isReactKey(opt.value));
-  if (useValuesAsKeys) {
-    return options.map((opt) => {
-      const key = ensureKey(opt.value);
-      return { ...opt, key };
-    });
-  }
-  return options.map((opt, i) => ({ ...opt, key: i }));
 }
 
 type ModalProps = {
@@ -615,7 +573,7 @@ export interface FileUploaderProps {
 }
 
 export function FileUploader(props: FileUploaderProps) {
-  const { onChange, accept, style, children } = props;
+  const { onChange, accept, style, children, disabled } = props;
   const [isDragOver, setDragOver] = React.useState(false);
   return (
     <Tooltip title={"Upload or drag a file here"}>
@@ -635,6 +593,7 @@ export function FileUploader(props: FileUploaderProps) {
           accept={accept}
           onDragEnter={() => setDragOver(true)}
           onDragLeave={() => setDragOver(false)}
+          disabled={disabled}
         />
       </PlainLinkButton>
     </Tooltip>
@@ -1126,6 +1085,42 @@ export function VerticalFillTable(
   return (
     <div className={cx("vertical-fill-table", wrapperClassName)}>
       <Table {...rest} />
+    </div>
+  );
+}
+
+export function StudioPlaceholder() {
+  return (
+    <div className="StudioPlaceholder visible">
+      <div className="placeholder_topBar">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="placeholder_icon"
+          fill="none"
+          viewBox="0 0 32 32"
+          role="img"
+        >
+          <path
+            d="M3.2 22C3.2 14.93 8.93 9.2 16 9.2S28.8 14.93 28.8 22H32c0-8.837-7.163-16-16-16S0 13.163 0 22h3.2z"
+            fill="currentColor"
+          ></path>
+
+          <path
+            d="M24 22a8 8 0 10-16 0H4.8c0-6.185 5.015-11.2 11.2-11.2S27.2 15.815 27.2 22H24z"
+            fill="currentColor"
+          ></path>
+
+          <path
+            d="M12.8 22a3.2 3.2 0 016.4 0h3.2a6.4 6.4 0 10-12.8 0h3.2z"
+            fill="currentColor"
+          ></path>
+        </svg>
+      </div>
+      <div className="placeholder_leftToolbar"></div>
+      <div className="placeholder_leftPanel"></div>
+      <div className="placeholder_canvasArea"></div>
+      <div className="placeholder_rightPanel"></div>
+      <div className="placeholder_loading placeholder_loading--fast"></div>
     </div>
   );
 }

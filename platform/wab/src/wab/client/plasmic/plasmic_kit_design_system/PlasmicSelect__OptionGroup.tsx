@@ -13,26 +13,20 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
+import {
+  Flex as Flex__,
+  SingleBooleanChoiceArg,
+  StrictProps,
+  classNames,
+  createPlasmicElementProxy,
+  deriveRenderOpts,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
+} from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import * as pp from "@plasmicapp/react-web";
-import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
-  StrictProps,
-  deriveRenderOpts,
-  ensureGlobalVariants,
-} from "@plasmicapp/react-web";
 import Select__Option from "../../components/widgets/Select__Option"; // plasmic-import: rr-LWdMni2G/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
@@ -70,10 +64,10 @@ export const PlasmicSelect__OptionGroup__ArgProps = new Array<ArgPropType>(
 );
 
 export type PlasmicSelect__OptionGroup__OverridesType = {
-  root?: p.Flex<"div">;
-  titleContainer?: p.Flex<"div">;
-  optionsContainer?: p.Flex<"div">;
-  separator2?: p.Flex<"div">;
+  root?: Flex__<"div">;
+  titleContainer?: Flex__<"div">;
+  optionsContainer?: Flex__<"div">;
+  separator2?: Flex__<"div">;
 };
 
 export interface DefaultSelect__OptionGroupProps
@@ -93,20 +87,27 @@ function PlasmicSelect__OptionGroup__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "noTitle",
@@ -127,9 +128,10 @@ function PlasmicSelect__OptionGroup__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.isLast,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -179,7 +181,7 @@ function PlasmicSelect__OptionGroup__RenderFunc(props: {
             ),
           })}
         >
-          {p.renderPlasmicSlot({
+          {renderPlasmicSlot({
             defaultContents: "Group Name",
             value: args.title,
             className: classNames(sty.slotTargetTitle),
@@ -191,7 +193,7 @@ function PlasmicSelect__OptionGroup__RenderFunc(props: {
         data-plasmic-override={overrides.optionsContainer}
         className={classNames(projectcss.all, sty.optionsContainer)}
       >
-        {p.renderPlasmicSlot({
+        {renderPlasmicSlot({
           defaultContents: (
             <React.Fragment>
               <Select__Option
@@ -206,6 +208,7 @@ function PlasmicSelect__OptionGroup__RenderFunc(props: {
               </Select__Option>
             </React.Fragment>
           ),
+
           value: args.children,
         })}
       </div>
@@ -255,6 +258,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicSelect__OptionGroup__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

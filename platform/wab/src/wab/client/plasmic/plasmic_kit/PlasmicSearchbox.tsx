@@ -13,35 +13,27 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
+
 import Textbox from "../../components/widgets/Textbox"; // plasmic-import: pA22NEzDCsn_/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import projectcss from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicSearchbox.module.css"; // plasmic-import: po7gr0PX4_gWo/css
 
-import SearchsvgIcon from "../q_4_icons/icons/PlasmicIcon__Searchsvg"; // plasmic-import: R5DLz11OA/icon
-import ClosesvgIcon from "../q_4_icons/icons/PlasmicIcon__Closesvg"; // plasmic-import: DhvEHyCHT/icon
+import CloseSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__CloseSvg"; // plasmic-import: DhvEHyCHT/icon
+import SearchSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__SearchSvg"; // plasmic-import: R5DLz11OA/icon
 
 createPlasmicElementProxy;
 
@@ -78,7 +70,7 @@ type ArgPropType = keyof PlasmicSearchbox__ArgsType;
 export const PlasmicSearchbox__ArgProps = new Array<ArgPropType>("placeholder");
 
 export type PlasmicSearchbox__OverridesType = {
-  root?: p.Flex<typeof Textbox>;
+  root?: Flex__<typeof Textbox>;
 };
 
 export interface DefaultSearchboxProps {
@@ -107,7 +99,9 @@ function PlasmicSearchbox__RenderFunc(props: {
         {
           placeholder: "Search...",
         },
-        props.args
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
       ),
     [props.args]
   );
@@ -117,13 +111,11 @@ function PlasmicSearchbox__RenderFunc(props: {
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "hasValue",
@@ -163,9 +155,10 @@ function PlasmicSearchbox__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.medium,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -202,7 +195,7 @@ function PlasmicSearchbox__RenderFunc(props: {
       }
       placeholder={args.placeholder}
       prefixIcon={
-        <SearchsvgIcon
+        <SearchSvgIcon
           className={classNames(projectcss.all, sty.svg__unKzu, {
             [sty.svghasValue__unKzuuzQ8L]: hasVariant(
               $state,
@@ -223,7 +216,7 @@ function PlasmicSearchbox__RenderFunc(props: {
       }
       suffixIcon={
         (hasVariant($state, "hasValue", "hasValue") ? true : false) ? (
-          <ClosesvgIcon
+          <CloseSvgIcon
             className={classNames(projectcss.all, sty.svg___2K8R, {
               [sty.svghasValue___2K8RuzQ8L]: hasVariant(
                 $state,
@@ -264,6 +257,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicSearchbox__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

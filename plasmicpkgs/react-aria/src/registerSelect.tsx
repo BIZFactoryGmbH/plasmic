@@ -1,234 +1,288 @@
-import { usePlasmicCanvasContext } from "@plasmicapp/host";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import {
-  Key,
   Select,
-  SelectValue as BaseSelectValue,
+  SelectProps,
+  SelectStateContext,
+  SelectValue,
 } from "react-aria-components";
-import { PlasmicListBoxContext } from "./contexts";
-import {
-  flattenOptions,
-  HasOptions,
-  makeOptionsPropType,
-  makeValuePropType,
-  useStrictOptions,
-} from "./option-utils";
+import { getCommonProps } from "./common";
+import { PlasmicListBoxContext, PlasmicPopoverContext } from "./contexts";
+import { ListBoxItemIdManager } from "./ListBoxItemIdManager";
+import { BUTTON_COMPONENT_NAME } from "./registerButton";
+import { LABEL_COMPONENT_NAME } from "./registerLabel";
+import { LIST_BOX_COMPONENT_NAME } from "./registerListBox";
+import { POPOVER_COMPONENT_NAME } from "./registerPopover";
 import {
   extractPlasmicDataProps,
+  HasControlContextData,
   makeComponentName,
   Registerable,
   registerComponentHelper,
-  Styleable,
+  useAutoOpen,
 } from "./utils";
 
-export { BaseSelectValue };
+// It cannot be used as a hook like useAutoOpen() within the BaseSelect component
+// because it needs access to SelectStateContext, which is only created in the BaseSelect component's render function.
+function SelectAutoOpen(props: any) {
+  const { open, close } = React.useContext(SelectStateContext) ?? {};
+  useAutoOpen({ props, open, close });
+
+  return null;
+}
+
+export interface BaseSelectValueProps
+  extends React.ComponentProps<typeof SelectValue> {
+  customize?: boolean;
+}
+
+export const BaseSelectValue = (props: BaseSelectValueProps) => {
+  const { children, customize, className } = props;
+  const placeholder = customize ? children : "Select an item";
+  return (
+    <SelectValue className={className}>
+      {({ isPlaceholder, selectedText }) => (
+        <>{isPlaceholder ? placeholder : selectedText}</>
+      )}
+    </SelectValue>
+  );
+};
 
 const SELECT_NAME = makeComponentName("select");
 
-export interface BaseSelectProps<T extends object>
-  extends HasOptions<T>,
-    Styleable {
-  placeholder?: string;
-  isDisabled?: boolean;
-
-  value?: Key;
-  onChange?: (value: Key) => void;
-
-  previewOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-
-  structure?: React.ReactNode;
-
-  name?: string;
-  "aria-label"?: string;
-
-  renderOption?: (item: {
-    value: string;
-    label?: string;
-    isDisabled?: boolean;
-  }) => React.ReactNode;
+export interface BaseSelectControlContextData {
+  itemIds: string[];
 }
 
-export function BaseSelect<T extends object>(props: BaseSelectProps<T>) {
+export interface BaseSelectProps
+  extends SelectProps<{}>, // NOTE: We don't need generic type here since we don't use items prop (that needs it). We just need to make the type checker happy
+    HasControlContextData<BaseSelectControlContextData> {
+  children?: React.ReactNode;
+}
+
+export function BaseSelect(props: BaseSelectProps) {
   const {
-    value,
-    onChange,
+    selectedKey,
+    onSelectionChange,
     placeholder,
-    previewOpen,
     onOpenChange,
     isDisabled,
     className,
     style,
-    structure,
-    renderOption,
+    children,
+    disabledKeys,
     name,
+    setControlContextData,
     "aria-label": ariaLabel,
   } = props;
 
-  const { options, optionText } = useStrictOptions(props);
+  let idManager = useMemo(() => new ListBoxItemIdManager(), []);
 
-  const canvas = usePlasmicCanvasContext();
-
-  const disabledKeys = flattenOptions(options)
-    .filter((op) => op.isDisabled)
-    .map((op) => op.value);
+  useEffect(() => {
+    idManager.subscribe((ids: string[]) => {
+      setControlContextData?.({
+        itemIds: ids,
+      });
+    });
+  }, []);
 
   return (
     <Select
       placeholder={placeholder}
-      selectedKey={value}
-      onSelectionChange={onChange}
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
       onOpenChange={onOpenChange}
       isDisabled={isDisabled}
       className={className}
       style={style}
       name={name}
+      disabledKeys={disabledKeys}
       aria-label={ariaLabel}
-      {...(previewOpen && canvas ? { isOpen: previewOpen } : undefined)}
       {...extractPlasmicDataProps(props)}
     >
-      <PlasmicListBoxContext.Provider
-        value={{
-          items: options,
-          disabledKeys: disabledKeys,
-          makeItemProps: (item) => ({
-            key: item.value,
-            textValue: optionText(item),
-            children: renderOption ? renderOption(item) : optionText(item),
-          }),
-          makeSectionProps: (section) => ({
-            section,
-            key: section.key,
-          }),
-          getItemType: (option) =>
-            option.type === "section" ? "section" : "item",
-        }}
-      >
-        {structure}
-      </PlasmicListBoxContext.Provider>
+      <SelectAutoOpen {...props} />
+      <PlasmicPopoverContext.Provider value={{}}>
+        <PlasmicListBoxContext.Provider
+          value={{
+            idManager,
+          }}
+        >
+          {children}
+        </PlasmicListBoxContext.Provider>
+      </PlasmicPopoverContext.Provider>
     </Select>
   );
 }
 
 export function registerSelect(loader?: Registerable) {
+  const selectValueMeta = registerComponentHelper(loader, BaseSelectValue, {
+    name: makeComponentName("select-value"),
+    displayName: "Aria Selected Value",
+    importPath: "@plasmicpkgs/react-aria/skinny/registerSelect",
+    importName: "BaseSelectValue",
+    parentComponentName: SELECT_NAME,
+    props: {
+      customize: {
+        type: "boolean",
+        description: "Whether to customize the selected value display",
+      },
+      children: {
+        type: "slot",
+        defaultValue: [
+          {
+            type: "text",
+            value: "Selected value...",
+          },
+        ],
+        hidden: (props) => !props.customize,
+      },
+    },
+    trapsFocus: true,
+  });
+
   registerComponentHelper(loader, BaseSelect, {
     name: SELECT_NAME,
-    displayName: "BaseSelect",
-    importPath: "@plasmicpkgs/react-aria/registerSelect",
+    displayName: "Aria Select",
+    importPath: "@plasmicpkgs/react-aria/skinny/registerSelect",
     importName: "BaseSelect",
     props: {
-      options: makeOptionsPropType(),
-      placeholder: {
-        type: "string",
-      },
-      isDisabled: {
-        type: "boolean",
-      },
-      value: makeValuePropType(),
-      onChange: {
-        type: "eventHandler",
-        argTypes: [{ name: "value", type: "string" }],
-      },
-      previewOpen: {
-        type: "boolean",
-        displayName: "Preview opened?",
-        description: "Preview opened state while designing in Plasmic editor",
+      ...getCommonProps<BaseSelectProps>("Select", [
+        "name",
+        "aria-label",
+        "placeholder",
+        "isDisabled",
+        "autoFocus",
+      ]),
+      selectedKey: {
+        type: "choice",
         editOnly: true,
+        uncontrolledProp: "defaultSelectedKey",
+        displayName: "Initial selected item",
+        options: (_props, ctx) => (ctx?.itemIds ? Array.from(ctx.itemIds) : []),
+        // React Aria Select do not support multiple selections yet
+        multiSelect: false,
+      },
+      onSelectionChange: {
+        type: "eventHandler",
+        argTypes: [{ name: "selectedValue", type: "string" }],
+      },
+      disabledKeys: {
+        type: "choice",
+        displayName: "Disabled values",
+        description:
+          "The items that are disabled. These items cannot be selected, focused, or otherwise interacted with.",
+        options: (_props, ctx) => (ctx?.itemIds ? Array.from(ctx.itemIds) : []),
+        multiSelect: true,
+        advanced: true,
+      },
+      isOpen: {
+        type: "boolean",
+        defaultValue: false,
+        // It doesn't make sense to make isOpen prop editable (it's controlled by user interaction and always closed by default), so we keep this prop hidden. We have listed the prop here in the meta only so we can expose a writeable state for it.
+        hidden: () => true,
       },
       onOpenChange: {
         type: "eventHandler",
         argTypes: [{ name: "isOpen", type: "boolean" }],
       },
-      // optionValue: {
-      //   type: "string",
-      //   displayName: "Field key for an option's value",
-      //   hidden: (ps) =>
-      //     !ps.options ||
-      //     !ps.options[0] ||
-      //     typeof ps.options[0] === "string" ||
-      //     "value" in ps.options[0],
-      //   exprHint:
-      //     "Return a function that takes in an option object, and returns the key to use",
-      // },
-      // optionText: {
-      //   type: "string",
-      //   displayName: "Field key for an option's text value",
-      //   hidden: (ps) =>
-      //     !ps.options ||
-      //     !ps.options[0] ||
-      //     typeof ps.options[0] === "string" ||
-      //     "value" in ps.options[0],
-      //   exprHint:
-      //     "Return a function that takes in an option object, and returns the text value to use",
-      // },
-      // optionDisabled: {
-      //   type: "string",
-      //   displayName: "Field key for whether an option is disabled",
-      //   hidden: (ps) =>
-      //     !ps.options ||
-      //     !ps.options[0] ||
-      //     typeof ps.options[0] === "string" ||
-      //     "value" in ps.options[0],
-      //   exprHint:
-      //     "Return a function that takes in an option object, and returns true if option should be disabled",
-      // },
-
-      structure: {
+      children: {
         type: "slot",
-      },
-
-      // renderOption: {
-      //   type: "slot",
-      //   displayName: "Custom render option",
-      //   renderPropParams: ["item"],
-      //   hidePlaceholder: true
-      // },
-
-      name: {
-        type: "string",
-        displayName: "Form field key",
-        description: "Name of the input, when submitting in an HTML form",
-        advanced: true,
-      },
-
-      "aria-label": {
-        type: "string",
-        displayName: "Aria Label",
-        description: "Label for this input, if no visible label is used",
-        advanced: true,
-      },
-    },
-    states: {
-      value: {
-        type: "writable",
-        valueProp: "value",
-        onChangeProp: "onChange",
-        variableType: "text",
-      },
-      isOpen: {
-        type: "readonly",
-        onChangeProp: "onOpenChange",
-        variableType: "boolean",
-      },
-    },
-  });
-
-  registerComponentHelper(loader, BaseSelectValue, {
-    name: makeComponentName("select-value"),
-    displayName: "Base Selected Value",
-    importPath: "@plasmicpkgs/react-aria/registerSelect",
-    importName: "SelectValue",
-    parentComponentName: SELECT_NAME,
-    props: {
-      className: {
-        type: "class",
-        selectors: [
+        mergeWithParent: true,
+        defaultValue: [
           {
-            selector: ":self[data-placeholder]",
-            label: "Placeholder",
+            type: "vbox",
+            styles: {
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+              width: "300px",
+              padding: 0,
+            },
+            children: [
+              {
+                type: "component",
+                name: LABEL_COMPONENT_NAME,
+                props: {
+                  children: {
+                    type: "text",
+                    value: "Label",
+                  },
+                },
+              },
+              {
+                type: "component",
+                name: BUTTON_COMPONENT_NAME,
+                styles: {
+                  width: "100%",
+                },
+                props: {
+                  children: {
+                    type: "hbox",
+                    styles: {
+                      width: "stretch",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "2px 5px",
+                    },
+                    children: [
+                      {
+                        type: "component",
+                        name: selectValueMeta.name,
+                      },
+                      {
+                        type: "img",
+                        src: "https://static1.plasmic.app/arrow-up.svg",
+                        styles: {
+                          height: "20px",
+                          width: "20px",
+                          transform: "rotate(180deg)",
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                type: "component",
+                name: POPOVER_COMPONENT_NAME,
+                styles: {
+                  backgroundColor: "white",
+                  padding: "10px",
+                  overflow: "scroll",
+                },
+                props: {
+                  children: [
+                    {
+                      type: "component",
+                      name: LIST_BOX_COMPONENT_NAME,
+                      props: {
+                        selectionMode: "single",
+                      },
+                      styles: {
+                        borderWidth: 0,
+                        width: "stretch",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
           },
         ],
       },
     },
+    states: {
+      selectedValue: {
+        type: "writable",
+        valueProp: "selectedKey",
+        onChangeProp: "onSelectionChange",
+        variableType: "text",
+      },
+      isOpen: {
+        type: "writable",
+        valueProp: "isOpen",
+        onChangeProp: "onOpenChange",
+        variableType: "boolean",
+      },
+    },
+    trapsFocus: true,
   });
 }

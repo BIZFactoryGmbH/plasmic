@@ -1,99 +1,61 @@
 import {
-  CollectionExpr,
-  Component,
-  ComponentDataQuery,
-  CompositeExpr,
-  CustomCode,
-  DataSourceOpExpr,
-  ensureKnownNamedState,
-  EventHandler,
-  Expr,
-  FunctionArg,
-  FunctionExpr,
-  ImageAssetRef,
-  isKnownColorPropType,
-  isKnownCustomCode,
-  isKnownDefaultStylesClassNamePropType,
-  isKnownDefaultStylesPropType,
-  isKnownEventHandler,
-  isKnownNamedState,
-  isKnownObjectPath,
-  isKnownStateParam,
-  isKnownStyleExpr,
-  isKnownStyleScopeClassNamePropType,
-  isKnownTplTag,
-  MapExpr,
-  Marker,
-  ObjectPath,
-  PageHref,
-  Param,
-  QueryInvalidationExpr,
-  RenderExpr,
-  Site,
-  State,
-  StrongFunctionArg,
-  StyleExpr,
-  StyleTokenRef,
-  TemplatedString,
-  TplComponent,
-  TplNode,
-  TplRef,
-  TplSlot,
-  TplTag,
-  Variant,
-  VariantSetting,
-  VariantsRef,
-  VarRef,
-  VirtualRenderExpr,
-} from "@/wab/classes";
+  SlateRenderNodeOpts,
+  mkCanvasText,
+  mkSlateChildren,
+} from "@/wab/client/components/canvas/CanvasText";
+import {
+  cachedRenderTplNode,
+  reactHookSpecsToKey,
+} from "@/wab/client/components/canvas/canvas-cache";
+import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
+import {
+  CanvasErrorBoundaryProps,
+  mkCanvasErrorBoundary,
+  withErrorDisplayFallback,
+} from "@/wab/client/components/canvas/canvas-error";
+import {
+  isExplicitlySized,
+  resizePlaceholder,
+} from "@/wab/client/components/canvas/canvas-fns-impl";
+import { useCanvasForceUpdate } from "@/wab/client/components/canvas/canvas-hooks";
+import {
+  mkCanvasObserver,
+  mkUseCanvasObserver,
+} from "@/wab/client/components/canvas/canvas-observer";
+import { genRepeatedElement } from "@/wab/client/components/canvas/repeatedElement";
+import {
+  showCanvasAuthNotification,
+  showCanvasPageNavigationNotification,
+  trapInteractionError,
+} from "@/wab/client/components/canvas/studio-canvas-util";
+import { getRealClassNames } from "@/wab/client/components/canvas/styles-name";
+import { SubDeps } from "@/wab/client/components/canvas/subdeps";
 import { makeVariantsController } from "@/wab/client/components/variants/VariantsController";
 import { buildViewCtxPinMaps } from "@/wab/client/cseval";
 import { globalHookCtx } from "@/wab/client/react-global-hook/globalHook";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { EditingTextContext, ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import {
-  assert,
-  cx,
-  ensure,
-  ensureArray,
-  ensureInstance,
-  ensureType,
-  mapEquals,
-  maybe,
-  setEquals,
-  switchType,
-  tuple,
-  unexpected,
-  withDefaultFunc,
-  withoutNils,
-} from "@/wab/common";
 import { mkTokenRef } from "@/wab/commons/StyleToken";
 import { DeepReadonly } from "@/wab/commons/types";
 import {
-  allComponentVariants,
-  ComponentType,
-  getComponentDisplayName,
-  getRepetitionIndexName,
-  isCodeComponent,
-  isHostLessCodeComponent,
-} from "@/wab/components";
-import { uniqifyClassName } from "@/wab/css";
-import { DEVFLAGS, DevFlagsType } from "@/wab/devflags";
+  getSlotParams,
+  isLikelyTextTplSlot,
+  isStyledTplSlot,
+  shouldWrapSlotContentInDataCtxReader,
+} from "@/wab/shared/SlotUtils";
+import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
 import {
-  asCode,
-  code,
-  ExprCtx,
-  extractReferencedParam,
-  getCodeExpressionWithFallback,
-  getRawCode,
-  InteractionArgLoc,
-  InteractionLoc,
-  isInteractionLoc,
-  isRealCodeExpr,
-  removeFallbackFromDataSourceOp,
-} from "@/wab/exprs";
-import { mkParam } from "@/wab/lang";
-import { makeSelectableKey } from "@/wab/selection";
+  VariantCombo,
+  getActiveVariantSettings,
+  isBaseVariant,
+  isDisabledPseudoSelectorVariantForTpl,
+  isGlobalVariant,
+  isMaybeInteractiveStyleVariant,
+  isPseudoElementVariantForTpl,
+  isScreenVariant,
+  isStyleVariant,
+  variantHasPrivatePseudoElementSelector,
+} from "@/wab/shared/Variants";
 import {
   componenToNonVariantParamNames,
   componentToElementNames,
@@ -103,6 +65,7 @@ import {
   makeTokenValueResolver,
 } from "@/wab/shared/cached-selectors";
 import {
+  INTERNAL_CC_CANVAS_SELECTION_PROP,
   classNameProp,
   dataCanvasEnvsProp,
   frameUidProp,
@@ -129,6 +92,10 @@ import {
   isPlainObjectPropType,
   tryGetStateHelpers,
 } from "@/wab/shared/code-components/code-components";
+import {
+  isTplRootWithCodeComponentVariants,
+  withoutCodeComponentVariantPrefix,
+} from "@/wab/shared/code-components/variants";
 import { toReactAttr } from "@/wab/shared/codegen/image-assets";
 import {
   deriveReactHookSpecs,
@@ -141,6 +108,7 @@ import {
 } from "@/wab/shared/codegen/react-p";
 import { ReactHookSpec } from "@/wab/shared/codegen/react-p/react-hook-spec";
 import {
+  NodeNamer,
   getExportedComponentName,
   makeRootResetClassName,
   makeWabFlexContainerClassName,
@@ -149,50 +117,50 @@ import {
   makeWabSlotClassName,
   makeWabTextClassName,
   maybeMakePlasmicImgSrc,
-  NodeNamer,
 } from "@/wab/shared/codegen/react-p/utils";
 import { paramToVarName, toVarName } from "@/wab/shared/codegen/util";
-import { isRenderFuncType, typeFactory } from "@/wab/shared/core/model-util";
-import { plasmicImgAttrStyles } from "@/wab/shared/core/style-props";
-import { parseDataUrlToSvgXml } from "@/wab/shared/data-urls";
 import {
-  EffectiveVariantSetting,
-  getEffectiveVariantSetting,
-} from "@/wab/shared/effective-variant-setting";
-import { CanvasEnv, evalCodeWithEnv } from "@/wab/shared/eval";
-import { exprUsesCtxOrFreeVars } from "@/wab/shared/eval/expression-parser";
-import { ContainerType } from "@/wab/shared/layoututils";
-import { canAddChildren } from "@/wab/shared/parenting";
+  assert,
+  cx,
+  ensure,
+  ensureArray,
+  ensureInstance,
+  ensureType,
+  mapEquals,
+  maybe,
+  setEquals,
+  switchType,
+  tuple,
+  unexpected,
+  withDefaultFunc,
+  withoutNils,
+} from "@/wab/shared/common";
 import {
-  getPlumeCanvasPlugin,
-  getPlumeCodegenPlugin,
-  getPlumeEditorPlugin,
-} from "@/wab/shared/plume/plume-registry";
-import { hashExpr } from "@/wab/shared/site-diffs";
-import { deriveSizeStyleValue, PageSizeType } from "@/wab/shared/sizingutils";
+  allComponentVariants,
+  getComponentDisplayName,
+  getRepetitionElementName,
+  getRepetitionIndexName,
+  isCodeComponent,
+  isHostLessCodeComponent,
+} from "@/wab/shared/core/components";
 import {
-  getSlotParams,
-  isLikelyTextTplSlot,
-  isStyledTplSlot,
-  shouldWrapSlotContentInDataCtxReader,
-} from "@/wab/shared/SlotUtils";
+  ExprCtx,
+  InteractionArgLoc,
+  InteractionLoc,
+  asCode,
+  code,
+  extractReferencedParam,
+  getCodeExpressionWithFallback,
+  getRawCode,
+  isInteractionLoc,
+  isRealCodeExpr,
+  removeFallbackFromDataSourceOp,
+} from "@/wab/shared/core/exprs";
+import { mkParam } from "@/wab/shared/core/lang";
+import { makeSelectableKey } from "@/wab/shared/core/selection";
+import { isSlotSelection } from "@/wab/shared/core/slots";
 import {
-  makeVariantComboSorter,
-  sortedVariantSettings,
-} from "@/wab/shared/variant-sort";
-import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
-import {
-  getActiveVariantSettings,
-  isBaseVariant,
-  isDisabledPseudoSelectorVariantForTpl,
-  isGlobalVariant,
-  isPseudoElementVariantForTpl,
-  isScreenVariant,
-  isStyleVariant,
-  VariantCombo,
-  variantHasPrivatePseudoElementSelector,
-} from "@/wab/shared/Variants";
-import {
+  StateVariableType,
   getLastPartOfImplicitStateName,
   getStateDisplayName,
   getStateOnChangePropName,
@@ -202,8 +170,8 @@ import {
   isReadonlyState,
   isWritableState,
   shouldHaveImplicitState,
-  StateVariableType,
-} from "@/wab/states";
+} from "@/wab/shared/core/states";
+import { plasmicImgAttrStyles } from "@/wab/shared/core/style-props";
 import {
   classNameForRuleSet,
   defaultStyleClassNames,
@@ -214,8 +182,10 @@ import {
   makeStyleExprClassName,
   makeStyleScopeClassName,
   studioDefaultStylesClassNameBase,
-} from "@/wab/styles";
+} from "@/wab/shared/core/styles";
 import {
+  RawTextLike,
+  TplTextTag,
   ancestorsUp,
   getOwnerSite,
   isExprText,
@@ -229,12 +199,82 @@ import {
   isTplRepeated,
   isTplTag,
   isTplTextBlock,
-  RawTextLike,
   summarizeTpl,
   tplHasRef,
-  TplTextTag,
-} from "@/wab/tpls";
-import { placeholderImgUrl } from "@/wab/urls";
+} from "@/wab/shared/core/tpls";
+import { uniqifyClassName } from "@/wab/shared/css";
+import { parseDataUrlToSvgXml } from "@/wab/shared/data-urls";
+import { DEVFLAGS, DevFlagsType } from "@/wab/shared/devflags";
+import {
+  EffectiveVariantSetting,
+  getEffectiveVariantSetting,
+} from "@/wab/shared/effective-variant-setting";
+import { stampIgnoreError } from "@/wab/shared/error-handling";
+import { CanvasEnv, evalCodeWithEnv } from "@/wab/shared/eval";
+import { exprUsesCtxOrFreeVars } from "@/wab/shared/eval/expression-parser";
+import { ContainerType } from "@/wab/shared/layoututils";
+import {
+  CollectionExpr,
+  Component,
+  ComponentDataQuery,
+  CompositeExpr,
+  CustomCode,
+  DataSourceOpExpr,
+  EventHandler,
+  Expr,
+  FunctionArg,
+  FunctionExpr,
+  ImageAssetRef,
+  MapExpr,
+  Marker,
+  ObjectPath,
+  PageHref,
+  Param,
+  QueryInvalidationExpr,
+  RenderExpr,
+  Site,
+  State,
+  StrongFunctionArg,
+  StyleExpr,
+  StyleTokenRef,
+  TemplatedString,
+  TplComponent,
+  TplNode,
+  TplRef,
+  TplSlot,
+  TplTag,
+  VarRef,
+  Variant,
+  VariantSetting,
+  VariantsRef,
+  VirtualRenderExpr,
+  ensureKnownNamedState,
+  isKnownColorPropType,
+  isKnownCustomCode,
+  isKnownDefaultStylesClassNamePropType,
+  isKnownDefaultStylesPropType,
+  isKnownEventHandler,
+  isKnownNamedState,
+  isKnownObjectPath,
+  isKnownStateParam,
+  isKnownStyleExpr,
+  isKnownStyleScopeClassNamePropType,
+  isKnownTplTag,
+} from "@/wab/shared/model/classes";
+import { isRenderFuncType, typeFactory } from "@/wab/shared/model/model-util";
+import { canAddChildren } from "@/wab/shared/parenting";
+import {
+  getPlumeCanvasPlugin,
+  getPlumeCodegenPlugin,
+  getPlumeEditorPlugin,
+} from "@/wab/shared/plume/plume-registry";
+import { hashExpr } from "@/wab/shared/site-diffs";
+import { PageSizeType, deriveSizeStyleValue } from "@/wab/shared/sizingutils";
+import { placeholderImgUrl } from "@/wab/shared/urls";
+import {
+  makeVariantComboSorter,
+  sortedVariantSettings,
+} from "@/wab/shared/variant-sort";
 import type { usePlasmicInvalidate } from "@plasmicapp/data-sources";
 import { DataDict, mkMetaName } from "@plasmicapp/host";
 import { $StateSpec } from "@plasmicapp/react-web";
@@ -248,32 +288,9 @@ import {
   without,
   zipObject,
 } from "lodash";
-import { computed, IObservableValue, observable } from "mobx";
+import { IObservableValue, comparer, computed, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import type React from "react";
-import { cachedRenderTplNode, reactHookSpecsToKey } from "./canvas-cache";
-import { CanvasCtx } from "./canvas-ctx";
-import {
-  CanvasErrorBoundaryProps,
-  mkCanvasErrorBoundary,
-  withErrorDisplayFallback,
-} from "./canvas-error";
-import { isExplicitlySized, resizePlaceholder } from "./canvas-fns-impl";
-import { useCanvasForceUpdate } from "./canvas-hooks";
-import { mkCanvasObserver, mkUseCanvasObserver } from "./canvas-observer";
-import {
-  mkCanvasText,
-  mkSlateChildren,
-  SlateRenderNodeOpts,
-} from "./CanvasText";
-import { genRepeatedElement } from "./repeatedElement";
-import {
-  showCanvasAuthNotification,
-  showCanvasPageNavigationNotification,
-  trapInteractionError,
-} from "./studio-canvas-util";
-import { getRealClassNames } from "./styles-name";
-import { SubDeps } from "./subdeps";
 import defer = setTimeout;
 
 export const hasLoadingBoundaryKey = "plasmicInternalHasLoadingBoundary";
@@ -320,6 +337,10 @@ export interface RenderingCtx {
 
   plasmicInvalidate: ReturnType<typeof usePlasmicInvalidate> | undefined;
   stateSpecs: $StateSpec<any>[];
+
+  // This is used to enable code components variants in the canvas
+  $ccVariants: Record<string, boolean>;
+  updateVariant: (changes: Record<string, boolean>) => void;
 }
 
 interface CanvasComponentProps
@@ -459,7 +480,7 @@ export function mkEventHandlerEnv(
         return fn();
       } catch (error) {
         trapInteractionError(studioCtx, loc, error);
-        error.__wab_error_handled = true;
+        stampIgnoreError(error);
         throw error;
       }
     },
@@ -471,7 +492,7 @@ export function mkEventHandlerEnv(
         return await promise;
       } catch (error) {
         trapInteractionError(studioCtx, loc, error);
-        error.__wab_error_handled = true;
+        stampIgnoreError(error);
         throw error;
       }
     },
@@ -590,9 +611,9 @@ function mkInitFuncFromExpr(
   isForRegisterInitFunc?: boolean
 ) {
   return evalCodeWithEnv(
-    `({$props, $state, $queries${isForRegisterInitFunc ? ", $ctx" : ""}}) => (
+    `(({$props, $state, $queries${isForRegisterInitFunc ? ", $ctx" : ""}}) => (
       ${getRawCode(initFuncExpr, exprCtx)}
-    )`,
+    ))`,
     { ...(env ?? {}) },
     viewCtx.canvasCtx.win()
   );
@@ -666,24 +687,50 @@ const mkTriggers = computedFn(
         sub,
         viewCtx
       )(() => {
+        const isInteractive = ctx.viewCtx.studioCtx.isInteractiveMode;
+
+        // triggers map is empty in non-interactive mode
         const { triggers, triggerProps } = useTriggers(
           ctx.viewCtx.canvasCtx,
           ctx.reactHookSpecs,
-          ctx.viewCtx.studioCtx.isInteractiveMode
+          isInteractive
         );
+
         const newCtx: RenderingCtx = {
           ...ctx,
           triggerProps,
           activeVariants: new Set([
             ...ctx.activeVariants.keys(),
             ...component.variants.filter((variant) => {
-              if (isStyleVariant(variant)) {
+              if (!isStyleVariant(variant)) {
+                return false;
+              }
+              // We include the style variants dynamically here to handle changes that require JS
+              // to be re-run. For handling changes that only require CSS, we generate the proper
+              // CSS classes in `genCanvasRules`. Those can only be applied in interactive mode,
+              // because we don't want the content to change when the user tries to edit rich text
+              // while in design mode.
+
+              // Style variants of built-in components (like vertical stack's hover)
+              if (!isTplRootWithCodeComponentVariants(component.tplTree)) {
                 const hook = ctx.reactHookSpecs.find(
                   (spec) => spec.sv === variant
                 );
                 return hook && triggers[hook.hookName];
               }
-              return false;
+
+              // Interactive registered variants (like a Button CC's hover) can not be applied in non-interactive mode
+              if (isMaybeInteractiveStyleVariant(variant) && !isInteractive) {
+                return false;
+              }
+
+              // Non-interactive registered variants (like Button CC's disabled) do no harm to rich-text editing and can be applied in non-interactive mode
+              return variant.selectors.reduce(
+                (prev, key) =>
+                  prev &&
+                  ctx.$ccVariants[withoutCodeComponentVariantPrefix(key)],
+                true
+              );
             }),
           ]),
         };
@@ -858,6 +905,22 @@ function useCtxFromInternalComponentProps(
   const refsRef = sub.React.useRef({});
   const $refs = refsRef.current;
 
+  // We will use $ccVariants to store the variants that are triggered
+  // by the code component root, to keep the number of hooks stable. We will
+  // always create these values during the canvas component initialization.
+  const [$ccVariants, setDollarCcVariants] = sub.React.useState({});
+  const updateVariant = sub.React.useCallback(
+    (changes: Record<string, boolean>) => {
+      setDollarCcVariants((prev) => {
+        if (!Object.keys(changes).some((k) => prev[k] !== changes[k])) {
+          return prev;
+        }
+        return { ...prev, ...changes };
+      });
+    },
+    []
+  );
+
   const $globalActions = sub.useGlobalActions?.();
 
   const env = {
@@ -952,6 +1015,8 @@ function useCtxFromInternalComponentProps(
       viewState.forceValComponentKeysWithDefaultSlotContents,
     setDollarQueries,
     stateSpecs,
+    $ccVariants,
+    updateVariant: updateVariant,
   };
   return ctx;
 }
@@ -1159,11 +1224,14 @@ function makeEmptyRenderingCtx(viewCtx: ViewCtx, valKey: string): RenderingCtx {
     setDollarQueries: () => {},
     stateSpecs: [],
     plasmicInvalidate: undefined,
+    $ccVariants: {},
+    updateVariant: () => {},
   };
 }
 
 export function renderTplNode(node: TplNode, ctx: RenderingCtx) {
   globalHookCtx.uuidToTplNode.set(node.uuid, new WeakRef(node));
+  globalHookCtx.valKeyToOwnerKey.set(ctx.valKey, ctx.ownerKey);
   return withErrorDisplayFallback(
     ctx.sub.React,
     ctx,
@@ -1206,7 +1274,7 @@ function renderReppable(tplNode: TplNode, ctx: RenderingCtx) {
               ...ctx,
               env: {
                 ...ctx.env,
-                [dataRep.element.name]: item,
+                [getRepetitionElementName(dataRep)]: item,
                 [getRepetitionIndexName(dataRep)]: index,
                 [elementInternalName]: item,
                 [indexInternalName]: index,
@@ -1373,6 +1441,10 @@ function renderTplComponent(
     props[setControlContextDataProp] = ctx.viewCtx.createSetContextDataFn(
       ctx.valKey
     );
+
+    if (isComponentRoot && isTplRootWithCodeComponentVariants(node)) {
+      props["plasmicUpdateVariant"] = ctx.updateVariant;
+    }
 
     if (meta) {
       for (const [prop, propMeta] of Object.entries(meta.meta.props)) {
@@ -1562,6 +1634,7 @@ function renderTplComponent(
       );
     }
   });
+
   if (tplHasRef(node)) {
     const refProp = node.component.codeComponentMeta?.refProp ?? "ref";
     props[refProp] = (ref: any) =>
@@ -1569,6 +1642,7 @@ function renderTplComponent(
         ensure(ctx.nodeNamer?.(node), `Only named tpls can have ref`)
       ] = ref);
   }
+
   if (
     meta &&
     ctx.ownerComponent &&
@@ -1596,6 +1670,67 @@ function renderTplComponent(
       }
     });
   }
+
+  if (isCodeComponent(node.component) && ctx.projectFlags.autoOpen) {
+    const codeComponentSelectionInfo = computedFn(
+      () => {
+        // Ensuring that the depencies are tracked
+        const isInteractive = ctx.viewCtx.studioCtx.isInteractiveMode;
+        const isAutoOpenMode = ctx.viewCtx.studioCtx.isAutoOpenMode;
+
+        // The reason why we are using the focusedTplDeepAncestorPath is because
+        // we can't rely on ValNodes or the dom to determine if a node is selected
+        // or not. Since code components are able to conditonally render content
+        // without our knowledge, even us being the ones that provide the content
+        // for the slot, we can't be sure wether the content is attached to the
+        // React tree. Our option is to rely on the model and based on the tpl nodes
+        // stretch the focused elements to include all the tpls that we are able to find.
+        //
+        // The reason for streching the selection is because code components can
+        // have the slot being proxied by a plasmic component, so we need to make sure
+        // that the selection is also handled through it.
+        const path = ctx.viewCtx.focusedTplAncestorsThroughComponents();
+        const nodeIdx = path?.findIndex((s) => s === node) ?? -1;
+
+        if (isInteractive || !isAutoOpenMode || !path || nodeIdx === -1) {
+          return {
+            id: node.uuid,
+            isSelected: false,
+            selectedSlotName: null,
+          };
+        }
+
+        // We now need to know whether this node is really selected or not since
+        // when dealing with proxied components the same node will be reused for
+        // rendering, we will then look into all tpl node ancestors and if they
+        // are present in the valKey
+        const nodeAncestors = path.slice(nodeIdx);
+        const isSelected = nodeAncestors.every((ancestor) => {
+          return (
+            isSlotSelection(ancestor) || ctx.valKey.includes(ancestor.uuid)
+          );
+        });
+
+        const descendant = nodeIdx > 0 ? path[nodeIdx - 1] : null;
+
+        return {
+          id: node.uuid,
+          isSelected,
+          selectedSlotName:
+            isSelected && isSlotSelection(descendant)
+              ? descendant?.slotParam?.variable.name
+              : null,
+        };
+      },
+      {
+        name: "canvasCodeComponentCtxValue",
+        equals: comparer.structural,
+      }
+    )();
+
+    props[INTERNAL_CC_CANVAS_SELECTION_PROP] = codeComponentSelectionInfo;
+  }
+
   let elt = createPlasmicElementProxy(node, ctx, ComponentImpl, props);
   if (isTplTag(node.parent) && isCodeComponent(node.component)) {
     // When we're rendering a code component, we wrap it in an error boundary,
@@ -1791,9 +1926,7 @@ function computeTplComponentArgs(
       })
       .when(CustomCode, (_expr) => {
         return evalCodeWithEnv(
-          isRealCodeExpr(_expr)
-            ? getCodeExpressionWithFallback(_expr, exprCtx)
-            : _expr.code,
+          getCodeExpressionWithFallback(_expr, exprCtx),
           ctx.env,
           ctx.viewCtx.canvasCtx.win()
         );
@@ -1896,7 +2029,7 @@ function computeTplComponentArgs(
       })
       .when(TemplatedString, (templatedString) =>
         evalCodeWithEnv(
-          asCode(templatedString, exprCtx).code,
+          getRawCode(templatedString, exprCtx),
           ctx.env,
           ctx.viewCtx.canvasCtx.win()
         )
@@ -2965,11 +3098,19 @@ function renderTplSlot(
     ctx.env.$props[varName] === undefined
   ) {
     // Render default contents if we are forced to do so, or if there's nothing
-    // passed in for the corresponding arg
+    // passed in for the corresponding arg.
+    // When the default contents, clear out component specific values to avoid
+    // user confusion.
     if (node.defaultContents.length > 0) {
       contents = node.defaultContents.flatMap((child) =>
         renderTplNode(child, {
           ...ctx,
+          env: {
+            ...ctx.env,
+            $props: {},
+            $queries: {},
+            $state: {},
+          },
           valKey: ctx.valKey + "." + child.uuid,
         })
       );
@@ -3217,12 +3358,12 @@ function createPlasmicElementProxy(
 export interface CanvasFrameInfo {
   // Using constants to avoid pulling in Arenas.ts
   viewMode: "stretch" | "centered";
+  height: number;
+  isHeightAutoDerived: boolean;
   bgColor: string | undefined;
   pageSizeType?: PageSizeType;
-  viewportHeight?: number;
   containerType?: ContainerType;
   defaultInitialPageFrameSize?: number;
-  componentType?: ComponentType;
 }
 
 export const mkCanvas = computedFn(
@@ -3236,15 +3377,8 @@ export const mkCanvas = computedFn(
       return mkUseCanvasObserver(sub, vc)(
         () => {
           const { children, frameInfo } = props;
-          const {
-            viewMode,
-            bgColor,
-            pageSizeType,
-            viewportHeight,
-            containerType,
-            defaultInitialPageFrameSize,
-            componentType,
-          } = frameInfo.get();
+          const { viewMode, height, isHeightAutoDerived, bgColor } =
+            frameInfo.get();
 
           const appUserCtx = vc.studioCtx.currentAppUserCtx;
 
@@ -3260,33 +3394,11 @@ export const mkCanvas = computedFn(
                 "__wab_root--stretch": viewMode === "stretch",
                 "__wab_root--centered": viewMode === "centered",
                 "__wab_root--checkerboard": viewMode === "centered" && !bgColor,
-                "__wab_root--page-stretch":
-                  pageSizeType === "stretch" ||
-                  pageSizeType === "fixed" ||
-                  (viewMode === "stretch" && componentType === "plain"),
+                "__wab_root--page-stretch": isHeightAutoDerived,
               }),
               style: {
-                ...(pageSizeType === "stretch" ||
-                pageSizeType === "fixed" ||
-                (viewMode === "stretch" && componentType === "plain")
-                  ? {
-                      height: "auto",
-                      minHeight: (() => {
-                        if (viewportHeight) {
-                          return viewportHeight;
-                        } else if (containerType === "free") {
-                          return "100vh";
-                        } else if (componentType === "plain") {
-                          return `${defaultInitialPageFrameSize}px`;
-                        } else {
-                          return "100px";
-                        }
-                      })(),
-                    }
-                  : {}),
-                "--viewport-height": viewportHeight
-                  ? viewportHeight + "px"
-                  : "100vh",
+                minHeight: `${height}px`,
+                "--viewport-height": `${height}px`,
               },
             },
             children

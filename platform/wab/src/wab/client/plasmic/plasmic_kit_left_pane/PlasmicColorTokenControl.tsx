@@ -15,97 +15,56 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
-  hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
-  useDollarState,
-  usePlasmicTranslator,
   useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import ListItem from "../../components/ListItem"; // plasmic-import: v31d9_ANqk/component
+import RowItem from "../../components/RowItem"; // plasmic-import: gkx-PRZnjFPo/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
 import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
+import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_new_design_system_former_style_controls_css from "../plasmic_kit_style_controls/plasmic_plasmic_kit_styles_pane.module.css"; // plasmic-import: gYEVvAzCcLMHDVPvuYxkFh/projectcss
-import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import sty from "./PlasmicColorTokenControl.module.css"; // plasmic-import: JyqCOl0Ccj/css
 
-import ComponentsvgIcon from "../plasmic_kit_q_4_icons/icons/PlasmicIcon__Componentsvg"; // plasmic-import: vJVrKlrDD/icon
-import EyeIcon from "../plasmic_kit/PlasmicIcon__Eye"; // plasmic-import: A2FnGYgDh4e3U/icon
+import ComponentsSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ComponentsSvg"; // plasmic-import: coPzxnFyi/icon
 
 createPlasmicElementProxy;
 
-export type PlasmicColorTokenControl__VariantMembers = {
-  isDraggable: "isDraggable";
-  isDragging: "isDragging";
-};
-export type PlasmicColorTokenControl__VariantsArgs = {
-  isDraggable?: SingleBooleanChoiceArg<"isDraggable">;
-  isDragging?: SingleBooleanChoiceArg<"isDragging">;
-};
+export type PlasmicColorTokenControl__VariantMembers = {};
+export type PlasmicColorTokenControl__VariantsArgs = {};
 type VariantPropType = keyof PlasmicColorTokenControl__VariantsArgs;
 export const PlasmicColorTokenControl__VariantProps =
-  new Array<VariantPropType>("isDraggable", "isDragging");
+  new Array<VariantPropType>();
 
 export type PlasmicColorTokenControl__ArgsType = {
-  children?: React.ReactNode;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
   value?: React.ReactNode;
 };
 type ArgPropType = keyof PlasmicColorTokenControl__ArgsType;
 export const PlasmicColorTokenControl__ArgProps = new Array<ArgPropType>(
-  "children",
   "icon",
+  "children",
   "value"
 );
 
 export type PlasmicColorTokenControl__OverridesType = {
   root?: Flex__<"div">;
-  listItem?: Flex__<typeof ListItem>;
-  svg?: Flex__<"svg">;
+  rowItem?: Flex__<typeof RowItem>;
 };
 
 export interface DefaultColorTokenControlProps {
-  children?: React.ReactNode;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
   value?: React.ReactNode;
-  isDraggable?: SingleBooleanChoiceArg<"isDraggable">;
-  isDragging?: SingleBooleanChoiceArg<"isDragging">;
   className?: string;
 }
 
@@ -119,7 +78,16 @@ function PlasmicColorTokenControl__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
@@ -129,32 +97,6 @@ function PlasmicColorTokenControl__RenderFunc(props: {
   const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
-
-  const currentUser = useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
-    () => [
-      {
-        path: "isDraggable",
-        type: "private",
-        variableType: "variant",
-        initFunc: ({ $props, $state, $queries, $ctx }) => $props.isDraggable,
-      },
-      {
-        path: "isDragging",
-        type: "private",
-        variableType: "variant",
-        initFunc: ({ $props, $state, $queries, $ctx }) => $props.isDragging,
-      },
-    ],
-    [$props, $ctx, $refs]
-  );
-  const $state = useDollarState(stateSpecs, {
-    $props,
-    $ctx,
-    $queries: {},
-    $refs,
-  });
 
   const [isRootHover, triggerRootHoverProps] = useTrigger("useHover", {});
   const triggers = {
@@ -180,73 +122,46 @@ function PlasmicColorTokenControl__RenderFunc(props: {
       )}
       data-plasmic-trigger-props={[triggerRootHoverProps]}
     >
-      <ListItem
-        data-plasmic-name={"listItem"}
-        data-plasmic-override={overrides.listItem}
-        actions={
-          <EyeIcon
-            data-plasmic-name={"svg"}
-            data-plasmic-override={overrides.svg}
-            className={classNames(projectcss.all, sty.svg)}
-            role={"img"}
-          />
-        }
+      <RowItem
+        data-plasmic-name={"rowItem"}
+        data-plasmic-override={overrides.rowItem}
         addendum={renderPlasmicSlot({
-          defaultContents: "Blahblah",
+          defaultContents: "Big  Addendum",
           value: args.value,
         })}
-        className={classNames("__wab_instance", sty.listItem, {
-          [sty.listItemisDraggable]: hasVariant(
-            $state,
-            "isDraggable",
-            "isDraggable"
-          ),
-          [sty.listItemisDragging]: hasVariant(
-            $state,
-            "isDragging",
-            "isDragging"
-          ),
-        })}
-        hasMenu={true}
+        className={classNames("__wab_instance", sty.rowItem)}
         icon={renderPlasmicSlot({
           defaultContents: (
-            <ComponentsvgIcon
-              className={classNames(projectcss.all, sty.svg__oaVe8)}
+            <ComponentsSvgIcon
+              className={classNames(projectcss.all, sty.svg__wDxJ4)}
               role={"img"}
             />
           ),
 
           value: args.icon,
         })}
-        isDraggable={
-          hasVariant($state, "isDraggable", "isDraggable") ? true : undefined
-        }
-        isDragging={
-          hasVariant($state, "isDragging", "isDragging") ? true : undefined
-        }
-        showAddendums={triggers.hover_root ? true : undefined}
+        menuSize={"small"}
+        showAddendum={triggers.hover_root ? true : undefined}
       >
         {renderPlasmicSlot({
-          defaultContents: "Item name",
+          defaultContents: "Some very long item label",
           value: args.children,
         })}
-      </ListItem>
+      </RowItem>
     </div>
   ) as React.ReactElement | null;
 }
 
 const PlasmicDescendants = {
-  root: ["root", "listItem", "svg"],
-  listItem: ["listItem", "svg"],
-  svg: ["svg"],
+  root: ["root", "rowItem"],
+  rowItem: ["rowItem"],
 } as const;
 type NodeNameType = keyof typeof PlasmicDescendants;
 type DescendantsType<T extends NodeNameType> =
   (typeof PlasmicDescendants)[T][number];
 type NodeDefaultElementType = {
   root: "div";
-  listItem: typeof ListItem;
-  svg: "svg";
+  rowItem: typeof RowItem;
 };
 
 type ReservedPropsType = "variants" | "args" | "overrides";
@@ -254,6 +169,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicColorTokenControl__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {
@@ -309,8 +225,7 @@ export const PlasmicColorTokenControl = Object.assign(
   makeNodeComponent("root"),
   {
     // Helper components rendering sub-elements
-    listItem: makeNodeComponent("listItem"),
-    svg: makeNodeComponent("svg"),
+    rowItem: makeNodeComponent("rowItem"),
 
     // Metadata about props expected for PlasmicColorTokenControl
     internalVariantProps: PlasmicColorTokenControl__VariantProps,

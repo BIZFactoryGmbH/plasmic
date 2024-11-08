@@ -2,8 +2,15 @@
 // This file is owned by you, feel free to edit as you see fit.
 import { Dropdown, Menu } from "antd";
 
-import { TplNode } from "@/wab/classes";
-import { apiKey } from "@/wab/client/api";
+import CommentPost from "@/wab/client/components/comments/CommentPost";
+import CommentPostForm from "@/wab/client/components/comments/CommentPostForm";
+import { useCommentsCtx } from "@/wab/client/components/comments/CommentsProvider";
+import ThreadComments from "@/wab/client/components/comments/ThreadComments";
+import {
+  getThreadsFromComments,
+  getThreadsFromFocusedComponent,
+  TplComment,
+} from "@/wab/client/components/comments/utils";
 import {
   SidebarModal,
   SidebarModalProvider,
@@ -14,36 +21,19 @@ import {
   PlasmicCommentsTab,
 } from "@/wab/client/plasmic/plasmic_kit_comments/PlasmicCommentsTab";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { xGroupBy, xSymmetricDifference } from "@/wab/common";
-import { ApiComment, CommentThreadId } from "@/wab/shared/ApiSchema";
-import { isTplNamable } from "@/wab/tpls";
-import { sortBy } from "lodash";
-import { observer } from "mobx-react-lite";
+import { CommentThreadId } from "@/wab/shared/ApiSchema";
+import { isTplNamable, summarizeTplNamable } from "@/wab/shared/core/tpls";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { useState } from "react";
-import { mutate } from "swr";
-import { useCommentViews } from "./CommentViews";
 
-export const DEFAULT_NOTIFICATION_LEVEL = "all";
+export const DEFAULT_NOTIFICATION_LEVEL = "mentions-and-replies";
 export const notifyAboutKeyToLabel = {
   all: "All comments",
   "mentions-and-replies": "Replies only",
   none: "None",
 } as const;
 
-// Your component props start with props for variants and slots you defined
-// in Plasmic, but you can add more here, like event handlers that you can
-// attach to named nodes in your component.
-//
-// If you don't want to expose certain variants or slots as a prop, you can use
-// Omit to hide them:
-//
-// interface CommentsTabProps extends Omit<DefaultCommentsTabProps, "hideProps1"|"hideProp2"> {
-//   // etc.
-// }
-//
-// You can also stop extending from DefaultCommentsTabProps altogether and have
-// total control over the props for your component.
 export type CommentsTabProps = DefaultCommentsTabProps;
 
 export const CommentsTab = observer(function CommentsTab(
@@ -61,94 +51,67 @@ export const CommentsTab = observer(function CommentsTab(
     focusedTpl = null;
   }
 
-  const maybeCommentViews = useCommentViews(studioCtx, viewCtx);
+  const currentComponent = studioCtx.currentComponent;
 
-  if (!maybeCommentViews) {
+  const { allComments, selfNotificationSettings, refreshComments } =
+    useCommentsCtx();
+
+  if (!currentComponent) {
     return null;
   }
 
-  const {
-    bundler,
-    allComments,
-    userMap,
-    deriveLabel,
-    renderComment,
-    renderFullThread,
-    renderPostForm,
-    getCurrentVariants,
-  } = maybeCommentViews;
-
-  function renderThreadPreview(threadComments: ApiComment[]) {
+  function renderRootComment(threadComments: TplComment[]) {
     const [comment] = threadComments;
-    const subject = bundler.objByAddr(comment.data.location.subject);
-    const isSelected = viewCtx?.focusedTpl() === subject;
-    const label = deriveLabel(subject);
 
-    const threadId = comment.data.threadId;
+    const threadId = comment.threadId;
 
     return (
-      <>
-        {renderComment(
-          comment,
-          label,
+      <CommentPost
+        comment={comment}
+        subjectLabel={comment.label}
+        isThread
+        repliesLinkLabel={
           threadComments.length > 1
             ? `${threadComments.length - 1} replies`
-            : "Reply",
-          async () => {
-            const ownerComponent = studioCtx
-              .tplMgr()
-              .findComponentContainingTpl(subject as TplNode);
-            if (ownerComponent) {
-              await studioCtx.setStudioFocusOnTpl(
-                ownerComponent,
-                subject as TplNode
-              );
-              studioCtx.centerFocusedFrame(1);
-            }
-            setShownThreadId(threadId);
-          },
-          true
-        )}
-        <SidebarModal
-          show={shownThreadId === threadId}
-          onClose={() => setShownThreadId(undefined)}
-          title={label}
-        >
-          {renderFullThread(threadComments, threadId)}
-        </SidebarModal>
-      </>
+            : "Reply"
+        }
+        onClick={async () => {
+          const ownerComponent = studioCtx
+            .tplMgr()
+            .findComponentContainingTpl(comment.subject);
+          if (ownerComponent) {
+            await studioCtx.setStudioFocusOnTpl(
+              ownerComponent,
+              comment.subject
+            );
+            studioCtx.centerFocusedFrame(1);
+          }
+          setShownThreadId(threadId);
+        }}
+      />
     );
   }
 
-  function isCommentForSelection(comment: ApiComment) {
-    const subject = bundler.objByAddr(comment.data.location.subject);
-    const variants = comment.data.location.variants.map((v) =>
-      bundler.objByAddr(v)
-    );
-    const isSelected =
-      viewCtx?.focusedTpl() === subject &&
-      xSymmetricDifference(variants, getCurrentVariants()).length === 0;
-    return isSelected;
-  }
-  const commentsForSelection = xGroupBy(
-    allComments.filter((comment) => isCommentForSelection(comment)),
-    (comment) => comment.data.threadId
-  );
-  const commentsForOther = xGroupBy(
-    allComments.filter((comment) => !isCommentForSelection(comment)),
-    (comment) => comment.data.threadId
-  );
+  const threads = getThreadsFromComments(allComments);
+
+  const {
+    focusedSubjectThreads,
+    focusedComponentThreads,
+    otherComponentsThreads,
+  } = getThreadsFromFocusedComponent(threads, currentComponent, focusedTpl);
+
+  // We have the focused element threads together, with the focused subject threads first
+  const currentFocusThreads = [
+    ...focusedSubjectThreads,
+    ...focusedComponentThreads,
+  ];
 
   const projectId = studioCtx.siteInfo.id;
   const branchId = studioCtx.branchInfo()?.id;
-  function refresh() {
-    return mutate(apiKey("getComments", projectId, branchId));
-  }
 
-  const selfNotificationSettings =
-    studioCtx.commentsData?.[0].selfNotificationSettings;
   const currentNotificationLevel =
     selfNotificationSettings?.notifyAbout ?? DEFAULT_NOTIFICATION_LEVEL;
+
   return (
     <div
       className={"comments-tab flex-even"}
@@ -182,7 +145,7 @@ export const CommentsTab = observer(function CommentsTab(
                                   notifyAbout: key as any,
                                 }
                               );
-                              await refresh();
+                              await refreshComments();
                             }}
                           >
                             {label}
@@ -201,32 +164,48 @@ export const CommentsTab = observer(function CommentsTab(
             wrap: focusedTpl ? (it) => it : () => null,
           }}
           currentlySelectedSubject={{
-            children: focusedTpl ? deriveLabel(focusedTpl) : undefined,
+            children:
+              focusedTpl && viewCtx
+                ? summarizeTplNamable(
+                    focusedTpl,
+                    viewCtx.effectiveCurrentVariantSetting(focusedTpl).rsh()
+                  )
+                : undefined,
           }}
           currentlySelectedPrefix={
-            commentsForSelection.size > 0
+            currentFocusThreads.length > 0
               ? {}
               : { children: "Comment on selected" }
           }
           currentThreadsList={{
-            children: sortBy(
-              [...commentsForSelection.values()],
-              (comment) => -comment[0].createdAt
-            ).map((threadComments) => renderThreadPreview(threadComments)),
+            children: currentFocusThreads.map((threadComments) =>
+              renderRootComment(threadComments)
+            ),
           }}
           newThreadForm={{
-            render: () => (focusedTpl ? renderPostForm() : null),
+            render: () => (focusedTpl ? <CommentPostForm /> : null),
           }}
           restThreadsSection={{
-            wrap: (node) => commentsForOther.size > 0 && node,
+            wrap: (node) => otherComponentsThreads.length > 0 && node,
           }}
           restThreadsList={{
-            children: sortBy(
-              [...commentsForOther.values()],
-              (comment) => -comment[0].createdAt
-            ).map((threadComments) => renderThreadPreview(threadComments)),
+            children: otherComponentsThreads.map((threadComments) =>
+              renderRootComment(threadComments)
+            ),
           }}
         />
+        {shownThreadId && (
+          <SidebarModal
+            show
+            onClose={() => setShownThreadId(undefined)}
+            title={threads.get(shownThreadId)?.[0]?.label}
+          >
+            <ThreadComments
+              comments={threads.get(shownThreadId) ?? []}
+              threadId={shownThreadId}
+            />
+          </SidebarModal>
+        )}
       </SidebarModalProvider>
     </div>
   );

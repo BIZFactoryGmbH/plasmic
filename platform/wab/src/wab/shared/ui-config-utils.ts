@@ -1,20 +1,27 @@
-import { withoutNils } from "@/wab/common";
 import { arrayReversed } from "@/wab/commons/collections";
-import { HostLessPackageInfo } from "@/wab/devflags";
-import { smartHumanize } from "@/wab/strs";
-import { merge } from "lodash";
 import {
+  ApiPermission,
+  ApiResource,
+  ApiTeam,
+  ApiUser,
   PublicStyleSection,
   StyleSectionVisibilities,
   TemplateSpec,
-} from "./ApiSchema";
+} from "@/wab/shared/ApiSchema";
+import { withoutNils } from "@/wab/shared/common";
+import { HostLessPackageInfo } from "@/wab/shared/devflags";
+import { accessLevelRank } from "@/wab/shared/EntUtil";
 import {
   FRAME_CAP,
   FREE_CONTAINER_CAP,
   HORIZ_CONTAINER_CAP,
   LAYOUT_CONTAINER_CAP,
   VERT_CONTAINER_CAP,
-} from "./Labels";
+} from "@/wab/shared/Labels";
+import { getAccessLevelToResource } from "@/wab/shared/perms";
+import { isEnterprise } from "@/wab/shared/pricing/pricing-utils";
+import { smartHumanize } from "@/wab/shared/strs";
+import { merge } from "lodash";
 
 export const BASIC_ALIASES = [
   "box",
@@ -32,7 +39,9 @@ export const BASIC_ALIASES = [
   "vstack",
 ] as const;
 
-export function makeNiceAliasName(alias: InsertAlias) {
+export const BASIC_ENTITY_ALIASES = ["token"] as const;
+
+export function makeNiceAliasName(alias: InsertAlias | CreateAlias) {
   if (alias === "box") {
     return FREE_CONTAINER_CAP;
   } else if (alias === "hstack") {
@@ -50,6 +59,9 @@ export function makeNiceAliasName(alias: InsertAlias) {
 }
 
 export type InsertBasicAlias = (typeof BASIC_ALIASES)[number];
+
+export type CreateBasicEntityAlias = (typeof BASIC_ENTITY_ALIASES)[number];
+export type CreateAlias = CreateBasicEntityAlias;
 
 export const COMPONENT_ALIASES = [
   "accordion",
@@ -106,6 +118,7 @@ export type InsertComponentAlias = (typeof COMPONENT_ALIASES)[number];
 
 export type InsertAlias = InsertBasicAlias | InsertComponentAlias;
 
+/** These correspond to actual buttons on the left tab strip. */
 export const LEFT_TAB_PANEL_KEYS = [
   "outline",
   "components",
@@ -125,28 +138,49 @@ export const LEFT_TAB_PANEL_KEYS = [
 
 export type LeftTabKey = (typeof LEFT_TAB_PANEL_KEYS)[number];
 
-export const LEFT_TAB_BUTTON_KEYS = [...LEFT_TAB_PANEL_KEYS, "figma"] as const;
-export type LeftTabButtonKey = (typeof LEFT_TAB_BUTTON_KEYS)[number];
+/** These are extra left tab UI parts that can be configured.  */
+export const LEFT_TAB_UI_KEYS = [
+  ...LEFT_TAB_PANEL_KEYS,
+
+  // sections in the images panel can be selectively configured
+  "imagesSection",
+  "iconsSection",
+
+  "figma",
+] as const;
+
+export type LeftTabUiKey = (typeof LEFT_TAB_UI_KEYS)[number];
 
 export const PROJECT_CONFIGS = ["localization", "rename"] as const;
 
 export type ProjectConfig = (typeof PROJECT_CONFIGS)[number];
 
+export type UiAccess = "hidden" | "readable" | "writable";
+export function canRead(...access: UiAccess[]) {
+  return access.every((a) => a === "writable" || a === "readable");
+}
+export function canWrite(...access: UiAccess[]) {
+  return access.every((a) => a === "writable");
+}
+
 export interface UiConfig {
   styleSectionVisibilities?: Partial<StyleSectionVisibilities>;
   canInsertBasics?: Record<InsertBasicAlias, boolean> | boolean;
+  canCreateBasics?: Record<CreateBasicEntityAlias, boolean> | boolean;
   canInsertBuiltinComponent?: Record<InsertComponentAlias, boolean> | boolean;
   canInsertHostless?: Record<string, boolean> | boolean;
+  hideDefaultPageTemplates?: boolean;
   pageTemplates?: TemplateSpec[];
   insertableTemplates?: TemplateSpec[];
-  leftTabs?: Record<LeftTabButtonKey, "hidden" | "readable" | "writable">;
-  projectConfigs?: Record<ProjectConfig, boolean>;
+  leftTabs?: Record<LeftTabUiKey, UiAccess>;
+  projectConfigs?: Record<ProjectConfig, boolean> | boolean;
   brand?: {
     logoImgSrc?: string;
     logoHref?: string;
     logoAlt?: string;
     logoTooltip?: string;
   };
+  canPublishProject?: boolean;
 }
 
 /**
@@ -208,6 +242,7 @@ export function mergeUiConfigs(
       configs.map((c) => c.styleSectionVisibilities)
     ) as Partial<StyleSectionVisibilities>,
     canInsertBasics: mergeBooleanObjs(configs.map((c) => c.canInsertBasics)),
+    canCreateBasics: mergeBooleanObjs(configs.map((c) => c.canCreateBasics)),
     canInsertBuiltinComponent: mergeBooleanObjs(
       configs.map((c) => c.canInsertBuiltinComponent)
     ),
@@ -215,11 +250,15 @@ export function mergeUiConfigs(
       configs.map((c) => c.canInsertHostless)
     ),
     leftTabs: mergeshallowObjs(configs.map((c) => c.leftTabs)),
+    hideDefaultPageTemplates: mergedFirst(
+      configs.map((c) => c.hideDefaultPageTemplates)
+    ),
     pageTemplates: mergedFirst(configs.map((c) => c.pageTemplates)),
     insertableTemplates: mergedFirst(configs.map((c) => c.insertableTemplates)),
-    projectConfigs: mergeshallowObjs(configs.map((c) => c.projectConfigs)),
+    projectConfigs: mergeBooleanObjs(configs.map((c) => c.projectConfigs)),
     // Deep merge `brand`
     brand: merge({}, ...configs.map((c) => c.brand)),
+    canPublishProject: mergedFirst(configs.map((c) => c.canPublishProject)),
   };
 }
 
@@ -314,9 +353,17 @@ export function canInsertAlias(
   }
 }
 
+export function canCreateAlias(config: UiConfig, alias: CreateAlias): boolean {
+  return resolveBooleanPreference(
+    config.canCreateBasics,
+    (basicPrefs) => basicPrefs[alias],
+    true
+  );
+}
+
 export function getLeftTabPermission(
   config: UiConfig,
-  tab: LeftTabButtonKey,
+  tab: LeftTabUiKey,
   opts: {
     isContentCreator: boolean;
   }
@@ -332,10 +379,7 @@ export function getLeftTabPermission(
   return pref ?? defaultAnswer;
 }
 
-const LEFT_TAB_CONTENT_CREATOR_DEFAULT: Record<
-  LeftTabButtonKey,
-  "readable" | "writable" | "hidden"
-> = {
+const LEFT_TAB_CONTENT_CREATOR_DEFAULT: Record<LeftTabUiKey, UiAccess> = {
   outline: "writable",
   components: "hidden",
   tokens: "hidden",
@@ -343,6 +387,8 @@ const LEFT_TAB_CONTENT_CREATOR_DEFAULT: Record<
   fonts: "hidden",
   themes: "hidden",
   images: "writable",
+  iconsSection: "writable",
+  imagesSection: "writable",
   responsiveness: "hidden",
   imports: "hidden",
   versions: "writable",
@@ -355,11 +401,35 @@ const LEFT_TAB_CONTENT_CREATOR_DEFAULT: Record<
 
 export function canEditProjectConfig(
   config: UiConfig,
-  projectConfig: ProjectConfig
+  projectConfig?: ProjectConfig
 ) {
-  if (!config.projectConfigs) {
+  if (typeof config.projectConfigs === "boolean") {
+    return config.projectConfigs;
+  }
+  if (!projectConfig || !config.projectConfigs) {
     return true;
   }
 
   return config.projectConfigs[projectConfig] ?? true;
+}
+
+export function canEditUiConfig(
+  team: ApiTeam | undefined,
+  resource: ApiResource,
+  user: ApiUser | null,
+  perms: ApiPermission[]
+) {
+  if (!team || !isEnterprise(team.featureTier) || user?.isWhiteLabel) {
+    return false;
+  }
+  const accessLevel = getAccessLevelToResource(resource, user, perms);
+  return accessLevelRank(accessLevel) >= accessLevelRank("editor");
+}
+
+export function canPublishProject(config: UiConfig) {
+  if (typeof config.canPublishProject === "boolean") {
+    return config.canPublishProject;
+  }
+
+  return true;
 }

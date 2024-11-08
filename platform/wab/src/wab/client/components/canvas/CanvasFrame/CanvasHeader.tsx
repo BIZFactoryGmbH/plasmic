@@ -1,10 +1,11 @@
-import { ArenaFrame, Component, TplTag, Variant } from "@/wab/classes";
 import { maybeShowContextMenu } from "@/wab/client/components/ContextMenu";
 import {
   makeCanvasVariantContextMenu,
   StyleVariantEditor,
   VariantLabel,
 } from "@/wab/client/components/VariantControls";
+import { CanvasConfigButton } from "@/wab/client/components/canvas/CanvasFrame/CanvasConfigButton";
+import styles from "@/wab/client/components/canvas/CanvasFrame/CanvasHeader.module.scss";
 import { EditableLabelHandles } from "@/wab/client/components/widgets/EditableLabel";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import {
@@ -14,23 +15,34 @@ import {
 import ComponentIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Component";
 import PageIcon from "@/wab/client/plasmic/plasmic_kit_design_system/icons/PlasmicIcon__Page";
 import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { cx } from "@/wab/common";
 import { MaybeWrap } from "@/wab/commons/components/ReactUtil";
-import { isFrameComponent, isPageComponent } from "@/wab/components";
 import {
   AnyArena,
   isComponentArena,
   isMixedArena,
   isPageArena,
 } from "@/wab/shared/Arenas";
-import { getDisplayVariants, isStyleVariant } from "@/wab/shared/Variants";
+import {
+  getDisplayVariants,
+  isStyleVariant,
+  StyleVariant,
+} from "@/wab/shared/Variants";
+import { cx } from "@/wab/shared/common";
+import {
+  isFrameComponent,
+  isPageComponent,
+} from "@/wab/shared/core/components";
+import {
+  ArenaFrame,
+  Component,
+  TplTag,
+  Variant,
+} from "@/wab/shared/model/classes";
 import { Popover, Tooltip } from "antd";
 import cn from "classnames";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { CanvasConfigButton } from "./CanvasConfigButton";
-import styles from "./CanvasHeader.module.scss";
 
 export const CanvasHeader = observer(CanvasHeader_);
 
@@ -223,7 +235,7 @@ export const VariantName = observer(function VariantName_({
             visible={showStyleVariantEditor}
             content={() => (
               <StyleVariantEditor
-                variant={variant}
+                variant={variant as StyleVariant}
                 component={component}
                 onDismiss={() => setShowStyleVariantEditor(false)}
               />

@@ -1,6 +1,13 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
-import { CopyRspackPlugin, DefinePlugin, ProvidePlugin } from "@rspack/core";
+import {
+  Compiler,
+  CopyRspackPlugin,
+  DefinePlugin,
+  ProvidePlugin,
+  RspackPluginInstance,
+} from "@rspack/core";
+import { Source } from "@rspack/core/dist/Template";
 import { execSync } from "child_process";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
@@ -9,9 +16,11 @@ import { StudioHtmlPlugin } from "./tools/studio-html-plugin";
 
 const commitHash = execSync("git rev-parse HEAD").toString().slice(0, 6);
 const buildEnv = process.env.NODE_ENV ?? "production";
-const publicUrl = process.env.PUBLIC_URL || homepage;
-const port = process.env.PORT ? +process.env.PORT : 3003;
-const backendPort = process.env.BACKEND_PORT || 3004;
+const port: number = process.env.PORT ? +process.env.PORT : 3003;
+const backendPort: number = process.env.BACKEND_PORT
+  ? +process.env.BACKEND_PORT
+  : 3004;
+const publicUrl: string = process.env.PUBLIC_URL || homepage;
 
 console.log(`Starting rsbuild...
 - commitHash: ${commitHash}
@@ -20,6 +29,131 @@ console.log(`Starting rsbuild...
 - port: ${port}
 - backendPort: ${backendPort}
 `);
+
+/**
+ * Appends a sourceMappingURL for js files in paths, by looking for
+ * the source map file with the same hash-tagged name
+ */
+class AppendSourceMapWithHash implements RspackPluginInstance {
+  constructor(
+    private opts: {
+      paths: string[];
+    }
+  ) {}
+
+  apply(compiler: Compiler) {
+    const processFile = (filePath: string, assets: Record<string, Source>) => {
+      if (this.shouldProcessFile(filePath)) {
+        const sourceMapFilePath = this.makeSourceMapFilePath(filePath);
+        if (assets[sourceMapFilePath]) {
+          let content = assets[filePath].source();
+          // We use the full path (with publicUrl) because the files may be
+          // loaded from the inner frame and so the relative path would be
+          // wrong.
+          const newMapping = `//# sourceMappingURL=${publicUrl}/${sourceMapFilePath}`;
+          if (content.includes("//# sourceMappingURL=")) {
+            content = content
+              .toString()
+              .replace(/\/\/# sourceMappingURL=[^\s*]*\s*$/, newMapping);
+          } else {
+            content = content.toString() + `\n${newMapping}\n`;
+          }
+          assets[filePath] = {
+            source: () => content,
+            size: () => content.length,
+          };
+        }
+      }
+    };
+
+    // This hook transforms the source map reference in dev mode
+    compiler.hooks.compilation.tap("AppedSourceMapWithHash", (compilation) => {
+      compilation.hooks.processAssets.tapAsync(
+        {
+          name: "AppendSourceMapWithHash",
+          stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+        },
+        (assets, callback) => {
+          Object.keys(assets).forEach((filePath) => {
+            processFile(filePath, assets);
+          });
+          callback();
+        }
+      );
+    });
+
+    // This hook appends the source map reference when doing `yarn build`. Not
+    // sure why this is necessary and why the previous hook alone isn't enough;
+    // with just the previous hook, the source map reference is stripped out
+    // completely for `yarn build`.
+    compiler.hooks.emit.tapAsync(
+      "AppendSourceMapWithHash",
+      (compilation, callback) => {
+        Object.keys(compilation.assets).forEach((filePath) => {
+          processFile(filePath, compilation.assets);
+        });
+        callback();
+      }
+    );
+  }
+
+  private makeSourceMapFilePath(file: string) {
+    const parts = file.split(".");
+    const ext = parts[parts.length - 1];
+    const hash = parts[parts.length - 2];
+    const rest = parts.slice(0, parts.length - 2).join(".");
+    return `${rest}.${ext}.${hash}.map`;
+  }
+
+  private shouldProcessFile(filePath: string) {
+    return (
+      filePath.endsWith(".js") &&
+      this.opts.paths.some((path) => filePath.startsWith(path))
+    );
+  }
+}
+
+/**
+ * rspack when concatenating css files doesn't properly move @import
+ * statements to the top of the file. This is a workaround for that.
+ *
+ * See https://github.com/web-infra-dev/rsbuild/issues/1912
+ */
+class FixCssImports implements RspackPluginInstance {
+  apply(compiler: Compiler) {
+    const fixCssImports = (css: string) => {
+      const re = /@import\s*(url\()?"[^"]*"\)?;/g;
+      const matches = Array.from(css.matchAll(re)).map((m) => m[0]);
+      if (matches.length > 0) {
+        css = css.replaceAll(re, "");
+        css = `${matches.join("")}${css}`;
+      }
+      return css;
+    };
+
+    compiler.hooks.compilation.tap("FixCssImports", (compilation) => {
+      compilation.hooks.processAssets.tapAsync(
+        {
+          name: "FixCssImports",
+          stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE,
+        },
+        (assets, callback) => {
+          Object.keys(assets).forEach((filePath) => {
+            if (filePath.endsWith(".css")) {
+              const css = assets[filePath].source().toString();
+              const fixedCss = fixCssImports(css);
+              assets[filePath] = {
+                source: () => fixedCss,
+                size: () => fixedCss.length,
+              };
+            }
+          });
+          callback();
+        }
+      );
+    });
+  }
+}
 
 export default defineConfig({
   dev: {
@@ -33,11 +167,20 @@ export default defineConfig({
       "/api": `http://localhost:${backendPort}`,
     },
   },
+  source: {
+    entry: {
+      index: "src/wab/client/main.tsx"
+    }
+  },
   output: {
     distPath: {
       root: "build",
     },
     charset: "utf8",
+    sourceMap: {
+      js: isProd ? "source-map" : "cheap-module-source-map",
+      css: true,
+    },
   },
   plugins: [pluginReact()],
   tools: {
@@ -52,7 +195,6 @@ export default defineConfig({
         // file name to use, and it's too much work to expose each
         // one by one. Maybe one day! For now, at least this means all
         // the files are cacheable until the next deployment.
-        // TODO: Add source map transforms (https://gerrit.aws.plasmic.app/c/create-react-app-new/+/12102).
         new CopyRspackPlugin({
           patterns: [
             {
@@ -81,6 +223,15 @@ export default defineConfig({
             },
           ],
         }),
+        new AppendSourceMapWithHash({
+          paths: [
+            "static/sub/build/",
+            "static/live-frame/build/",
+            "static/react-web-bundle/build/",
+            "static/canvas-packages/build/",
+          ],
+        }),
+        new FixCssImports(),
         new HtmlWebpackPlugin({
           template: "../sub/public/static/host.html",
           filename: `static/host.html`,
@@ -102,7 +253,9 @@ export default defineConfig({
           PUBLICPATH: JSON.stringify(publicUrl),
           COMMITHASH: JSON.stringify(commitHash),
           DEPLOYENV: JSON.stringify(buildEnv),
-          "process.env": JSON.stringify(process.env),
+          "process.env": JSON.stringify({
+            NODE_ENV: "production",
+          }),
         }),
         new MonacoWebpackPlugin(),
         new HtmlWebpackPlugin(
@@ -111,9 +264,6 @@ export default defineConfig({
             {
               inject: true,
               template: "./public/index.html",
-              templateParameters: {
-                assetPrefix: publicUrl,
-              },
             },
             buildEnv === "production"
               ? {
@@ -133,7 +283,7 @@ export default defineConfig({
               : undefined
           )
         ),
-        new StudioHtmlPlugin(publicUrl, commitHash),
+        new StudioHtmlPlugin(commitHash),
       ],
     },
   },

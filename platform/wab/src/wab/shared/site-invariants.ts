@@ -1,67 +1,8 @@
-import {
-  ArenaFrame,
-  Component,
-  isKnownArenaFrame,
-  isKnownRenderExpr,
-  isKnownStateChangeHandlerParam,
-  isKnownStateParam,
-  isKnownVariantGroupState,
-  isKnownVariantsRef,
-  isKnownVarRef,
-  Site,
-  StyleToken,
-  TplNode,
-  Variant,
-} from "@/wab/classes";
-import { meta } from "@/wab/classes-metas";
-import { describeValueOrType, ensure, partitions, pathGet } from "@/wab/common";
 import { isTokenRef, tryParseTokenRef } from "@/wab/commons/StyleToken";
-import {
-  allComponentVariants,
-  getComponentDisplayName,
-  isCodeComponent,
-  isContextCodeComponent,
-  isFrameComponent,
-  isPageComponent,
-  isPlumeComponent,
-  tryGetVariantGroupValueFromArg,
-} from "@/wab/components";
 import * as cssPegParser from "@/wab/gen/cssPegParser";
-import { ParamExportType } from "@/wab/lang";
-import { ImportableObject } from "@/wab/project-deps";
-import {
-  allComponents,
-  allGlobalVariants,
-  allImageAssets,
-  allMixins,
-  allStyleTokens,
-  getSiteArenas,
-} from "@/wab/sites";
-import { isPrivateState } from "@/wab/states";
-import { parseCssValue } from "@/wab/styles";
-import {
-  ancestorsUp,
-  isTplComponent,
-  isTplSlot,
-  isTplTag,
-  isTplVariantable,
-  tplChildren,
-} from "@/wab/tpls";
-import L, { uniqBy } from "lodash";
-import { AnyArena, getArenaFrames, isMixedArena } from "./Arenas";
-import {
-  componentToUsedImageAssets,
-  componentToUsedMixins,
-  componentToUsedTokens,
-  flattenComponent,
-} from "./cached-selectors";
-import { instUtil } from "./core/InstUtil";
-import { createNodeCtx, walkModelTree } from "./core/model-tree-util";
-import { isValidStyleProp } from "./core/style-props";
-import { MIXIN_LOWER } from "./Labels";
-import { maybeComputedFn } from "./mobx-util";
-import { modelConflictsMeta } from "./site-diffs/model-conflicts-meta";
-import { getTplSlot, isSlot } from "./SlotUtils";
+import { AnyArena, getArenaFrames, isMixedArena } from "@/wab/shared/Arenas";
+import { MIXIN_LOWER } from "@/wab/shared/Labels";
+import { getTplSlot, isSlot } from "@/wab/shared/SlotUtils";
 import {
   isBaseRuleVariant,
   isBaseVariant,
@@ -72,7 +13,77 @@ import {
   isStyleVariant,
   splitVariantCombo,
   tryGetVariantSetting,
-} from "./Variants";
+} from "@/wab/shared/Variants";
+import {
+  componentToUsedImageAssets,
+  componentToUsedMixins,
+  componentToUsedTokens,
+  flattenComponent,
+} from "@/wab/shared/cached-selectors";
+import {
+  describeValueOrType,
+  ensure,
+  partitions,
+  pathGet,
+} from "@/wab/shared/common";
+import {
+  ContextCodeComponent,
+  allComponentVariants,
+  getComponentDisplayName,
+  isCodeComponent,
+  isContextCodeComponent,
+  isFrameComponent,
+  isPageComponent,
+  isPlasmicComponent,
+  isPlumeComponent,
+  tryGetVariantGroupValueFromArg,
+} from "@/wab/shared/core/components";
+import { ParamExportType } from "@/wab/shared/core/lang";
+import { ImportableObject } from "@/wab/shared/core/project-deps";
+import {
+  allComponents,
+  allGlobalVariants,
+  allImageAssets,
+  allMixins,
+  allStyleTokens,
+  getSiteArenas,
+} from "@/wab/shared/core/sites";
+import { isPrivateState } from "@/wab/shared/core/states";
+import { isValidStyleProp } from "@/wab/shared/core/style-props";
+import { parseCssValue } from "@/wab/shared/core/styles";
+import {
+  ancestorsUp,
+  isTplComponent,
+  isTplSlot,
+  isTplTag,
+  isTplVariantable,
+  tplChildren,
+} from "@/wab/shared/core/tpls";
+import { maybeComputedFn } from "@/wab/shared/mobx-util";
+import { instUtil } from "@/wab/shared/model/InstUtil";
+import {
+  ArenaFrame,
+  Component,
+  Site,
+  StyleToken,
+  TplNode,
+  Variant,
+  isKnownArenaFrame,
+  isKnownRenderExpr,
+  isKnownStateChangeHandlerParam,
+  isKnownStateParam,
+  isKnownVarRef,
+  isKnownVariantGroupState,
+  isKnownVariantsRef,
+} from "@/wab/shared/model/classes";
+import { meta } from "@/wab/shared/model/classes-metas";
+import {
+  createNodeCtx,
+  walkModelTree,
+} from "@/wab/shared/model/model-tree-util";
+import { modelConflictsMeta } from "@/wab/shared/site-diffs/model-conflicts-meta";
+import * as Sentry from "@sentry/browser";
+import L, { uniqBy } from "lodash";
 
 export class InvariantError extends Error {
   constructor(message: string, public data?: any) {
@@ -90,11 +101,23 @@ export function assertSiteInvariants(site: Site) {
 }
 
 export function* genSiteErrors(site: Site) {
+  const componentNames = new Set<string>();
   componentToVariants = new WeakMap();
   siteToGlobalVariants = new WeakMap();
   siteToValidRefs = new WeakMap();
   for (const component of site.components) {
     yield* genComponentErrors(site, component);
+    // Only count Plasmic components that are not sub components
+    if (!isPlasmicComponent(component) || component.superComp) {
+      continue;
+    }
+    if (componentNames.has(component.name)) {
+      Sentry.captureException(
+        new InvariantError(`Duplicated component name: ${component.name}`)
+      );
+    } else {
+      componentNames.add(component.name);
+    }
   }
 
   yield* genGlobalContextErrors(site);
@@ -928,7 +951,7 @@ function* genGlobalContextErrors(site: Site) {
   }
   const seenComponents: Set<string> = new Set();
   for (const gc of globalContextsTpls) {
-    if (!registeredGlobalContexts.has(gc)) {
+    if (!registeredGlobalContexts.has(gc as ContextCodeComponent)) {
       yield new InvariantError(
         `Global Context ${gc.name} has tpl but no corresponding registered component`
       );

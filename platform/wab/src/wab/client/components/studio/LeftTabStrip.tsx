@@ -1,55 +1,55 @@
 // eslint-disable-next-line no-restricted-imports
 import { UU } from "@/wab/client/cli-routes";
 import { showTemporaryInfo } from "@/wab/client/components/quick-modals";
+import { AnonymousAvatar, Avatar } from "@/wab/client/components/studio/Avatar";
+import { FigmaModalContent } from "@/wab/client/components/studio/FigmaModalContent";
+import LeftTabButton from "@/wab/client/components/studio/LeftTabButton";
 import GearIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Gear";
 import MixinIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Mixin";
 import SlackIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Slack";
 import TreeIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Tree";
 import WandIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Wand";
 import KeyboardIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__Keyboard";
+import BooksvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__BookSvg";
+import ClocksvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__ClockSvg";
+import ComponentssvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__ComponentsSvg";
+import ComponentsvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__ComponentSvg";
+import DevicessvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__DevicesSvg";
+import DotsHorizontalCirclesvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__DotsHorizontalCircleSvg";
+import DownloadsvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__DownloadSvg";
+import FigmasvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__FigmaSvg";
 import FontFamily2SvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__FontFamily2Svg";
+import HelpCirclesvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__HelpCircleSvg";
+import HelpsvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__HelpSvg";
+import MessagesvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__MessageSvg";
+import Paintbrush2SvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__Paintbrush2Svg";
+import PhotosvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__PhotoSvg";
+import WarningTrianglesvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__WarningTriangleSvg";
 import IconIcon from "@/wab/client/plasmic/plasmic_kit_left_pane/icons/PlasmicIcon__Icon";
 import {
   DefaultLeftTabStripProps,
   PlasmicLeftTabStrip,
 } from "@/wab/client/plasmic/plasmic_kit_left_pane/PlasmicLeftTabStrip";
 import DiamondsIcon from "@/wab/client/plasmic/plasmic_kit_merge_flow/icons/PlasmicIcon__Diamonds";
-import ComponentsvgIcon from "@/wab/client/plasmic/plasmic_kit_q_4_icons/icons/PlasmicIcon__Componentsvg";
-import DevicessvgIcon from "@/wab/client/plasmic/plasmic_kit_q_4_icons/icons/PlasmicIcon__Devicessvg";
-import Paintbrush2SvgIcon from "@/wab/client/plasmic/plasmic_kit_q_4_icons/icons/PlasmicIcon__Paintbrush2Svg";
-import BooksvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Booksvg";
-import ClocksvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Clocksvg";
-import ComponentssvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Componentssvg";
-import DotsHorizontalCirclesvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__DotsHorizontalCirclesvg";
-import DownloadsvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Downloadsvg";
-import FigmasvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Figmasvg";
-import HelpCirclesvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__HelpCirclesvg";
-import HelpsvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Helpsvg";
-import MessagesvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Messagesvg";
-import PhotosvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Photosvg";
-import WarningTrianglesvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__WarningTrianglesvg";
 import { PlayerData } from "@/wab/client/studio-ctx/multiplayer-ctx";
 import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { TutorialEventsType } from "@/wab/client/tours/tutorials/tutorials-events";
-import { spawn, unexpected } from "@/wab/common";
 import { Stated } from "@/wab/commons/components/Stated";
-import { DEVFLAGS } from "@/wab/devflags";
+import { spawn, unexpected } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { BASE_URL } from "@/wab/shared/discourse/config";
 import { MIXINS_CAP } from "@/wab/shared/Labels";
 import {
   getLeftTabPermission,
-  LeftTabButtonKey,
   LeftTabKey,
+  LeftTabUiKey,
 } from "@/wab/shared/ui-config-utils";
 import { Popover } from "antd";
 import classNames from "classnames";
 import { omit } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { CSSProperties, ReactNode } from "react";
-import { AnonymousAvatar, Avatar } from "./Avatar";
-import { FigmaModalContent } from "./FigmaModalContent";
-import LeftTabButton from "./LeftTabButton";
 
 interface LeftTabStripProps extends DefaultLeftTabStripProps {
   useVersionsCTA: boolean;
@@ -86,7 +86,7 @@ const LeftTabStrip = observer(function LeftTabStrip(props: LeftTabStripProps) {
   const isWhiteLabelUser = studioCtx.appCtx.isWhiteLabelUser();
   const uiConfig = studioCtx.getCurrentUiConfig();
 
-  const canViewTab = (tab: LeftTabButtonKey) => {
+  const canViewTab = (tab: LeftTabUiKey) => {
     return (
       getLeftTabPermission(uiConfig, tab, {
         isContentCreator: contentEditorMode,
@@ -434,7 +434,10 @@ Help
       )}
       players={{
         render: (_props) => {
-          return <Players {..._props} studioCtx={studioCtx} />;
+          // Exclude 'children' from props to avoid React warnings about missing keys,
+          // as they are already omitted inside Player and not needed here.
+          const { children: _children, ...otherProps } = _props;
+          return <Players {...otherProps} studioCtx={studioCtx} />;
         },
       }}
       avatar={{

@@ -1,9 +1,7 @@
 /** @format */
 
-import { ensure, uncheckedCast } from "@/wab/common";
 import { latestTag } from "@/wab/commons/semver";
 import { encodeUriParams } from "@/wab/commons/urls";
-import { DEVFLAGS } from "@/wab/devflags";
 import {
   ArenaType,
   CmsDatabaseId,
@@ -13,16 +11,18 @@ import {
   MainBranchId,
 } from "@/wab/shared/ApiSchema";
 import { isArenaType } from "@/wab/shared/Arenas";
-import { getPublicUrl } from "@/wab/urls";
+import { ensure, uncheckedCast } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { getPublicUrl } from "@/wab/shared/urls";
 import {
-  createPath,
   History,
   Location,
   LocationDescriptor,
   LocationDescriptorObject,
+  createPath,
 } from "history";
 import L, { trimStart } from "lodash";
-import { compile, PathFunction } from "path-to-regexp";
+import { PathFunction, compile } from "path-to-regexp";
 import { match as Match, matchPath, useRouteMatch } from "react-router-dom";
 import * as url from "url";
 
@@ -239,7 +239,6 @@ export class RouteSet {
   register = new R("/register");
   plasmicInit = new R("/auth/plasmic-init/:initToken");
   currentUser = new R("/api/v1/auth/self");
-  userSettings = new R("/self/settings");
   privacy = new R("https://www.plasmic.app/privacy", { noCompile: true });
   tos = new R("https://www.plasmic.app/tos", { noCompile: true });
   survey = new R("/survey");
@@ -255,6 +254,14 @@ export class RouteSet {
 }
 
 export const UU = new RouteSet();
+
+export function isProjectPath(pathname) {
+  return !!(
+    UU.project.parse(pathname) ||
+    UU.projectSlug.parse(pathname) ||
+    UU.projectBranchArena.parse(pathname)
+  );
+}
 
 export const U: {
   [P in keyof typeof UU]: (typeof UU)[P] extends R<infer X>

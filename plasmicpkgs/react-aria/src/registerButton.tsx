@@ -1,36 +1,62 @@
 import React from "react";
 import type { ButtonProps } from "react-aria-components";
 import { Button } from "react-aria-components";
+import { getCommonProps } from "./common";
 import {
   CodeComponentMetaOverrides,
   makeComponentName,
   Registerable,
   registerComponentHelper,
-  ValueObserver,
 } from "./utils";
+import { pickAriaComponentVariants, WithVariants } from "./variant-utils";
 
-interface BaseButtonProps extends ButtonProps {
+const BUTTON_VARIANTS = [
+  "hovered" as const,
+  "pressed" as const,
+  "focused" as const,
+  "focusVisible" as const,
+  "disabled" as const,
+];
+
+const { variants, withObservedValues } =
+  pickAriaComponentVariants(BUTTON_VARIANTS);
+
+interface BaseButtonProps
+  extends ButtonProps,
+    WithVariants<typeof BUTTON_VARIANTS> {
+  children: React.ReactNode;
+  resetsForm?: boolean;
   submitsForm?: boolean;
-  onFocusVisibleChange?: (isFocusVisible: boolean) => void;
 }
 
-export function BaseButton(props: BaseButtonProps) {
-  const { submitsForm, onFocusVisibleChange, children, ...rest } = props;
+const BaseButton = React.forwardRef(
+  (props: BaseButtonProps, ref: React.Ref<HTMLButtonElement>) => {
+    const { submitsForm, resetsForm, children, plasmicUpdateVariant, ...rest } =
+      props;
 
-  return (
-    <Button type={submitsForm ? "submit" : "button"} {...rest}>
-      {({ isFocusVisible }) => (
-        <>
-          <ValueObserver
-            value={isFocusVisible}
-            onChange={onFocusVisibleChange}
-          />
-          {children}
-        </>
-      )}
-    </Button>
-  );
-}
+    const type = submitsForm ? "submit" : resetsForm ? "reset" : "button";
+
+    return (
+      <Button type={type} ref={ref} {...rest}>
+        {({ isHovered, isPressed, isFocused, isFocusVisible, isDisabled }) =>
+          withObservedValues(
+            children,
+            {
+              hovered: isHovered,
+              pressed: isPressed,
+              focused: isFocused,
+              focusVisible: isFocusVisible,
+              disabled: isDisabled,
+            },
+            plasmicUpdateVariant
+          )
+        }
+      </Button>
+    );
+  }
+);
+
+export const BUTTON_COMPONENT_NAME = makeComponentName("button");
 
 export function registerButton(
   loader?: Registerable,
@@ -40,77 +66,53 @@ export function registerButton(
     loader,
     BaseButton,
     {
-      name: makeComponentName("button"),
-      displayName: "BaseButton",
-      importPath: "@plasmicpkgs/react-aria/registerButton",
+      name: BUTTON_COMPONENT_NAME,
+      displayName: "Aria Button",
+      importPath: "@plasmicpkgs/react-aria/skinny/registerButton",
       importName: "BaseButton",
+      variants,
+      defaultStyles: {
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: "black",
+        padding: "2px 10px",
+        cursor: "pointer",
+      },
       props: {
+        ...getCommonProps<BaseButtonProps>("button", [
+          "autoFocus",
+          "isDisabled",
+          "aria-label",
+        ]),
         children: {
           type: "slot",
-          mergeWithParent: true as any,
-        },
-        isDisabled: {
-          displayName: "Disabled",
-          type: "boolean",
-          description: "Whether the button is disabled",
-          defaultValueHint: false,
+          mergeWithParent: true,
+          defaultValue: {
+            type: "text",
+            value: "Button",
+          },
         },
         submitsForm: {
           type: "boolean",
           displayName: "Submits form?",
           defaultValueHint: false,
+          hidden: (props) => Boolean(props.resetsForm),
           description:
             "Whether clicking this button should submit the enclosing form.",
           advanced: true,
         },
-        "aria-label": {
-          type: "string",
-          displayName: "Aria Label",
+        resetsForm: {
+          type: "boolean",
+          displayName: "Resets form?",
+          defaultValueHint: false,
+          hidden: (props) => Boolean(props.submitsForm),
           description:
-            "Label for this button, if no visible label is used (e.g. an icon only button)",
+            "Whether clicking this button should reset the enclosing form.",
           advanced: true,
         },
         onPress: {
           type: "eventHandler",
           argTypes: [{ name: "event", type: "object" }],
-        },
-        onHoverChange: {
-          type: "eventHandler",
-          argTypes: [{ name: "isHovered", type: "boolean" }],
-        },
-        onPressChange: {
-          type: "eventHandler",
-          argTypes: [{ name: "isPressed", type: "boolean" }],
-        },
-        onFocusChange: {
-          type: "eventHandler",
-          argTypes: [{ name: "isFocused", type: "boolean" }],
-        },
-        onFocusVisibleChange: {
-          type: "eventHandler",
-          argTypes: [{ name: "isFocusVisible", type: "boolean" }],
-        },
-      },
-      states: {
-        isHovered: {
-          type: "readonly",
-          onChangeProp: "onHoverChange",
-          variableType: "boolean",
-        },
-        isPressed: {
-          type: "readonly",
-          onChangeProp: "onPressChange",
-          variableType: "boolean",
-        },
-        isFocused: {
-          type: "readonly",
-          onChangeProp: "onFocusChange",
-          variableType: "boolean",
-        },
-        isFocusVisible: {
-          type: "readonly",
-          onChangeProp: "onFocusVisibleChange",
-          variableType: "boolean",
         },
       },
       trapsFocus: true,

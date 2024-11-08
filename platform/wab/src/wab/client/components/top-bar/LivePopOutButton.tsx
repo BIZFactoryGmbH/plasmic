@@ -1,10 +1,12 @@
-import { ComponentArena } from "@/wab/classes";
 import {
   getUrlsForLiveMode,
   isLiveMode,
   usePreviewCtx,
 } from "@/wab/client/components/live/PreviewCtx";
-import { useLivePreview } from "@/wab/client/components/live/PreviewFrame";
+import {
+  useFrameBgColor,
+  useLivePreview,
+} from "@/wab/client/components/live/PreviewFrame";
 import { untilClosed } from "@/wab/client/dom-utils";
 import {
   DefaultLivePopOutButtonProps,
@@ -12,19 +14,14 @@ import {
 } from "@/wab/client/plasmic/plasmic_kit_top_bar/PlasmicLivePopOutButton";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { useForceUpdate } from "@/wab/client/useForceUpdate";
-import { spawn } from "@/wab/common";
-import { isPageComponent } from "@/wab/components";
+import { spawn } from "@/wab/shared/common";
 import { getFrameHeight } from "@/wab/shared/Arenas";
-import {
-  getCustomFrameForActivatedVariants,
-  getFrameForActivatedVariants,
-} from "@/wab/shared/component-arenas";
-import { getPublicUrl } from "@/wab/urls";
-import { observer } from "mobx-react-lite";
+import { getPublicUrl } from "@/wab/shared/urls";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { useHistory } from "react-router";
 
-interface LivePopOutButtonProps extends DefaultLivePopOutButtonProps {}
+type LivePopOutButtonProps = DefaultLivePopOutButtonProps;
 
 const LivePopOutButton = observer(function LivePopOutButton(
   props: LivePopOutButtonProps
@@ -131,38 +128,20 @@ const LivePopOutButton = observer(function LivePopOutButton(
     };
   }, [curPopup]);
 
-  function setFrameColor(
-    frame: React.MutableRefObject<Window | null>,
-    color: string | null | undefined
-  ) {
-    if (frame?.current?.document?.body?.style) {
-      frame.current.document.body.style.backgroundColor = color ?? "";
-    }
-  }
+  const setFrameColor = React.useCallback(
+    (
+      frame: React.MutableRefObject<Window | null>,
+      color: string | null | undefined
+    ) => {
+      if (frame?.current?.document?.body?.style) {
+        frame.current.document.body.style.backgroundColor = color ?? "";
+      }
+    },
+    []
+  );
 
-  const adjustBackgroundColor = () => {
-    if (!previewCtx.component || isPageComponent(previewCtx.component)) {
-      setFrameColor(frameRef, null);
-      return;
-    }
-    const componentArena = previewCtx.studioCtx.getDedicatedArena(
-      previewCtx.component
-    ) as ComponentArena | undefined;
-    if (!componentArena) {
-      setFrameColor(frameRef, null);
-      return;
-    }
-    const activeVariants = new Set(previewCtx.getVariants());
-    const currentFrame =
-      getCustomFrameForActivatedVariants(componentArena, activeVariants) ??
-      getFrameForActivatedVariants(componentArena, activeVariants);
+  useFrameBgColor(frameRef, previewCtx, setFrameColor);
 
-    setFrameColor(frameRef, currentFrame?.bgColor);
-  };
-
-  React.useEffect(() => {
-    adjustBackgroundColor();
-  }, [previewCtx.studioCtx.focusedFrame()?.bgColor, frameRef.current]);
   return (
     <PlasmicLivePopOutButton
       {...props}

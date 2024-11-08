@@ -1,9 +1,8 @@
-import { Param, TplComponent } from "@/wab/classes";
 import { internalCanvasElementProps } from "@/wab/shared/canvas-constants";
 import {
+  SerializerBaseContext,
   getExternalParams,
   serializeParamType,
-  SerializerBaseContext,
 } from "@/wab/shared/codegen/react-p";
 import {
   getExportedComponentName,
@@ -15,9 +14,10 @@ import {
   paramToVarName,
   toVarName,
 } from "@/wab/shared/codegen/util";
+import { Param, TplComponent } from "@/wab/shared/model/classes";
+import { PlumePlugin } from "@/wab/shared/plume/plume-registry";
+import { makeComponentImportPath } from "@/wab/shared/plume/plume-utils";
 import { omit, pick } from "lodash";
-import { PlumePlugin } from "./plume-registry";
-import { makeComponentImportPath } from "./plume-utils";
 
 const RESERVED_PROPS = [
   "isDisabled",

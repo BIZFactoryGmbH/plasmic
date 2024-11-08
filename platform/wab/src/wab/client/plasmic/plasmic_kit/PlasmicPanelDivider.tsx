@@ -13,25 +13,14 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
+  Flex as Flex__,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -51,7 +40,7 @@ type ArgPropType = keyof PlasmicPanelDivider__ArgsType;
 export const PlasmicPanelDivider__ArgProps = new Array<ArgPropType>();
 
 export type PlasmicPanelDivider__OverridesType = {
-  panelDivider?: p.Flex<"div">;
+  panelDivider?: Flex__<"div">;
 };
 
 export interface DefaultPanelDividerProps {
@@ -68,18 +57,25 @@ function PlasmicPanelDivider__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
-
-  const currentUser = p.useCurrentUser?.() || {};
 
   return (
     <div
@@ -115,6 +111,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicPanelDivider__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

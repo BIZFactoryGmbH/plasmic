@@ -1,4 +1,7 @@
-import { Component, isKnownVariant, Variant } from "@/wab/classes";
+import VariantRow from "@/wab/client/components/canvas/VariantsBar/VariantRow";
+import styles from "@/wab/client/components/canvas/VariantsBar/VariantsDrawer.module.scss";
+import VariantsGroupLabel from "@/wab/client/components/canvas/VariantsBar/VariantsGroupLabel";
+import VariantsSectionDivider from "@/wab/client/components/canvas/VariantsBar/VariantsSectionDivider";
 import { Matcher } from "@/wab/client/components/view-common";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import { useRefMap } from "@/wab/client/hooks/useRefMap";
@@ -8,8 +11,11 @@ import {
   PlasmicVariantsDrawer,
 } from "@/wab/client/plasmic/plasmic_kit_variants_bar/PlasmicVariantsDrawer";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { mod, partitions, spawn, xGroupBy } from "@/wab/common";
+import { isCodeComponentVariant } from "@/wab/shared/code-components/variants";
+import { mod, partitions, spawn, xGroupBy } from "@/wab/shared/common";
+import { isTplTag } from "@/wab/shared/core/tpls";
 import { VARIANTS_LOWER } from "@/wab/shared/Labels";
+import { Component, isKnownVariant, Variant } from "@/wab/shared/model/classes";
 import {
   getAllVariantsForTpl,
   isComponentStyleVariant,
@@ -20,18 +26,14 @@ import {
   isStyleVariant,
   makeVariantName,
 } from "@/wab/shared/Variants";
-import { isTplTag } from "@/wab/tpls";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import VariantRow from "./VariantRow";
-import styles from "./VariantsDrawer.module.scss";
-import VariantsGroupLabel from "./VariantsGroupLabel";
-import VariantsSectionDivider from "./VariantsSectionDivider";
 import defer = setTimeout;
 
 const elementInteractionsLabel = "Element Interactions";
-const interactionsLabel = "Component Interactions";
+const styleVariantsLabel = "Component Interactions";
+const codeComponentVariantsLabel = "Registered Variants";
 const baseLabel = "Base";
 
 interface VariantsDrawerProps extends DefaultVariantsDrawerProps {
@@ -85,13 +87,18 @@ function VariantsDrawer_({
       v.parent !== studioCtx.site.activeScreenVariantGroup
     ) {
       return false;
+    } else if (isCodeComponentVariant(v)) {
+      return v.selectors?.some(
+        (sel) =>
+          matcher.matches(sel) || matcher.matches(codeComponentVariantsLabel)
+      );
     } else if (isStyleVariant(v)) {
       return v.selectors?.some(
         (sel) =>
           matcher.matches(sel) ||
           (isPrivateStyleVariant(v) &&
             matcher.matches(elementInteractionsLabel)) ||
-          matcher.matches(interactionsLabel)
+          matcher.matches(styleVariantsLabel)
       );
     } else {
       return (
@@ -115,15 +122,12 @@ function VariantsDrawer_({
     !hideScreen
   );
 
-  const flattenedVariants = useMemo(
+  const flattenedVariants: (string | Variant | undefined)[] = useMemo(
     () => groupedVariants.flatMap((it) => (it.isBase ? "base" : it.variants)),
     [groupedVariants, shouldShowBase]
   );
   const variantIndices = useMemo(
-    () =>
-      new Map<Variant, number>(
-        flattenedVariants.map((it, index) => [it, index])
-      ),
+    () => new Map(flattenedVariants.map((v, index) => [v, index])),
     [flattenedVariants]
   );
 
@@ -173,7 +177,10 @@ function VariantsDrawer_({
       }
       case "Enter":
       case "Space": {
-        const currentHighlightedVariant = flattenedVariants[highlightIndex];
+        const currentHighlightedVariant = flattenedVariants[highlightIndex] as
+          | Variant
+          | string
+          | undefined;
         if (currentHighlightedVariant) {
           handleVariantClick(currentHighlightedVariant)();
         }
@@ -221,6 +228,7 @@ function VariantsDrawer_({
     makeVariantName({
       variant,
       ...(isTplTag(focusedTpl) && { focusedTag: focusedTpl }),
+      site: studioCtx.site,
     })!;
 
   useEffect(() => {
@@ -266,8 +274,9 @@ function VariantsDrawer_({
               {baseLabel}
             </VariantRow>
           ) : (
-            variants.map((variant) => (
+            variants?.map((variant) => (
               <VariantRow
+                key={variant.uuid}
                 ref={getVariantRowRef(variant)}
                 isRecording={targetedVariantsSet.has(variant)}
                 highlight={flattenedVariants[highlightIndex] === variant}
@@ -303,11 +312,13 @@ function useGroupedVariants(
 ) {
   const [
     privateStyleVariants,
+    codeComponentVariants,
     compStyleVariants,
     compVariants,
     globalVariants,
   ] = partitions(filteredVariants, [
     isPrivateStyleVariant,
+    isCodeComponentVariant,
     isComponentStyleVariant,
     (v) => !isGlobalVariant(v),
   ]);
@@ -343,7 +354,17 @@ function useGroupedVariants(
           withDivider: true,
           groupLabel: (
             <>
-              {interactionsLabel}
+              {codeComponentVariantsLabel}
+              <Icon icon={PlasmicIcon__Bolt} />
+            </>
+          ),
+          variants: codeComponentVariants,
+        },
+        {
+          withDivider: true,
+          groupLabel: (
+            <>
+              {styleVariantsLabel}
               <Icon icon={PlasmicIcon__Bolt} />
             </>
           ),
@@ -372,6 +393,7 @@ function useGroupedVariants(
       ].filter((it: any) => it.show || it.variants?.length),
     [
       privateStyleVariants,
+      codeComponentVariants,
       compStyleVariants,
       compVariants,
       globalVariants,

@@ -13,25 +13,20 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
   SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
+  Stack as Stack__,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -39,7 +34,7 @@ import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_token
 import projectcss from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicChip.module.css"; // plasmic-import: jW885tExwE/css
 
-import ClosesvgIcon from "../q_4_icons/icons/PlasmicIcon__Closesvg"; // plasmic-import: DhvEHyCHT/icon
+import CloseSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__CloseSvg"; // plasmic-import: DhvEHyCHT/icon
 
 createPlasmicElementProxy;
 
@@ -64,8 +59,8 @@ type ArgPropType = keyof PlasmicChip__ArgsType;
 export const PlasmicChip__ArgProps = new Array<ArgPropType>("children");
 
 export type PlasmicChip__OverridesType = {
-  root?: p.Flex<"button">;
-  closeIcon?: p.Flex<"svg">;
+  root?: Flex__<"button">;
+  closeIcon?: Flex__<"svg">;
 };
 
 export interface DefaultChipProps {
@@ -85,20 +80,27 @@ function PlasmicChip__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "deletable",
@@ -113,9 +115,10 @@ function PlasmicChip__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.size,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -123,7 +126,7 @@ function PlasmicChip__RenderFunc(props: {
   });
 
   return (
-    <p.Stack
+    <Stack__
       as={"button"}
       data-plasmic-name={"root"}
       data-plasmic-override={overrides.root}
@@ -149,7 +152,7 @@ function PlasmicChip__RenderFunc(props: {
         }
       )}
     >
-      {p.renderPlasmicSlot({
+      {renderPlasmicSlot({
         defaultContents: (
           <div
             className={classNames(
@@ -161,6 +164,7 @@ function PlasmicChip__RenderFunc(props: {
             {"Chip"}
           </div>
         ),
+
         value: args.children,
         className: classNames(sty.slotTargetChildren, {
           [sty.slotTargetChildrendeletable]: hasVariant(
@@ -176,7 +180,7 @@ function PlasmicChip__RenderFunc(props: {
         }),
       })}
       {(hasVariant($state, "deletable", "deletable") ? true : false) ? (
-        <ClosesvgIcon
+        <CloseSvgIcon
           data-plasmic-name={"closeIcon"}
           data-plasmic-override={overrides.closeIcon}
           className={classNames(projectcss.all, sty.closeIcon, {
@@ -189,7 +193,7 @@ function PlasmicChip__RenderFunc(props: {
           role={"img"}
         />
       ) : null}
-    </p.Stack>
+    </Stack__>
   ) as React.ReactElement | null;
 }
 
@@ -210,6 +214,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicChip__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

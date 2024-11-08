@@ -1,3 +1,5 @@
+import ComponentListItem from "@/wab/client/components/docs/ComponentListItem";
+import { useDocsPortalCtx } from "@/wab/client/components/docs/DocsPortalCtx";
 import { Matcher } from "@/wab/client/components/view-common";
 import {
   DefaultComponentsPanelProps,
@@ -7,14 +9,12 @@ import {
   isCodeComponent,
   isFrameComponent,
   isSubComponent,
-} from "@/wab/components";
+} from "@/wab/shared/core/components";
 import { Alert } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import ComponentListItem from "./ComponentListItem";
-import { useDocsPortalCtx } from "./DocsPortalCtx";
 
-interface ComponentsPanelProps extends DefaultComponentsPanelProps {}
+type ComponentsPanelProps = DefaultComponentsPanelProps;
 
 const ComponentsPanel = observer(function ComponentsPanel(
   props: ComponentsPanelProps

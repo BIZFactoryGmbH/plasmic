@@ -1,3 +1,4 @@
+import type { RepeatedElementFnType } from "@/wab/client/components/canvas/repeatedElement";
 import type * as PlasmicDataSourcesContext from "@plasmicapp/data-sources-context";
 import type {
   DataContext,
@@ -17,7 +18,6 @@ import type ReactDOM from "react-dom";
 import type ResizeObserver from "resize-observer-polyfill";
 import type * as slate from "slate";
 import type * as slateReact from "slate-react";
-import type { RepeatedElementFnType } from "./repeatedElement";
 
 export const tags = [
   // HTML
@@ -202,12 +202,23 @@ export const tags = [
 ] as const;
 
 export interface SubDeps {
+  hostVersion: string | undefined;
   React: typeof React;
   ReactDOM: typeof ReactDOM;
   ResizeObserver: typeof ResizeObserver;
   slate: typeof slate;
   slateReact: typeof slateReact;
   localElement: typeof Element;
+  createThumbnail: (
+    element: HTMLElement,
+    opts?: {
+      canvasWidth?: number;
+      canvasHeight?: number;
+      quality?: number;
+      filter?: (elem: HTMLElement) => boolean;
+      includeQueryParams?: boolean;
+    }
+  ) => Promise<string>;
   setPlasmicRootNode: (node: React.ReactElement | null) => void;
   repeatedElement: RepeatedElementFnType;
   setRepeatedElementFn?: (fn: RepeatedElementFnType) => void;
@@ -220,7 +231,6 @@ export interface SubDeps {
   createModal: (
     props: Pick<ModalProps, InternalModalProps>
   ) => (restProps: Omit<ModalProps, InternalModalProps>) => JSX.Element;
-  StudioFetcherContext?: React.Context<any>; // TODO fix the type from @plasmicapp/host
   DataCtxReader: typeof DataCtxReader;
   reactWeb: typeof ReactWeb;
   dataSources?: typeof PlasmicDataSources;

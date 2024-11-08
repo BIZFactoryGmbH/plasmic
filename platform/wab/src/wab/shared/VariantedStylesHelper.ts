@@ -1,4 +1,13 @@
 import {
+  arrayEqIgnoreOrder,
+  ensure,
+  ensureArray,
+  last,
+  remove,
+} from "@/wab/shared/common";
+import { TokenValue } from "@/wab/commons/StyleToken";
+import { DeepReadonly } from "@/wab/commons/types";
+import {
   isKnownStyleToken,
   Mixin,
   RuleSet,
@@ -7,18 +16,13 @@ import {
   Variant,
   VariantedRuleSet,
   VariantedValue,
-} from "@/wab/classes";
+} from "@/wab/shared/model/classes";
+import { RuleSetHelpers } from "@/wab/shared/RuleSetHelpers";
 import {
-  arrayEqIgnoreOrder,
-  ensure,
-  ensureArray,
-  last,
-  remove,
-} from "@/wab/common";
-import { DeepReadonly } from "@/wab/commons/types";
-import { cloneRuleSet } from "@/wab/styles";
-import { RuleSetHelpers } from "./RuleSetHelpers";
-import { isAncestorCombo, makeGlobalVariantComboSorter } from "./variant-sort";
+  isAncestorCombo,
+  makeGlobalVariantComboSorter,
+} from "@/wab/shared/variant-sort";
+import { cloneRuleSet } from "@/wab/shared/core/styles";
 
 export class VariantedStylesHelper {
   constructor(
@@ -68,7 +72,9 @@ export class VariantedStylesHelper {
 
   private sortedActiveVariantedStyles(style: StyleToken | Mixin) {
     const activeVariantedValues = this.activeVariantedStyles(style);
-    if (activeVariantedValues.length === 0) return activeVariantedValues;
+    if (activeVariantedValues.length === 0) {
+      return activeVariantedValues;
+    }
 
     const sorter = makeGlobalVariantComboSorter(
       ensure(this.site, "site must exist to sort variants")
@@ -112,10 +118,9 @@ export class VariantedStylesHelper {
     );
   }
 
-  getActiveTokenValue(token: StyleToken) {
-    return (
-      this.getVariantedValueWithHighestPriority(token)?.value ?? token.value
-    );
+  getActiveTokenValue(token: StyleToken): TokenValue {
+    return (this.getVariantedValueWithHighestPriority(token)?.value ??
+      token.value) as TokenValue;
   }
 
   updateToken(token: StyleToken, value: string) {

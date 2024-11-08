@@ -1,14 +1,29 @@
 import { registerButton } from "./registerButton";
+import { registerCheckbox } from "./registerCheckbox";
+import { registerCheckboxGroup } from "./registerCheckboxGroup";
 import { registerComboBox } from "./registerComboBox";
+import { registerDescription } from "./registerDescription";
+import { registerDialogTrigger } from "./registerDialogTrigger";
+// import { registerForm } from "./registerForm";
+import { registerHeading } from "./registerHeading";
 import { registerInput } from "./registerInput";
 import { registerLabel } from "./registerLabel";
 import { registerListBox } from "./registerListBox";
+import { registerModal } from "./registerModal";
 import { registerPopover } from "./registerPopover";
-import { registerSection } from "./registerSection";
+import { registerRadioGroup } from "./registerRadioGroup";
 import { registerSelect } from "./registerSelect";
+import { registerSlider } from "./registerSlider";
+import { registerSwitch } from "./registerSwitch";
+import { registerText } from "./registerText";
+import { registerTextField } from "./registerTextField";
+import { registerTooltip } from "./registerTooltip";
 import { Registerable } from "./utils";
 
 export function registerAll(loader?: Registerable) {
+  registerText(loader);
+  registerHeading(loader);
+  registerDescription(loader);
   registerSelect(loader);
   registerComboBox(loader);
   registerButton(loader);
@@ -16,5 +31,14 @@ export function registerAll(loader?: Registerable) {
   registerListBox(loader);
   registerPopover(loader);
   registerInput(loader);
-  registerSection(loader);
+  registerSwitch(loader);
+  // registerForm(loader);
+  registerCheckbox(loader);
+  registerCheckboxGroup(loader);
+  registerRadioGroup(loader);
+  registerTextField(loader);
+  registerModal(loader);
+  registerTooltip(loader);
+  registerDialogTrigger(loader);
+  registerSlider(loader);
 }

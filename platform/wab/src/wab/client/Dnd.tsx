@@ -1,68 +1,30 @@
-import { TplNode } from "@/wab/classes";
-import * as domMod from "@/wab/client/dom";
-import { getPaddingRect, hasLayoutBox } from "@/wab/client/dom";
 import {
-  assert,
-  ensure,
-  ensureArray,
-  ensureInstance,
-  maybe,
-  tuple,
-  withoutNils,
-} from "@/wab/common";
-import { Box, Orientation, Pt, Rect, Side, sideToOrient } from "@/wab/geom";
-import { isSelectableLocked, Selectable, SelQuery, SQ } from "@/wab/selection";
-import { Area } from "@/wab/shared/Grids";
+  ManipState,
+  ManipulatorAbortedError,
+  ModifierStates,
+  mkFreestyleManipForFocusedDomElt,
+} from "@/wab/client/FreestyleManipulator";
+import { hasLinkedSelectable } from "@/wab/client/components/canvas/studio-canvas-util";
 import {
-  ContainerLayoutType,
-  ContainerType,
-  getRshContainerType,
-  isFlexReverse,
-} from "@/wab/shared/layoututils";
-import {
-  canAddChildrenToSelectableAndWhy,
-  canAddSiblings,
-} from "@/wab/shared/parenting";
-import { getAncestorSlotArg } from "@/wab/shared/SlotUtils";
-import { $$$ } from "@/wab/shared/TplQuery";
-import { SlotSelection } from "@/wab/slots";
-import { isTplVariantable, prepareFocusedTpls } from "@/wab/tpls";
-import {
-  getComputedStyleForVal,
-  isValTagOrComponent,
-  ValComponent,
-  ValNode,
-  ValSlot,
-  ValTag,
-} from "@/wab/val-nodes";
-import { asVal } from "@/wab/vals";
-import classNames from "classnames";
-import $ from "jquery";
-import L from "lodash";
-import { Observer, observer } from "mobx-react-lite";
-import * as React from "react";
-import { hasLinkedSelectable } from "./components/canvas/studio-canvas-util";
-import {
-  findRowColForMouse,
   MeasuredGrid,
-} from "./components/style-controls/GridEditor";
-import { useViewCtx } from "./contexts/StudioContexts";
+  findRowColForMouse,
+} from "@/wab/client/components/style-controls/GridEditor";
+import { useViewCtx } from "@/wab/client/contexts/StudioContexts";
 import {
   clientToFramePt,
   frameToClientRect,
   frameToScalerRect,
-} from "./coords";
-import { AddTplItem } from "./definitions/insertables";
+} from "@/wab/client/coords";
+import {
+  AddInstallableItem,
+  AddTplItem,
+} from "@/wab/client/definitions/insertables";
+import * as domMod from "@/wab/client/dom";
+import { getPaddingRect, hasLayoutBox } from "@/wab/client/dom";
 import {
   getElementVisibleBounds,
   getVisibleBoundingClientRect,
-} from "./dom-utils";
-import {
-  ManipState,
-  ManipulatorAbortedError,
-  mkFreestyleManipForFocusedDomElt,
-  ModifierStates,
-} from "./FreestyleManipulator";
+} from "@/wab/client/dom-utils";
 import {
   CONTENT_LAYOUT_ICON,
   ERROR_ICON,
@@ -71,15 +33,71 @@ import {
   HORIZ_STACK_ICON,
   SLOT_ICON,
   VERT_STACK_ICON,
-} from "./icons";
+} from "@/wab/client/icons";
 import {
   ClientCantAddChildMsg,
   renderCantAddMsg,
-} from "./messages/parenting-msgs";
-import { computeNodeOutlineTagLayoutClass } from "./node-outline";
-import { cssPropsForInvertTransform, StudioCtx } from "./studio-ctx/StudioCtx";
-import { ViewCtx } from "./studio-ctx/view-ctx";
-import { summarizeFocusObj } from "./utils/tpl-client-utils";
+} from "@/wab/client/messages/parenting-msgs";
+import { computeNodeOutlineTagLayoutClass } from "@/wab/client/node-outline";
+import {
+  StudioCtx,
+  cssPropsForInvertTransform,
+} from "@/wab/client/studio-ctx/StudioCtx";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
+import { summarizeFocusObj } from "@/wab/client/utils/tpl-client-utils";
+import { Area } from "@/wab/shared/Grids";
+import { getAncestorSlotArg } from "@/wab/shared/SlotUtils";
+import { $$$ } from "@/wab/shared/TplQuery";
+import {
+  assert,
+  ensure,
+  ensureArray,
+  ensureInstance,
+  maybe,
+  tuple,
+  withoutNils,
+} from "@/wab/shared/common";
+import {
+  SQ,
+  SelQuery,
+  Selectable,
+  isSelectableLocked,
+} from "@/wab/shared/core/selection";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import { isTplVariantable, prepareFocusedTpls } from "@/wab/shared/core/tpls";
+import {
+  ValComponent,
+  ValNode,
+  ValSlot,
+  ValTag,
+  getComputedStyleForVal,
+  isValTagOrComponent,
+} from "@/wab/shared/core/val-nodes";
+import { asVal } from "@/wab/shared/core/vals";
+import {
+  Box,
+  Orientation,
+  Pt,
+  Rect,
+  Side,
+  sideToOrient,
+} from "@/wab/shared/geom";
+import {
+  ContainerLayoutType,
+  ContainerType,
+  getRshContainerType,
+  isFlexReverse,
+} from "@/wab/shared/layoututils";
+import { Arena, Component, TplNode } from "@/wab/shared/model/classes";
+import {
+  canAddChildrenToSelectableAndWhy,
+  canAddSiblings,
+} from "@/wab/shared/parenting";
+import classNames from "classnames";
+import $ from "jquery";
+import L from "lodash";
+import { Observer, observer } from "mobx-react";
+import * as React from "react";
 
 const insertionStripThickness = 4;
 const insertionStripExtension = 0;
@@ -749,17 +767,33 @@ export class DragInsertManager {
     this.targeters.push(...targeters);
   }
 
+  /**
+   * Installs a collection from the Insert Panel without needing to require a view context.
+   * @param studioCtx
+   * @param spec
+   */
+  public static async install(studioCtx: StudioCtx, spec: AddInstallableItem) {
+    const extraInfo = spec.asyncExtraInfo
+      ? await spec.asyncExtraInfo(studioCtx)
+      : undefined;
+    let installed: Arena | Component | undefined;
+    await studioCtx.changeUnsafe(() => {
+      installed = spec.factory(studioCtx, extraInfo);
+    });
+    return installed;
+  }
+
   public static async build(
     studioCtx: StudioCtx,
     spec: AddTplItem
   ): Promise<DragInsertManager> {
     const targeters: NodeTargeter[] = [];
+    const extraInfo = spec.asyncExtraInfo
+      ? await spec.asyncExtraInfo(studioCtx, { isDragging: true })
+      : undefined;
     for (const vc of studioCtx.viewCtxs) {
       // Ignore ViewCtx whose root is invisible.
       if (vc.isVisible() && vc.valState().maybeValUserRoot()) {
-        const extraInfo = spec.asyncExtraInfo
-          ? await spec.asyncExtraInfo(studioCtx, { isDragging: true })
-          : undefined;
         await studioCtx.changeUnsafe(() => {
           const toInsert = spec.factory(vc, extraInfo);
           if (toInsert != null) {

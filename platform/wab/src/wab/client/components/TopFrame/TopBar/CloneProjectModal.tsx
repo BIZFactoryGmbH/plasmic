@@ -3,9 +3,9 @@
 import { parseProjectLocation, U } from "@/wab/client/cli-routes";
 import { promptMoveToWorkspace } from "@/wab/client/components/dashboard/dashboard-actions";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
-import { assert, spawn } from "@/wab/common";
+import { assert, spawn } from "@/wab/shared/common";
 import { ApiProject, MainBranchId } from "@/wab/shared/ApiSchema";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useEffect } from "react";
 
 interface CloneProjectModalProps {

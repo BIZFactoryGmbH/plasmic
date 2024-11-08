@@ -1,25 +1,64 @@
-import type { CodeComponentMeta } from "@plasmicapp/host";
+import {
+  usePlasmicCanvasComponentInfo,
+  usePlasmicCanvasContext,
+  type CodeComponentMeta,
+} from "@plasmicapp/host";
 import registerComponent from "@plasmicapp/host/registerComponent";
 import React, { useEffect } from "react";
 
-export function ValueObserver({ value, onChange }: any) {
-  useEffect(() => {
-    onChange(value);
-  }, [value, onChange]);
-  return null;
-}
+export type HasControlContextData<T = BaseControlContextData> = {
+  setControlContextData?: (ctxData: T) => void;
+};
+
+export type BaseControlContextData = {
+  parent?: {
+    isDisabled?: boolean;
+    isReadOnly?: boolean;
+  };
+};
 
 export type Registerable = {
   registerComponent: typeof registerComponent;
+};
+
+export type OtherCodeComponentsMeta = {
+  text: CodeComponentMeta<any>;
+  description: CodeComponentMeta<any>;
 };
 
 export type CodeComponentMetaOverrides<T extends React.ComponentType<any>> =
   Partial<
     Pick<
       CodeComponentMeta<React.ComponentProps<T>>,
-      "parentComponentName" | "props" | "displayName"
+      "parentComponentName" | "props" | "displayName" | "name"
     >
   >;
+
+export function useAutoOpen({
+  props,
+  open,
+  close,
+}: {
+  props: any;
+  open?: () => void;
+  close?: () => void;
+}) {
+  const inPlasmicCanvas = !!usePlasmicCanvasContext();
+  const isSelected = usePlasmicCanvasComponentInfo(props)?.isSelected ?? false;
+
+  useEffect(() => {
+    // selection in outline tab only matters in canvas
+    if (!inPlasmicCanvas) {
+      return;
+    }
+    if (isSelected) {
+      open?.();
+    } else {
+      close?.();
+    }
+    // Not putting open and close in the useEffect dependencies array, because it causes a re-render loop.
+  }, [isSelected, inPlasmicCanvas]);
+}
 
 export function registerComponentHelper<T extends React.ComponentType<any>>(
   loader: Registerable | undefined,
@@ -27,6 +66,13 @@ export function registerComponentHelper<T extends React.ComponentType<any>>(
   meta: CodeComponentMeta<React.ComponentProps<T>>,
   overrides?: CodeComponentMetaOverrides<T>
 ) {
+  meta = {
+    ...meta,
+    defaultStyles: {
+      boxSizing: "border-box",
+      ...(meta.defaultStyles ?? {}),
+    },
+  };
   if (overrides) {
     meta = {
       ...meta,
@@ -48,6 +94,7 @@ export function registerComponentHelper<T extends React.ComponentType<any>>(
   } else {
     registerComponent(component, meta);
   }
+  return meta;
 }
 
 export function makeComponentName(name: string) {
@@ -74,12 +121,14 @@ export interface Styleable {
 
 export function extractPlasmicDataProps(props: Record<string, any>) {
   return Object.fromEntries(
-    Object.entries(props).filter(([key, val]) =>
-      key.startsWith("data-plasmic-")
-    )
+    Object.entries(props).filter(([key]) => key.startsWith("data-plasmic-"))
   );
 }
 
 export function withoutNils<T>(array: (T | undefined | null)[]) {
   return array.filter((x): x is T => x != null);
+}
+
+export function isDefined<T>(thing: T | undefined | null): thing is T {
+  return thing !== undefined && thing !== null;
 }

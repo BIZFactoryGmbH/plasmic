@@ -510,6 +510,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -523,6 +525,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "4f5QJDTElPWj": {
@@ -655,6 +658,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -668,6 +673,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "8cyCagXbmfTU": { "name": "text", "__type": "Text" },
@@ -721,8 +727,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "aA60ZqW9wiOR" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "3dqxWrMGaFXF": {
             "name": "children",
@@ -819,7 +825,6 @@
             "uuid": "bu3dBcyE0srJ",
             "width": 800,
             "height": 800,
-            "viewportHeight": null,
             "container": { "__ref": "Wb1MBtMfn2uj" },
             "lang": "English",
             "pinnedVariants": {},
@@ -1017,7 +1022,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       },
       "projectId": "aH1hFXMTo8YybdGp5ScZNk",
       "version": "0.0.1",
@@ -1545,6 +1550,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -1558,6 +1565,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "4f5QJDTElPWj": {
@@ -1690,6 +1698,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -1703,6 +1713,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "8cyCagXbmfTU": { "name": "text", "__type": "Text" },
@@ -1756,8 +1767,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "aA60ZqW9wiOR" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "3dqxWrMGaFXF": {
             "name": "children",
@@ -1854,7 +1865,6 @@
             "uuid": "bu3dBcyE0srJ",
             "width": 800,
             "height": 800,
-            "viewportHeight": null,
             "container": { "__ref": "Wb1MBtMfn2uj" },
             "lang": "English",
             "pinnedVariants": {},
@@ -2039,7 +2049,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     },
     {
@@ -2551,6 +2561,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -2564,6 +2576,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "4f5QJDTElPWj": {
@@ -2696,6 +2709,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -2709,6 +2724,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "8cyCagXbmfTU": { "name": "text", "__type": "Text" },
@@ -2762,8 +2778,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "aA60ZqW9wiOR" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "3dqxWrMGaFXF": {
             "name": "children",
@@ -2860,7 +2876,6 @@
             "uuid": "bu3dBcyE0srJ",
             "width": 800,
             "height": 800,
-            "viewportHeight": null,
             "container": { "__ref": "Wb1MBtMfn2uj" },
             "lang": "English",
             "pinnedVariants": {},
@@ -3049,7 +3064,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     }
   ]

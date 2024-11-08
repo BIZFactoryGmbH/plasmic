@@ -1,15 +1,15 @@
-import { Variant, VariantGroup } from "@/wab/classes";
-import Select from "@/wab/client/components/widgets/Select";
 import { XMultiSelect } from "@/wab/client/components/XMultiSelect";
+import { DocsPortalCtx } from "@/wab/client/components/docs/DocsPortalCtx";
+import Select from "@/wab/client/components/widgets/Select";
 import { PlasmicVariantProp } from "@/wab/client/plasmic/plasmic_kit_docs_portal/PlasmicVariantProp";
-import { ensureArray } from "@/wab/common";
+import { ensureArray } from "@/wab/shared/common";
+import { isStandaloneVariantGroup } from "@/wab/shared/Variants";
 import { toVarName } from "@/wab/shared/codegen/util";
 import { serializeVariantGroupMembersType } from "@/wab/shared/codegen/variants";
-import { isStandaloneVariantGroup } from "@/wab/shared/Variants";
+import { Variant, VariantGroup } from "@/wab/shared/model/classes";
 import { Tooltip } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import { DocsPortalCtx } from "./DocsPortalCtx";
 
 interface VariantPropProps {
   docsCtx: DocsPortalCtx;

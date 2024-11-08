@@ -1,3 +1,4 @@
+import { NonBaseVariantTransitionsMessage } from "@/wab/client/components/sidebar-tabs/style-tab";
 import { SidebarModal } from "@/wab/client/components/sidebar/SidebarModal";
 import { SidebarSectionHandle } from "@/wab/client/components/sidebar/SidebarSection";
 import {
@@ -15,16 +16,15 @@ import {
 } from "@/wab/client/components/widgets";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { arrayMoveIndex } from "@/wab/collections";
-import { assert, ensure, maybe, tuple, uniqueKey } from "@/wab/common";
+import { arrayMoveIndex } from "@/wab/shared/collections";
+import { assert, ensure, maybe, tuple, uniqueKey } from "@/wab/shared/common";
 import { removeFromArray } from "@/wab/commons/collections";
-import { getCssInitial } from "@/wab/css";
+import { getCssInitial } from "@/wab/shared/css";
 import { transitionProps } from "@/wab/shared/core/style-props";
 import { joinCssValues, RSH, splitCssValue } from "@/wab/shared/RuleSetHelpers";
 import { isBaseVariant, tryGetBaseVariantSetting } from "@/wab/shared/Variants";
 import { observer } from "mobx-react";
 import React, { createRef } from "react";
-import { NonBaseVariantTransitionsMessage } from "./style-tab";
 
 export class Transition {
   transitionProperty: string;

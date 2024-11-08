@@ -15,58 +15,29 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
   renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import MenuButton from "../../components/widgets/MenuButton"; // plasmic-import: h69wHrrKtL/component
-import TeamMemberList from "../../components/dashboard/TeamMemberList"; // plasmic-import: 3jXSiWKc1-/component
-import TeamMemberListItem from "../../components/dashboard/TeamMemberListItem"; // plasmic-import: gdLJj97tYt/component
 import NavSeparator from "../../components/dashboard/NavSeparator"; // plasmic-import: cOUHQYmbvX/component
 import TeamBilling from "../../components/dashboard/TeamBilling"; // plasmic-import: MtL6MGlBxoy/component
+import TeamMemberList from "../../components/dashboard/TeamMemberList"; // plasmic-import: 3jXSiWKc1-/component
+import TeamMemberListItem from "../../components/dashboard/TeamMemberListItem"; // plasmic-import: gdLJj97tYt/component
+import MenuButton from "../../components/widgets/MenuButton"; // plasmic-import: h69wHrrKtL/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
-import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
-import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_pricing_css from "../plasmic_kit_pricing/plasmic_plasmic_kit_pricing.module.css"; // plasmic-import: ehckhYnyDHgCBbV47m9bkf/projectcss
+import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import projectcss from "../PP__plasmickit_dashboard.module.css"; // plasmic-import: ooL7EhXDmFQWnW9sxtchhE/projectcss
+import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicTeamSettings.module.css"; // plasmic-import: zRIUpVU0Cm8/css
 
 createPlasmicElementProxy;
@@ -130,8 +101,6 @@ function PlasmicTeamSettings__RenderFunc(props: {
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = useCurrentUser?.() || {};
-
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
@@ -141,6 +110,7 @@ function PlasmicTeamSettings__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.hideNewButton,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -199,7 +169,13 @@ function PlasmicTeamSettings__RenderFunc(props: {
       <TeamMemberList
         data-plasmic-name={"memberList"}
         data-plasmic-override={overrides.memberList}
-        className={classNames("__wab_instance", sty.memberList)}
+        className={classNames("__wab_instance", sty.memberList, {
+          [sty.memberListhideNewButton]: hasVariant(
+            $state,
+            "hideNewButton",
+            "hideNewButton"
+          ),
+        })}
       >
         <TeamMemberListItem
           className={classNames(
@@ -301,6 +277,7 @@ const PlasmicDescendants = {
     "navSeparator",
     "teamBilling",
   ],
+
   header: ["header", "freeBox", "teamMenuButton"],
   freeBox: ["freeBox"],
   teamMenuButton: ["teamMenuButton"],
@@ -326,6 +303,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicTeamSettings__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

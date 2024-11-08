@@ -1,19 +1,19 @@
 import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
+import StyleToggleButton from "@/wab/client/components/style-controls/StyleToggleButton";
+import StyleToggleButtonGroup from "@/wab/client/components/style-controls/StyleToggleButtonGroup";
 import DimTokenSpinner from "@/wab/client/components/widgets/DimTokenSelector";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { parseCssNumericNew } from "@/wab/css";
+import { parseCssNumericNew } from "@/wab/shared/css";
 import {
   defaultTransforms,
   fromTransformObjToString,
   getSliderConfig,
   Transform,
   transformAllowedUnits,
-} from "@/wab/transform-utils";
+} from "@/wab/shared/core/transform-utils";
 import { Slider } from "antd";
 import { observer } from "mobx-react";
 import React, { useEffect } from "react";
-import StyleToggleButton from "./StyleToggleButton";
-import StyleToggleButtonGroup from "./StyleToggleButtonGroup";
 
 interface TransformPanelProps {
   studioCtx: StudioCtx;

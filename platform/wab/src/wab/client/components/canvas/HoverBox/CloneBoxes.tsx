@@ -7,13 +7,13 @@ import {
 import { hasLayoutBox } from "@/wab/client/dom";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { maybes } from "@/wab/common";
-import { Selectable } from "@/wab/selection";
+import { maybes } from "@/wab/shared/common";
+import { Selectable } from "@/wab/shared/core/selection";
 import Chroma from "@/wab/shared/utils/color-utils";
-import { isTplVariantable } from "@/wab/tpls";
+import { isTplVariantable } from "@/wab/shared/core/tpls";
 import $ from "jquery";
 import { computed } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 export const CloneBoxes = observer(function CloneBoxes() {
   const studioCtx = useStudioCtx();

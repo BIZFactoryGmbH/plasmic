@@ -1,8 +1,8 @@
-import { TplNode } from "@/wab/classes";
-import { isCodeComponent } from "@/wab/components";
-import { isTplComponent, isTplTag, tplHasRef } from "@/wab/tpls";
+import { InteractionContextData } from "@/wab/client/state-management/interactions-meta";
+import { isCodeComponent } from "@/wab/shared/core/components";
+import { TplNode } from "@/wab/shared/model/classes";
+import { isTplComponent, isTplTag, tplHasRef } from "@/wab/shared/core/tpls";
 import { RefActionRegistration } from "@plasmicapp/host/registerComponent";
-import { InteractionContextData } from "./interactions-meta";
 
 export function getTplRefActions(tpl: TplNode, ctx: InteractionContextData) {
   if (tplHasRef(tpl)) {

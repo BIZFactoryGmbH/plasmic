@@ -147,6 +147,8 @@
           "displayName": "Link Preview",
           "importName": "LinkPreview",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -165,6 +167,7 @@
               { "type": "text", "value": "loading preview..." }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "uTs6_QB9_j9o": { "name": "text", "__type": "Text" },
@@ -227,8 +230,8 @@
         "mkPuLBmkSzA_": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "IoyrDjd1uy6G": {
           "name": "children",
@@ -396,14 +399,14 @@
         "x7AWeHNw-OCC": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "_sSYAK9fPfkg": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "w-gEkHNsVIEo": {
           "name": "plasmic-link-preview",
@@ -425,7 +428,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1100,6 +1103,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1113,6 +1118,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "mrioyw9MDYES": {
@@ -1245,6 +1251,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1258,6 +1266,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4ghiC-lruuSI": { "name": "text", "__type": "Text" },
@@ -1311,8 +1320,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "0ATjxP71o2C5" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "GOs5CnOp4NA8": {
           "name": "children",
@@ -1415,7 +1424,6 @@
           "uuid": "Pzx62PeSjNdb",
           "width": 800,
           "height": 800,
-          "viewportHeight": null,
           "container": { "__ref": "IckiaskRzyLy" },
           "lang": "English",
           "pinnedVariants": {},
@@ -1540,7 +1548,6 @@
           "uuid": "hvJZbHmDvWhI",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "T-2kdOYAMJDy" },
           "lang": "English",
           "pinnedVariants": {},
@@ -1558,7 +1565,6 @@
           "uuid": "1CFL48xA8pjA",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "Aac6wEs2942q" },
           "lang": "English",
           "pinnedVariants": {},
@@ -2095,7 +2101,7 @@
         }
       },
       "deps": ["1f6fbbaf-82a8-43b5-abd3-ead1dee4ab4c"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

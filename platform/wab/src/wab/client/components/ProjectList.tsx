@@ -1,4 +1,7 @@
 import { hideStarters } from "@/wab/client/app-ctx";
+import ProjectListItem from "@/wab/client/components/ProjectListItem";
+import StarterGroup from "@/wab/client/components/StarterGroup";
+import { Spinner } from "@/wab/client/components/widgets";
 import {
   useAllProjectsData,
   useAppCtx,
@@ -8,14 +11,11 @@ import {
   DefaultProjectListProps,
   PlasmicProjectList,
 } from "@/wab/client/plasmic/plasmic_kit/PlasmicProjectList";
-import { ensure } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
+import { ensure } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { getExtraData, updateExtraDataJson } from "@/wab/shared/ApiSchemaUtil";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import ProjectListItem from "./ProjectListItem";
-import StarterGroup from "./StarterGroup";
-import { Spinner } from "./widgets";
 
 interface ProjectListProps extends DefaultProjectListProps {
   workspaces?: boolean;
