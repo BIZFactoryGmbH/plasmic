@@ -32,7 +32,7 @@ cat /etc/sysctl.conf | grep fs.inotify \n\
 exec bash \
 " >> /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-RUN ln -s `which pip3` /usr/bin/pip
+#RUN ln -s `which pip3` /usr/bin/pip
 
 # Secrets config
 ADD secrets.json /root/.plasmic/

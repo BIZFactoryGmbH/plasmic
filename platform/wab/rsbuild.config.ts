@@ -16,6 +16,7 @@ import { StudioHtmlPlugin } from "./tools/studio-html-plugin";
 
 const commitHash = execSync("git rev-parse HEAD").toString().slice(0, 6);
 const buildEnv = process.env.NODE_ENV ?? "production";
+const isProd = buildEnv === "production";
 const port: number = process.env.PORT ? +process.env.PORT : 3003;
 const backendPort: number = process.env.BACKEND_PORT
   ? +process.env.BACKEND_PORT
