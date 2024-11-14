@@ -1,0 +1,72 @@
+version: "3.8"
+volumes:
+  wab-db:
+  minio_data:
+services:
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-03-10T02-53-48Z
+    restart: unless-stopped
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - 'minio_data:/data'
+    command: server --console-address ":9001" /data
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=592SkV7LigNjNz
+    networks:
+      - plasmic
+  sockets:
+    image: plasmic-update
+    restart: unless-stopped
+    env_file: ".env"
+    environment:
+      - SOCKET_PORT=3020
+    working_dir: /plasmic/platform/wab
+    command: "yarn socket-server --"
+    ports:
+      - "3020:3020"
+    networks:
+      - plasmic
+  backend:
+    image: plasmic-update
+    restart: unless-stopped
+    env_file: ".env"
+    environment:
+      - SOCKET_HOST=http://sockets:3020
+      - S3_ENDPOINT=http://minio:9000
+      - AWS_CONFIG_FILE=/plasmic/platform/wab/s3_credentials
+      - AWS_SDK_LOAD_CONFIG=1
+    working_dir: /plasmic/platform/wab
+    command: "bash tools/run.bash src/wab/server/main.ts"
+    volumes:
+      - ./s3_credentials:/plasmic/platform/wab/s3_credentials
+    ports:
+      - "3004:3004"
+    networks:
+      - plasmic
+  frontend:
+    image: plasmic-update
+    restart: unless-stopped
+    working_dir: /plasmic/platform/wab/build
+    command: "npx --yes http-server -p 3003 -P http://127.0.0.1:3003?"
+    ports:
+      - "3003:3003"
+    networks:
+      - plasmic
+  postgres:
+    image : "postgres:15"
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "wab"
+      POSTGRES_PASSWORD: "wab"
+      POSTGRES_DB: "wab"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "wab-db:/var/lib/postgresql/data"
+    networks:
+      - plasmic
+networks:
+  plasmic:

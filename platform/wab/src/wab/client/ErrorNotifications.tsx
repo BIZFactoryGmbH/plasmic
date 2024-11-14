@@ -86,9 +86,9 @@ export function handleError(error: Error, source?: string) {
   setTimeout(() => {
     stampObjectUuid(error);
     Sentry.captureException(error);
-    analytics().track("Error", {
-      error: shallowJson(error),
-    });
+    // analytics().track("Error", {
+    //  error: shallowJson(error),
+    // });
   }, 0);
 }
 
@@ -176,10 +176,10 @@ export function reportError(error: Error, eventName?: string) {
   }
   console.log("Error: ", eventName ?? error.name, error.message, error);
   Sentry.captureException(error);
-  analytics().track(eventName ?? error.name, {
-    name: error.name,
-    message: error.message,
-  });
+  // analytics().track(eventName ?? error.name, {
+  //   name: error.name,
+  //   message: error.message,
+  // });
 }
 
 export function reportSilentErrorMessage(
@@ -187,9 +187,9 @@ export function reportSilentErrorMessage(
   eventName = "Silent Error"
 ) {
   Sentry.captureMessage(msg);
-  analytics().track(eventName, {
-    message: msg,
-  });
+  // analytics().track(eventName, {
+  //   message: msg,
+  // });
 }
 
 // Sometimes the handled variable is not of type Error, so we need to normalize it

@@ -152,7 +152,7 @@ export class Api extends SharedApi {
   setUser = setUser;
 
   clearUser() {
-    analytics().setAnonymousUser();
+    // analytics().setAnonymousUser();
     Sentry.configureScope((scope) => {
       scope.setUser({});
     });
@@ -656,7 +656,7 @@ export function setUser(user: ApiUser) {
     fullName: fullName(user),
     domain: email.split("@")[1],
   });
-  analytics().setUser(id);
+  // analytics().setUser(id);
   Sentry.configureScope((scope) => {
     scope.setUser({ id, ...traits });
   });
