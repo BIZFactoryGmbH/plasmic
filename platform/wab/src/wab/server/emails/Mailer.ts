@@ -24,13 +24,14 @@ class ConsoleMailer implements Mailer {
 
 export function createMailer() {
   if (process.env.NODE_ENV === "production") {
-    return new NodeMailer(
-      createTransport({
-        host: "email-smtp.us-west-2.amazonaws.com",
-        port: 587,
-        auth: getSmtpAuth(),
-      })
-    );
+    // return new NodeMailer(
+    //   createTransport({
+    //     host: "email-smtp.us-west-2.amazonaws.com",
+    //     port: 587,
+    //     auth: getSmtpAuth(),
+    //   })
+    // );
+    return new ConsoleMailer();
   } else {
     return new ConsoleMailer();
   }
