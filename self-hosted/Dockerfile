@@ -10,9 +10,6 @@ WORKDIR /plasmic
 RUN git clone https://github.com/BIZFactoryGmbH/plasmic.git /plasmic --depth 1 --branch feature/update-plasmic --single-branch
 
 ARG CODEGEN_HOST=https://plasmic.staging.bizfactory.tech
-ARG DATABASE_URI=postgresql://wab:wab@postgres:5432/wab
-ARG DISABLE_BWRAP=1
-ARG ENABLED_GET_EMAIL_VERIFICATION_TOKEN=1
 ARG HOST=https://host.plasmic.staging.bizfactory.tech
 ARG MAIL_CONFIG='{"mailFrom":"Plasmic <team@example.com>","mailUserOps":"ops@example.com"}'
 ARG NODE_ENV=production
@@ -20,7 +17,6 @@ ARG PUBLIC_URL=https://plasmic.staging.bizfactory.tech
 ARG REACT_APP_DEFAULT_HOST_URL=https://host.plasmic.staging.bizfactory.tech/static/host.html
 ARG REACT_APP_PUBLIC_URL=https://plasmic.staging.bizfactory.tech
 ARG REACT_APP_CDN_URL=https://plasmic.staging.bizfactory.tech
-ARG SESSION_SECRET=h5dwysoCqnEQY43m6Wmc9EEU5WJAaUFj
 ARG SITE_ASSETS_BASE_URL=http://assets.plasmic.staging.bizfactory.tech/plasmic-site-assets/
 ARG SITE_ASSETS_BUCKET=plasmic-site-assets
 

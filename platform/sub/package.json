@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build-dev": "webpack --config webpack.dev.config.js",
-    "build": "node_modules/.bin/webpack --config webpack.prod.config.js",
+    "build": "webpack --config webpack.prod.config.js",
     "watch": "webpack --progress --watch --config webpack.dev.config.js",
     "watch-css": "postcss src/main.css -w -o assets/main.css -u postcss-cssnext",
     "dev": "webpack-dev-server --config webpack.dev.config.js --open",
