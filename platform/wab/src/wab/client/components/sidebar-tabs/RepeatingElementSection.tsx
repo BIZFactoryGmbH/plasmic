@@ -1,24 +1,24 @@
-import { ObjectPath, Rep, TplNode } from "@/wab/classes";
-import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
+import { DataPickerEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/DataPickerEditor";
+import { StringPropEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/StringPropEditor";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
+import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { IconLinkButton } from "@/wab/client/components/widgets";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import {
   code,
   createExprForDataPickerValue,
   extractValueSavedFromDataPicker,
-} from "@/wab/exprs";
-import { mkVar } from "@/wab/lang";
+} from "@/wab/shared/core/exprs";
+import { mkVar } from "@/wab/shared/core/lang";
 import { isBaseVariant } from "@/wab/shared/Variants";
-import { tryGetTplOwnerComponent } from "@/wab/tpls";
+import { ObjectPath, Rep, TplNode } from "@/wab/shared/model/classes";
+import { tryGetTplOwnerComponent } from "@/wab/shared/core/tpls";
 import { Menu } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
-import { DataPickerEditor } from "./ComponentProps/DataPickerEditor";
-import { StringPropEditor } from "./ComponentProps/StringPropEditor";
 
 const defaultElementName = "currentItem";
 const defaultIndexName = "currentIndex";

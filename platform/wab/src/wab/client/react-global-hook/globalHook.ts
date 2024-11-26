@@ -1,112 +1,56 @@
-import {
-  RichText,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-} from "@/wab/classes";
-import { ExtraSlotCanvasEnvData } from "@/wab/client/components/canvas/canvas-rendering";
 import { handleError } from "@/wab/client/ErrorNotifications";
+import { validateCodeComponentParams } from "@/wab/client/react-global-hook/code-components";
+import { Fiber, FiberRoot } from "@/wab/client/react-global-hook/fiber";
+import { FAKE_NODE_CHILD_PARAM } from "@/wab/client/react-global-hook/globalHookConstants";
 import {
-  getRenderState,
-  RenderState,
-} from "@/wab/client/studio-ctx/renderState";
+  fiberChildren,
+  traverseTree,
+  traverseUpdates,
+} from "@/wab/client/react-global-hook/traverseFiber";
 import {
+  GlobalHook,
+  GlobalHookCtx,
+  SlotArgsData,
+  SlotCanvasEnv,
+  UpdateableVal,
+} from "@/wab/client/react-global-hook/types";
+import {
+  createValNode,
+  mergeArgsData,
+  tryGetCloneIndex,
+  tryGetFrameUid,
+  tryGetOwnerKey,
+  tryGetPlasmicClassName,
+  tryGetSlotArgInfo,
+  tryGetSlotCanvasEnv,
+  tryGetSlotPlaceholderKey,
+  tryGetValKey,
+} from "@/wab/client/react-global-hook/utils";
+import { getRenderState } from "@/wab/client/studio-ctx/renderState";
+import {
+  MAKE_EMPTY_OBJECT,
   arrayEq,
   assert,
   ensure,
   ensureInstance,
-  hackyCast,
   last,
-  MAKE_EMPTY_OBJECT,
   structuralMerge,
-  structuralMerge2,
-  switchType,
   switchTypeUnsafe,
   withDefault,
   withDefaultFunc,
-  withoutNils,
-} from "@/wab/common";
-import { isCodeComponent, isPlumeComponent } from "@/wab/components";
+} from "@/wab/shared/common";
+import { isCodeComponent } from "@/wab/shared/core/components";
+import { SlotSelection } from "@/wab/shared/core/slots";
 import {
-  classNameProp,
-  dataCanvasEnvsProp,
-  frameUidProp,
-  NO_INDEX_COPY,
-  plasmicClonedIndex,
-  richTextProp,
-  slotArgCompKeyProp,
-  slotArgParamProp,
-  slotExtraCanvasEnvProp,
-  slotFragmentKey,
-  slotPlaceholderAttr,
-  valKeyProp,
-  valOwnerProp,
-} from "@/wab/shared/canvas-constants";
-import { isPlainObjectPropType } from "@/wab/shared/code-components/code-components";
-import { CanvasEnv } from "@/wab/shared/eval";
-import { SlotInfo } from "@/wab/shared/eval/val-state";
-import { SlotSelection } from "@/wab/slots";
-import { isTplComponent, isTplTextBlock } from "@/wab/tpls";
-import {
-  InvalidArgMeta,
-  isValComponent,
   ValComponent,
-  ValidationType,
   ValNode,
   ValSlot,
   ValTag,
-  ValTagParams,
-  ValTextTag,
-} from "@/wab/val-nodes";
+  isValSlot,
+} from "@/wab/shared/core/val-nodes";
+import { SlotInfo } from "@/wab/shared/eval/val-state";
 import { isString, omit } from "lodash";
 import { observable, runInAction } from "mobx";
-import { Fiber, FiberRoot } from "./fiber";
-import { fiberChildren, traverseTree, traverseUpdates } from "./traverseFiber";
-
-function hasKey(v: any, key: string) {
-  return typeof v === "object" && v !== null && key in v;
-}
-
-interface GlobalHook {
-  plasmic: GlobalHookCtx;
-  inject: (injected: any) => void;
-  onCommitFiberRoot: (
-    rendererID: any,
-    fiberRoot: FiberRoot,
-    ...otherArgs: any[]
-  ) => void;
-  onCommitFiberUnmount: (
-    rendererID: any,
-    node: Fiber,
-    ...otherArgs: any[]
-  ) => void;
-}
-
-const tryReadInternalProp = (
-  node: Fiber,
-  propName: string
-): string | undefined => {
-  if (
-    hasKey(node.memoizedProps, propName) &&
-    isString(node.memoizedProps[propName])
-  ) {
-    return node.memoizedProps[propName];
-  }
-  if (isString(node.key) && node.key.startsWith(slotFragmentKey)) {
-    const attrs = (() => {
-      try {
-        return JSON.parse(node.key.slice(slotFragmentKey.length));
-      } catch {
-        throw new Error("Failed to parse key: " + node.key);
-      }
-    })();
-    if (hasKey(attrs, propName) && isString(attrs[propName])) {
-      return attrs[propName];
-    }
-  }
-  return undefined;
-};
 
 const officialHook = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__ as
   | GlobalHook
@@ -129,46 +73,6 @@ export function getMostRecentFiberVersion(fiber: Fiber): Fiber {
   }
   return fiber;
 }
-
-type UpdateableVal<T extends ValNode = ValNode> = {
-  -readonly [P in keyof T]: T[P];
-};
-
-/**
- * We support multiple fibers (from different subtrees) for the same ValNode.
- * To make that work, we store a list of ValNodes that are created for each
- * of those fibers (the non-cached nodes). Those are managed by `RenderState`
- * and only created / used by the global hook.
- *
- * From those non-cached versions, we compute a cached `ValNode` (it's cached so
- * that it's stable). This cached version is always computed by merging the data
- * in each of the non-cached versions, therefore it should never be mutated
- * directly. We can, instead, modify the non-cached version and call
- * `renderState.recomputeCachedVal` so the cached version gets updated.
- * For that reason, only `nonCached` is `UpdateableVal`.
- */
-type SlotArgsData = Record<
-  string /* Param uuid */,
-  { cached: ValNode; nonCached: UpdateableVal }[]
->;
-
-type SlotPlaceholderData = {
-  frameUid: number;
-  key: string;
-  fullKey: string;
-  toSlotSelection: () => SlotSelection | undefined;
-};
-
-/**
- * For components that provide data, we support getting the `CanvasEnv` with
- * the provided data for each slot. First, the DataCtxReader wraps the slot
- * contents in canvas-rendering with a dummy component, and provides the updated
- * env as a prop to that wrapper.
- *
- * Then the global hook consumes that env and stores it for each slot of the
- * `ValComponent`.
- */
-type SlotCanvasEnv = Record<string /* Param uuid */, CanvasEnv>;
 
 if (officialHook) {
   // TODO: assert `officialHook.plasmic` is null once we fix browser navigation
@@ -215,6 +119,7 @@ if (officialHook) {
     fiberToVal: new WeakMap(),
     fiberToSlotPlaceholderKeys: new WeakMap(),
     uuidToTplNode: new Map(),
+    valKeyToOwnerKey: new Map(),
     frameUidToValRoot: observable.map({}, { deep: false }),
     frameUidToRenderState: new Map(),
     envIdToEnvs: new Map(),
@@ -328,6 +233,9 @@ if (officialHook) {
   // Return true if this is a canvas frame's tree.
   const isCanvasFrame = (containerInfo: any) => {
     const doc = getDocFromContainerInfo(containerInfo);
+    if (!doc) {
+      return false;
+    }
     return !!doc.getElementById("plasmic-app");
   };
 
@@ -337,7 +245,7 @@ if (officialHook) {
     if (doc?.getElementById) {
       return doc;
     }
-    assert(false, "Unreachable code");
+    return null;
   };
 
   const knownRoots = new WeakSet<FiberRoot>();
@@ -433,6 +341,7 @@ if (officialHook) {
           const instanceKeyStack: {
             valKey: string;
             cloneIndex: number | undefined;
+            isFake?: boolean;
           }[] = [];
 
           // The stack of Fiber nodes and the ValNode we created for it. Used for
@@ -440,6 +349,7 @@ if (officialHook) {
           const valStack: {
             node: Fiber;
             val: ValNode;
+            isFake?: boolean;
           }[] = [];
 
           // This keeps track of how many clones of for a ValNode exists in the tree
@@ -546,6 +456,8 @@ if (officialHook) {
             const cloneIndex = deriveCloneIndex();
 
             try {
+              const currentFrameUid = ensure(frameUid, "Frame uid not defined");
+
               if (instanceKey) {
                 ancestorKeys.set(instanceKey, node);
 
@@ -560,6 +472,101 @@ if (officialHook) {
                   // Nothing to do here for now!
                 }
 
+                function deriveValOwner(ownerKey: string) {
+                  const ownerCandidates = valStack.filter(
+                    ({ val }) => val.key === ownerKey
+                  );
+                  if (ownerCandidates.length > 0) {
+                    return ensureInstance(
+                      last(ownerCandidates).val,
+                      ValComponent
+                    );
+                  }
+
+                  // We're in a situation that we're sure that something unexpected is happening,
+                  // since we are traversing the tree in a depth-first manner, and we should have
+                  // seen the owner before the current node. This is likely an abnormal behavior
+                  // likely due to code component not keeping a stable fiber tree while rendering.
+
+                  // Let's extract uuid, renderingCtx, tpl that represent the owner
+                  const ownerUuid = last(ownerKey.split("."));
+                  const ownerOwnerKey =
+                    officialHook?.plasmic.valKeyToOwnerKey.get(ownerKey);
+
+                  const ownerTplNode = ensure(
+                    officialHook?.plasmic.uuidToTplNode.get(ownerUuid)?.deref(),
+                    () => `Couldn't find TplNode from uuid ${ownerUuid}`
+                  );
+
+                  // We derive the valOwner first, since deriving the valOwner may mutate the valStack
+                  // and the instanceKeyStack, which are used to compute the fullKey.
+                  const fakeNodeValOwner = ownerOwnerKey
+                    ? deriveValOwner(ownerOwnerKey)
+                    : undefined;
+
+                  // fakeNodeValOwner not existing is another weird scenario, but this may be possible by
+                  // using the component that triggered this current weird scenario as the root of a Plasmic
+                  // component.
+                  const fakeCloneIndex = fakeNodeValOwner
+                    ? updateArgValCount(
+                        fakeNodeValOwner.key,
+                        // Figuring it out the exact param is not simple, one way would be to include this value
+                        // inside the rendering-ctx, but since this is an unexpected scenario, we're just going
+                        // to use a stable value
+                        FAKE_NODE_CHILD_PARAM,
+                        ownerKey
+                      )
+                    : 0;
+
+                  // We push into the stack before computing the full key, so that this fake node is considered
+                  instanceKeyStack.push({
+                    valKey: ownerKey,
+                    cloneIndex: fakeCloneIndex,
+                    isFake: true,
+                  });
+
+                  const fakeNodeFullKey = computeFullKey(ownerKey);
+
+                  const renderState = getRenderState(currentFrameUid);
+
+                  // Since we will be creating a fake node, we don't want this node to be registered in the renderState
+                  // along with any real nodes. So we will clean up everything for the full key of the fake node.
+                  renderState.unregisterFromKey(fakeNodeFullKey);
+
+                  const fakeValOwner = createValNode({
+                    globalHookCtx,
+                    // We will just use the `node` of the current node, which makes this fake node to use this fiber node
+                    // to render selection information, it may be possible that the selection needs to be represented by
+                    // multiple nodes, but this should be an even rarer case.
+                    node,
+                    tplNode: ownerTplNode,
+                    instanceKey: ownerKey,
+                    fullKey: fakeNodeFullKey,
+                    valOwner: fakeNodeValOwner,
+                    // We don't have a className so we're just going to use the one present in `node` which matches
+                    // the `node` in valNode
+                    className: tryGetPlasmicClassName(node),
+                    frameUid: currentFrameUid,
+                  });
+
+                  renderState.registerVal(fakeValOwner);
+
+                  valStack.push({
+                    node,
+                    val: ensureInstance(fakeValOwner, ValComponent),
+                    isFake: true,
+                  });
+
+                  return ensureInstance(fakeValOwner, ValComponent);
+                }
+
+                const ownerKey = tryGetOwnerKey(node);
+
+                // We derive the valOwner first, since deriving the valOwner may mutate the valStack/instanceKeyStack
+                const nodeValOwner = ownerKey
+                  ? deriveValOwner(ownerKey)
+                  : undefined;
+
                 instanceKeyStack.push({ valKey: instanceKey, cloneIndex });
 
                 // Note we need to compute fullKey _after_ we push onto instanceKeyStack
@@ -571,23 +578,15 @@ if (officialHook) {
                   () => `Couldn't find TplNode from uuid ${tplUuid}`
                 );
 
-                const ownerKey = tryGetOwnerKey(node);
-                const valOwner = ownerKey
-                  ? ensureInstance(
-                      last(valStack.filter(({ val }) => val.key === ownerKey))
-                        .val,
-                      ValComponent
-                    )
-                  : undefined;
-
                 const valNode = createValNode({
+                  globalHookCtx,
                   node,
                   tplNode,
                   instanceKey,
                   fullKey,
-                  valOwner,
+                  valOwner: nodeValOwner,
                   className: tryGetPlasmicClassName(node),
-                  frameUid: ensure(frameUid, () => `Couldn't find frame UID`),
+                  frameUid: currentFrameUid,
                 });
 
                 const cachedValNode = ensure(
@@ -598,55 +597,13 @@ if (officialHook) {
                 officialHook.plasmic.fiberToVal.set(node, cachedValNode);
                 valStack.push({ node, val: cachedValNode });
 
-                if (
-                  isTplComponent(tplNode) &&
-                  isCodeComponent(tplNode.component) &&
-                  tplNode.component._meta &&
-                  isValComponent(valNode)
-                ) {
-                  const meta = tplNode.component._meta;
-                  const ccContextData = frameUid
-                    ? globalHookCtx.frameValKeyToContextData.get(
-                        mkFrameValKeyToContextDataKey(frameUid, instanceKey)
-                      )
-                    : undefined;
-                  const invalidArgs: InvalidArgMeta[] = withoutNils(
-                    tplNode.component.params.map((p) => {
-                      const propType = meta.props[p.variable.name];
-                      if (!isPlainObjectPropType(propType)) {
-                        return undefined;
-                      }
-                      if (
-                        hackyCast(propType).required &&
-                        valNode.codeComponentProps[p.variable.name] == null
-                      ) {
-                        return {
-                          param: p,
-                          validationType: ValidationType.Required,
-                        };
-                      }
-                      if (hackyCast(propType).validator) {
-                        const res = hackyCast(propType).validator(
-                          valNode.codeComponentProps[p.variable.name],
-                          valNode.codeComponentProps,
-                          ccContextData,
-                          { path: [p.variable.name] }
-                        );
-                        if (res !== true) {
-                          return {
-                            param: p,
-                            validationType: ValidationType.Custom,
-                            message: res,
-                          };
-                        }
-                      }
-                      return undefined;
-                    })
-                  );
-                  if (invalidArgs.length > 0) {
-                    valNode.invalidArgs = invalidArgs;
-                  }
-                }
+                validateCodeComponentParams({
+                  globalHookCtx,
+                  frameUid,
+                  instanceKey,
+                  valNode,
+                  tplNode,
+                });
               } else if (slotPlaceholderKey) {
                 const [tplCompKey, paramUuid] = slotPlaceholderKey.split("~");
                 assert(
@@ -661,7 +618,7 @@ if (officialHook) {
                   cloneIndex ?? 0
                 }]`;
                 officialHook.plasmic.fiberToSlotPlaceholderKeys.set(node, {
-                  frameUid: ensure(frameUid, () => `Couldn't find frame UID`),
+                  frameUid: currentFrameUid,
                   fullKey: slotPlaceholderFullkey,
                   key: slotPlaceholderKey,
                   toSlotSelection: () => {
@@ -683,9 +640,7 @@ if (officialHook) {
                     return undefined;
                   },
                 });
-                getRenderState(
-                  ensure(frameUid, () => `Couldn't find frame UID`)
-                ).registerSlotPlaceholder(
+                getRenderState(currentFrameUid).registerSlotPlaceholder(
                   slotPlaceholderKey,
                   slotPlaceholderFullkey,
                   node
@@ -771,8 +726,25 @@ if (officialHook) {
 
             instanceKeyStack.pop();
 
+            assert(
+              valStack.length === 0 || !last(valStack).isFake,
+              "The last val node in valStack should be a real one"
+            );
+
             if (valStack.length > 0 && last(valStack).node === node) {
               valStack.pop();
+
+              // We only start popping after the real node that made the fake ones to be pushed gets popped
+              while (valStack.length > 0 && last(valStack).isFake) {
+                const key = valStack.pop()!.val.key;
+                delete valCompToArgToValKeyToCount[key];
+
+                assert(
+                  instanceKeyStack.length > 0 && last(instanceKeyStack).isFake,
+                  "While popping fake nodes, instanceKeyStack should have a respective fake node"
+                );
+                instanceKeyStack.pop();
+              }
             }
 
             const cachedVal = ensure(
@@ -830,8 +802,12 @@ if (officialHook) {
                         vs.map(({ nonCached }) => nonCached).forEach((v) => {
                           v.slotInfo = new SlotInfo(
                             p,
-                            // ValSlots only exist in Plasmic components
-                            !isCodeComponent(valComp.tpl.component)
+                            // ValSlots only exist in Plasmic components, since they are handled by us during the rendering,
+                            // but for code components, the slot is scoped by the code component itself. Directly checking if
+                            // the tpl.component is a PlasmicComponent may not be enough, since the user can re-expose the slot
+                            // of a code component through a Plasmic component.
+                            !isCodeComponent(valComp.tpl.component) &&
+                            isValSlot(v.parent)
                               ? ensureInstance(v.parent, ValSlot)
                               : undefined,
                             valComp
@@ -1038,23 +1014,9 @@ if (officialHook) {
   }
 }
 
-function onlyValidCloneIndexes(idxs: number[]) {
-  return idxs.every((idx) => idx !== NO_INDEX_COPY);
-}
-
-export interface GlobalHookCtx {
-  uuidToTplNode: Map<string, WeakRef<TplNode>>;
-  fiberToVal: WeakMap<Fiber, ValNode | undefined>;
-  fiberToSlotPlaceholderKeys: WeakMap<Fiber, SlotPlaceholderData | undefined>;
-  frameUidToValRoot: Map<number, ValComponent | null>;
-  frameUidToRenderState: Map<number, RenderState>;
-  envIdToEnvs: Map<string, WeakRef<{ env: CanvasEnv; wrappingEnv: CanvasEnv }>>;
-  frameValKeyToContextData: Map<string, WeakRef<any>>;
-  dispose: () => void;
-}
-
 export const globalHookCtx: GlobalHookCtx = officialHook?.plasmic ?? {
   uuidToTplNode: new Map(),
+  valKeyToOwnerKey: new Map(),
   fiberToVal: new WeakMap(),
   fiberToSlotPlaceholderKeys: new WeakMap(),
   frameUidToValRoot: new Map(),
@@ -1063,184 +1025,3 @@ export const globalHookCtx: GlobalHookCtx = officialHook?.plasmic ?? {
   frameValKeyToContextData: new Map(),
   dispose: () => {},
 };
-
-function mergeArgsData(
-  obj1: Record<string, SlotArgsData>,
-  obj2: Record<string, SlotArgsData>
-) {
-  return structuralMerge2(obj1, obj2);
-}
-
-const tryGetValKey = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, valKeyProp);
-const tryGetOwnerKey = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, valOwnerProp);
-const tryGetPlasmicClassName = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, classNameProp);
-const tryGetSlotCompKey = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, slotArgCompKeyProp);
-const tryGetSlotParam = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, slotArgParamProp);
-const tryGetSlotPlaceholderKey = (node: Fiber): string | undefined =>
-  tryReadInternalProp(node, slotPlaceholderAttr);
-const tryGetFrameUid = (node: Fiber): number | undefined => {
-  if (hasKey(node.memoizedProps, frameUidProp)) {
-    return node.memoizedProps[frameUidProp] as number;
-  }
-  return undefined;
-};
-const tryGetSlotCanvasEnv = (
-  node: Fiber
-): ExtraSlotCanvasEnvData | undefined => {
-  if (hasKey(node.memoizedProps, slotExtraCanvasEnvProp)) {
-    return node.memoizedProps[slotExtraCanvasEnvProp] as ExtraSlotCanvasEnvData;
-  }
-  return undefined;
-};
-const tryGetCloneIndex = (node: Fiber): number | undefined => {
-  if (hasKey(node.memoizedProps, plasmicClonedIndex)) {
-    return +node.memoizedProps[plasmicClonedIndex];
-  }
-  return undefined;
-};
-
-function tryGetRichTextData(node: Fiber):
-  | {
-      text: RichText;
-      handle: { enterEdit: () => string | undefined; exitEdit: () => void };
-    }
-  | undefined {
-  if (hasKey(node.memoizedProps, richTextProp)) {
-    return node.memoizedProps[richTextProp];
-  }
-  return undefined;
-}
-
-function tryGetNodeCanvasEnvs(node: Fiber) {
-  const id = tryReadInternalProp(node, dataCanvasEnvsProp);
-  return id != null
-    ? ensure(
-        globalHookCtx.envIdToEnvs
-          .get(ensure(id, () => `Missing canvas env props`))
-          ?.deref(),
-        () => `Couldn't find envs`
-      )
-    : undefined;
-}
-
-function tryGetSlotArgInfo(node: Fiber) {
-  // A real node passed in as a slot arg
-  const slotTplCompKey = tryGetSlotCompKey(node);
-  const slotParamUuid = tryGetSlotParam(node);
-  if (slotTplCompKey && slotParamUuid) {
-    return { slotTplCompKey, slotParamUuid };
-  }
-
-  // A placeholder node
-  const slotPlaceholderKey = tryGetSlotPlaceholderKey(node);
-  if (slotPlaceholderKey) {
-    const split = slotPlaceholderKey.split("~");
-    return { slotTplCompKey: split[0], slotParamUuid: split[1] };
-  }
-
-  return { slotTplCompKey: undefined, slotParamUuid: undefined };
-}
-
-function createValNode(opts: {
-  node: Fiber;
-  tplNode: TplNode;
-  instanceKey: string;
-  fullKey: string;
-  valOwner: ValComponent | undefined;
-  className: string | undefined;
-  frameUid: number;
-}) {
-  const { node, tplNode, instanceKey, fullKey, valOwner, className, frameUid } =
-    opts;
-  const commonValNodeParams = {
-    key: instanceKey,
-    fullKey,
-    valOwner,
-    className,
-    frameUid: ensure(frameUid, () => `Couldn't find frame UID`),
-    fibers: [node],
-    parent: undefined,
-    slotInfo: undefined,
-  };
-
-  const valNode: ValNode = switchType(tplNode)
-    .when(TplTag, (tplTag) => {
-      const params: ValTagParams = {
-        ...commonValNodeParams,
-        tpl: tplTag,
-        children: [],
-        className: ensure(
-          className,
-          () => `Couldn't get className for ValTag ${fullKey}`
-        ),
-      };
-      if (isTplTextBlock(tplTag)) {
-        // richTextData may be undefined if node was not successfully rendered
-        const richTextData = tryGetRichTextData(node);
-        return new ValTextTag({
-          ...params,
-          ...richTextData,
-          tpl: tplTag,
-        });
-      }
-      return new ValTag(params);
-    })
-    .when(
-      TplComponent,
-      (tplComponent) =>
-        new ValComponent({
-          ...commonValNodeParams,
-          slotArgs: new Map(),
-          tpl: tplComponent,
-          className: ensure(
-            className,
-            () => `Couldn't get className for ValComponent ${fullKey}`
-          ),
-          slotCanvasEnvs: new Map(),
-        })
-    )
-    .when(
-      TplSlot,
-      (tplSlot) =>
-        new ValSlot({
-          ...commonValNodeParams,
-          tpl: tplSlot,
-          contents: [],
-        })
-    )
-    .result();
-
-  const envs = tryGetNodeCanvasEnvs(node);
-  if (envs) {
-    valNode.envs = envs;
-  }
-  if (
-    valNode instanceof ValComponent &&
-    (isCodeComponent(valNode.tpl.component) ||
-      isPlumeComponent(valNode.tpl.component))
-  ) {
-    valNode.codeComponentProps = node.memoizedProps;
-    if (node.memoizedProps["className"]?.includes("__wab_error-display")) {
-      // This is an error display, so we try to recover the props from the actual
-      // node props we were trying to render.  It is stored as a prop to the
-      // CanvasErrorBoundary, which is a _parent_ of this node.
-      // We want to recover the node props even with a rendering error, because
-      // the component's controls may depend on the node props.
-      const nodeProps = node.return?.memoizedProps?.nodeProps;
-      if (nodeProps) {
-        valNode.codeComponentProps = nodeProps;
-      }
-    }
-  }
-  return valNode;
-}
-
-export const mkFrameValKeyToContextDataKey = (
-  frameUid: number,
-  valKey: string
-) => `${frameUid}.${valKey}`;

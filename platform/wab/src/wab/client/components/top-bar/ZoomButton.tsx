@@ -6,9 +6,9 @@ import {
 import PlasmicZoomButton from "@/wab/client/plasmic/plasmic_kit_top_bar/PlasmicZoomButton";
 import { getComboForAction } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { mkUuid } from "@/wab/common";
+import { mkUuid } from "@/wab/shared/common";
 import { InputNumber, Menu } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 
 const ZoomSpinner = observer(ZoomSpinner_);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import PP__ShareDialogContent from "./PlasmicShareDialogContent";
+import PP__ShareDialogContent from "@/wab/client/components/widgets/plasmic/PlasmicShareDialogContent";
 import {
   ApiPermission,
   ApiResource,
@@ -16,12 +16,12 @@ import {
   spawn,
   unexpected,
   withoutFalsy,
-} from "@/wab/common";
+} from "@/wab/shared/common";
 import { notification } from "antd";
 import L from "lodash";
 import copy from "copy-to-clipboard";
 import { U } from "@/wab/client/cli-routes";
-import { getPublicUrl } from "@/wab/urls";
+import { getPublicUrl } from "@/wab/shared/urls";
 import Select from "@/wab/client/components/widgets/Select";
 import PermissionItem, {
   contentCreatorTooltip,
@@ -30,7 +30,7 @@ import PermissionItem, {
   designerTooltip,
   developerTooltip,
   viewerTooltip,
-} from "./PermissionItem";
+} from "@/wab/client/components/widgets/plasmic/PermissionItem";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import {
   convertToTaggedResourceId,
@@ -48,8 +48,8 @@ import {
   maybeShowPaywall,
   PaywallError,
 } from "@/wab/client/components/modals/PricingModal";
-import { DEVFLAGS } from "@/wab/devflags";
-import TextWithInfo from "@/TextWithInfo";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import TextWithInfo from "@/wab/client/components/TextWithInfo";
 import { ORGANIZATION_LOWER } from "@/wab/shared/Labels";
 import { getUserEmail } from "@/wab/shared/ApiSchemaUtil";
 import PermissionsTab from "@/wab/client/components/app-auth/PermissionsTab";
@@ -216,6 +216,11 @@ function ShareDialogContent(props: ShareDialogContentProps) {
       ? !resource.resource.inviteOnly
       : resource.type === "team"
       ? !!resource.resource.defaultAccessLevel
+      : false;
+  const noShareByLink =
+    resource.type === "team" && !!resource.resource.defaultAccessLevel
+      ? ownAccessLevelRank <
+        accessLevelRank(resource.resource.defaultAccessLevel)
       : false;
 
   const updateProject = async (
@@ -436,6 +441,7 @@ function ShareDialogContent(props: ShareDialogContentProps) {
         isChecked: requireSignUp,
         onChange: setRequireSignUp,
       }}
+      noShareByLink={noShareByLink}
       shareByLinkSwitch={
         resource.type !== "workspace"
           ? {
@@ -523,10 +529,12 @@ function ShareDialogContent(props: ShareDialogContentProps) {
     setCurrentTab(showEndUsersTab ? "end-users" : "collaborators");
   }, [loadingAuthConfig]);
 
-  if (loadingAuthConfig) return <Spinner />;
+  if (loadingAuthConfig) {
+    return <Spinner />;
+  }
 
-  return (
-    <div style={{ width: 500 }}>
+  const TabsWrapper = () => {
+    return (
       <Tabs
         onSwitch={(tabKey) => {
           setCurrentTab(tabKey);
@@ -569,6 +577,13 @@ function ShareDialogContent(props: ShareDialogContentProps) {
           }),
         ])}
       ></Tabs>
+    );
+  };
+
+  return (
+    <div style={{ width: 500 }}>
+      {" "}
+      {showEndUsersTab ? TabsWrapper() : collaboratorShareDialog}{" "}
     </div>
   );
 }

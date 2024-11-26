@@ -474,8 +474,8 @@
         "13821008": {
           "name": "renderable",
           "params": [{ "__ref": "13821009" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "13821009": {
           "name": "instance",
@@ -597,8 +597,8 @@
         "13821021": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "13821022": {
           "tag": "div",
@@ -691,6 +691,8 @@
           "displayName": null,
           "importName": "TableValue",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -704,6 +706,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "13821036": {
@@ -750,6 +753,8 @@
           "displayName": null,
           "importName": "TableColumn",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -769,6 +774,7 @@
               "children": [{ "type": "component", "name": "AntdTableValue" }]
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "13821062": {
@@ -889,6 +895,8 @@
           "displayName": "Antd Table",
           "importName": "TableWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -925,6 +933,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "14050001": {
@@ -1203,6 +1212,8 @@
           "displayName": "Antd Dropdown",
           "importName": "Dropdown",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1219,6 +1230,7 @@
             "overlay": [{ "type": "component", "name": "AntdMenu" }],
             "children": [{ "type": "text", "value": "Dropdown" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "14719017": {
@@ -1437,6 +1449,8 @@
           "displayName": "Antd Dropdown Button",
           "importName": "DropdownButton",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1453,6 +1467,7 @@
             "overlay": [{ "type": "component", "name": "AntdMenu" }],
             "children": [{ "type": "text", "value": "Dropdown" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "14719031": { "name": "range", "uuid": "67AfNh_Tr-1", "__type": "Var" },
@@ -1546,8 +1561,8 @@
         "14719056": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "14719057": {
           "name": "overlay",
@@ -1715,14 +1730,14 @@
         "14719179": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "14719180": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "14719185": {
           "name": "choice",
@@ -2695,6 +2710,8 @@
           "displayName": "Antd Button",
           "importName": "Button",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2710,6 +2727,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Button" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675037": {
@@ -2901,6 +2919,8 @@
           "displayName": "Antd Slider",
           "importName": "Slider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "14719003" },
@@ -2914,6 +2934,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675049": {
@@ -3088,6 +3109,8 @@
           "displayName": "Antd Switch",
           "importName": "Switch",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3104,6 +3127,7 @@
             "checkedChildren": [],
             "unCheckedChildren": []
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675059": {
@@ -3236,6 +3260,8 @@
           "displayName": "Antd Option",
           "importName": "Option",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3251,6 +3277,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Option" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675067": {
@@ -3343,6 +3370,8 @@
           "displayName": "Antd Option Group",
           "importName": "OptGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3358,6 +3387,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "component", "name": "AntdOption" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675073": {
@@ -3652,6 +3682,8 @@
           "displayName": "Antd Select",
           "importName": "Select",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3677,6 +3709,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675090": {
@@ -3834,6 +3867,8 @@
           "displayName": "Antd Collapse Panel",
           "importName": "CollapsePanel",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3850,6 +3885,7 @@
             "header": [{ "type": "text", "value": "Header" }],
             "children": [{ "type": "text", "value": "Insert text here" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675099": {
@@ -4006,6 +4042,8 @@
           "displayName": "Antd Collapse",
           "importName": "Collapse",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4027,6 +4065,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675109": {
@@ -4180,6 +4219,8 @@
           "displayName": "Antd Checkbox",
           "importName": "Checkbox",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "19675407" },
@@ -4195,6 +4236,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Checkbox" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675118": {
@@ -4267,6 +4309,8 @@
           "displayName": "Antd Checkbox Group",
           "importName": "CheckboxGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4282,6 +4326,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "component", "name": "AntdCheckbox" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675124": {
@@ -4333,6 +4378,8 @@
           "displayName": "Antd Menu Divider",
           "importName": "MenuDivider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4346,6 +4393,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675128": {
@@ -4478,6 +4526,8 @@
           "displayName": "Antd Menu Item",
           "importName": "MenuItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4493,6 +4543,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Option" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675136": {
@@ -4566,6 +4617,8 @@
           "displayName": "Antd Menu Item Group",
           "importName": "MenuItemGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4582,6 +4635,7 @@
             "title": [{ "type": "text", "value": "Group" }],
             "children": [{ "type": "component", "name": "AntdMenuItem" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675141": {
@@ -4695,6 +4749,8 @@
           "displayName": "Antd SubMenu",
           "importName": "SubMenu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4728,6 +4784,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675148": {
@@ -5026,6 +5083,8 @@
           "displayName": "Antd Menu",
           "importName": "Menu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5044,6 +5103,7 @@
               { "type": "component", "name": "AntdSubMenu" }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675165": {
@@ -5176,6 +5236,8 @@
           "displayName": "Antd Carousel",
           "importName": "Carousel",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5220,6 +5282,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675173": {
@@ -5521,6 +5584,8 @@
           "displayName": "Antd Input",
           "importName": "Input",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5534,6 +5599,7 @@
           "styleSections": null,
           "helpers": { "__ref": "26736002" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675189": {
@@ -5746,6 +5812,8 @@
           "displayName": "Antd Input Text Area",
           "importName": "TextArea",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5759,6 +5827,7 @@
           "styleSections": null,
           "helpers": { "__ref": "26736003" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675201": {
@@ -6080,6 +6149,8 @@
           "displayName": "Antd Input Search",
           "importName": "Search",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6093,6 +6164,7 @@
           "styleSections": null,
           "helpers": { "__ref": "26736004" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675218": {
@@ -6392,6 +6464,8 @@
           "displayName": "Antd Input Password",
           "importName": "Password",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6405,6 +6479,7 @@
           "styleSections": null,
           "helpers": { "__ref": "26736005" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675235": {
@@ -6497,6 +6572,8 @@
           "displayName": "Antd Input Group",
           "importName": "InputGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6515,6 +6592,7 @@
               { "type": "component", "name": "AntdInput" }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "19675241": { "name": "type", "uuid": "WMAJNmGUCpB", "__type": "Var" },
@@ -7220,8 +7298,8 @@
         "19675455": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675456": {
           "name": "forceSubMenuRender",
@@ -7255,8 +7333,8 @@
         "19675467": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675468": {
           "name": "selectable",
@@ -7405,8 +7483,8 @@
         "19675501": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675502": {
           "name": "addonBefore",
@@ -7416,8 +7494,8 @@
         "19675503": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675504": {
           "name": "allowClear",
@@ -7459,8 +7537,8 @@
         "19675517": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675518": { "name": "size", "uuid": "rX_zDytmGXWX", "__type": "Var" },
         "19675519": {
@@ -7476,8 +7554,8 @@
         "19675521": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675522": { "name": "type", "uuid": "7IIHPPSjxPUG", "__type": "Var" },
         "19675523": { "name": "text", "__type": "Text" },
@@ -7601,8 +7679,8 @@
         "19675553": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675554": {
           "name": "allowClear",
@@ -7630,8 +7708,8 @@
         "19675561": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675562": { "name": "id", "uuid": "irDpgfRABv2n", "__type": "Var" },
         "19675563": { "name": "text", "__type": "Text" },
@@ -7661,8 +7739,8 @@
         "19675571": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675572": { "name": "size", "uuid": "IkbIMb4SuwuO", "__type": "Var" },
         "19675573": {
@@ -7678,8 +7756,8 @@
         "19675575": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675576": { "name": "type", "uuid": "oDXCscZxxNRw", "__type": "Var" },
         "19675577": { "name": "text", "__type": "Text" },
@@ -7743,8 +7821,8 @@
         "19675587": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675588": {
           "name": "addonBefore",
@@ -7754,8 +7832,8 @@
         "19675589": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675590": {
           "name": "allowClear",
@@ -7797,8 +7875,8 @@
         "19675603": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19675604": { "name": "size", "uuid": "PjzdRTea0dRI", "__type": "Var" },
         "19675605": {
@@ -8610,8 +8688,8 @@
         "19962025": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "19962026": {
           "tag": "div",
@@ -8679,6 +8757,8 @@
           "displayName": "Antd Rate",
           "importName": "Rate",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -8692,6 +8772,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "26017001": {
@@ -9032,8 +9113,8 @@
         "26017024": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "26017025": {
           "variants": [{ "__ref": "19675097" }],
@@ -9054,8 +9135,8 @@
         "26017027": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "26017028": {
           "name": "closeIcon",
@@ -9065,8 +9146,8 @@
         "26017029": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "26017030": {
           "variants": [{ "__ref": "19675107" }],
@@ -9467,6 +9548,8 @@
           "displayName": "Antd Tab Pane",
           "importName": "TabPane",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9483,6 +9566,7 @@
             "tab": [{ "type": "text", "value": "Tab" }],
             "children": [{ "type": "text", "value": "Tab Content" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "43229022": {
@@ -9785,6 +9869,8 @@
           "displayName": "Antd Tabs",
           "importName": "Tabs",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9819,6 +9905,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "43229039": {
@@ -9867,8 +9954,8 @@
         "43229067": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "43229068": {
           "name": "children",
@@ -9927,8 +10014,8 @@
         "43229078": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "43229079": {
           "name": "animated",
@@ -9950,8 +10037,8 @@
         "43229084": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "43229085": { "name": "size", "uuid": "jqQUPH8c17A", "__type": "Var" },
         "43229086": {
@@ -9989,8 +10076,8 @@
         "43229094": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "43229095": {
           "name": "rightTabBarExtraContent",
@@ -10000,8 +10087,8 @@
         "43229096": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "43229097": {
           "name": "tabBarStyle",
@@ -10179,8 +10266,8 @@
         "48810001": {
           "name": "renderable",
           "params": [{ "__ref": "48810002" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "48810002": {
           "name": "instance",
@@ -10190,86 +10277,86 @@
         "52743001": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743002": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743004": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743006": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743007": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743009": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743011": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743012": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743014": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743017": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743020": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743022": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743023": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "52743024": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "53322001": {
           "components": [
@@ -10341,9 +10428,9 @@
           "defaultStyle": { "__ref": "53322062" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "53322062": {
           "name": "Default Typography",
@@ -10358,14 +10445,14 @@
         "61025001": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025019": {
           "name": "renderable",
           "params": [{ "__ref": "61025020" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025020": {
           "name": "instance",
@@ -10375,8 +10462,8 @@
         "61025026": {
           "name": "renderable",
           "params": [{ "__ref": "61025027" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025027": {
           "name": "instance",
@@ -10386,8 +10473,8 @@
         "61025035": {
           "name": "renderable",
           "params": [{ "__ref": "61025036" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025036": {
           "name": "instance",
@@ -10401,8 +10488,8 @@
             { "__ref": "61025045" },
             { "__ref": "61025046" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025044": {
           "name": "instance",
@@ -10427,8 +10514,8 @@
             { "__ref": "61025050" },
             { "__ref": "61025060" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025048": {
           "name": "instance",
@@ -10452,8 +10539,8 @@
             { "__ref": "61025053" },
             { "__ref": "61025054" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025052": {
           "name": "instance",
@@ -10478,14 +10565,14 @@
         "61025105": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025116": {
           "name": "renderable",
           "params": [{ "__ref": "61025117" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025117": {
           "name": "instance",
@@ -10495,8 +10582,8 @@
         "61025123": {
           "name": "renderable",
           "params": [{ "__ref": "61025124" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "61025124": {
           "name": "instance",
@@ -11137,7 +11224,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -11148,8 +11235,8 @@
         "2484901": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "2484902": { "name": "bool", "__type": "BoolType" },
         "3305301": {
@@ -11702,7 +11789,6 @@
           "uuid": "iX3I3C2DOz0",
           "width": 1440,
           "height": 1024,
-          "viewportHeight": 1024,
           "container": { "__ref": "4673003" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11720,7 +11806,6 @@
           "uuid": "yS_EcubVQ0f",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "4673004" },
           "lang": "English",
           "pinnedVariants": {},
@@ -13188,7 +13273,7 @@
         "31251054": {
           "uuid": "QwthTzMhQWj",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -13198,7 +13283,7 @@
         "31251055": {
           "uuid": "GBscaIejIWK",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -13208,7 +13293,7 @@
         "31251056": {
           "uuid": "ax_EIIRnYAj",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -14125,7 +14210,6 @@
           "uuid": "uf4L3I7XWcz",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251243" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14143,7 +14227,6 @@
           "uuid": "gGRQt07xc82",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251244" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14161,7 +14244,6 @@
           "uuid": "TaaRoWKLZxr",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251245" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14179,7 +14261,6 @@
           "uuid": "K30Fd3kIVQw",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251246" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14197,7 +14278,6 @@
           "uuid": "j71YPzjVVcR",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251247" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14215,7 +14295,6 @@
           "uuid": "ZSdCwrbEV6A",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251248" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14233,7 +14312,6 @@
           "uuid": "4PP7GEZtYdf",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251249" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14251,7 +14329,6 @@
           "uuid": "BP8CaWsW5bO",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251250" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14269,7 +14346,6 @@
           "uuid": "GXzoMoU9lgy",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251251" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14287,7 +14363,6 @@
           "uuid": "YGOxT3kLnwp",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251252" },
           "lang": "English",
           "pinnedVariants": {},
@@ -14305,7 +14380,6 @@
           "uuid": "3x1CxPgUMhr",
           "width": 340,
           "height": 340,
-          "viewportHeight": null,
           "container": { "__ref": "31251253" },
           "lang": "English",
           "pinnedVariants": {},
@@ -15761,6 +15835,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15774,6 +15850,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "43396010": {
@@ -15906,6 +15983,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15919,6 +15998,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "43396018": { "name": "title", "uuid": "RfwVQYCHTo", "__type": "Var" },
@@ -15961,8 +16041,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "43396040" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "43396033": {
           "name": "pageSize",
@@ -16343,7 +16423,6 @@
           "uuid": "HZYcNbl7UqhkY",
           "width": 1440,
           "height": 768,
-          "viewportHeight": 1024,
           "container": { "__ref": "46092066" },
           "lang": "English",
           "pinnedVariants": {},
@@ -16397,7 +16476,6 @@
           "uuid": "cH3yPCL1MY1JZ",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "46092072" },
           "lang": "English",
           "pinnedVariants": {},
@@ -16452,9 +16530,9 @@
             { "__ref": "46092229" }
           ],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "46092076": {
           "name": "Default Typography",
@@ -17539,7 +17617,7 @@
         }
       },
       "deps": ["39835060-ce5b-4983-baf1-aad50207dbde"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

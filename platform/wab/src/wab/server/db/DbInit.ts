@@ -1,17 +1,28 @@
 // Must initialize globals early so that imported code can detect what
 // environment we're running in.
-import { spawn } from "@/wab/common";
 import { DEFAULT_DATABASE_URI } from "@/wab/server/config";
-import { FeatureTier, User } from "@/wab/server/entities/Entities";
-import { PlumePkgMgr } from "@/wab/server/pkgs/plume-pkg-mgr";
+import { getLastBundleVersion } from "@/wab/server/db/BundleMigrator";
+import { ensureDbConnection } from "@/wab/server/db/DbCon";
+import { initDb } from "@/wab/server/db/DbInitUtil";
+import { DbMgr, normalActor, SUPER_USER } from "@/wab/server/db/DbMgr";
+import { seedTestFeatureTiers } from "@/wab/server/db/seed/feature-tier";
+import { FeatureTier, Team, User } from "@/wab/server/entities/Entities";
+import {
+  getBundleInfo,
+  getDevflagForInsertableTemplateItem,
+  PkgMgr,
+} from "@/wab/server/pkg-mgr";
 import { initializeGlobals } from "@/wab/server/svr-init";
 import { Bundler } from "@/wab/shared/bundler";
-import { createSite } from "@/wab/sites";
+import { ensureType, spawn } from "@/wab/shared/common";
+import { createSite } from "@/wab/shared/core/sites";
+import { InsertableTemplatesGroup, Installable } from "@/wab/shared/devflags";
+import {
+  InsertableId,
+  PLEXUS_INSERTABLE_ID,
+  PLUME_INSERTABLE_ID,
+} from "@/wab/shared/insertables";
 import { EntityManager } from "typeorm";
-import { getLastBundleVersion } from "./BundleMigrator";
-import { ensureDbConnection } from "./DbCon";
-import { initDb } from "./DbInitUtil";
-import { DbMgr, normalActor, SUPER_USER } from "./DbMgr";
 
 initializeGlobals();
 
@@ -28,15 +39,20 @@ async function main() {
   });
 }
 
-async function seedTestDb(em: EntityManager) {
+export async function seedTestDb(em: EntityManager) {
   const db = new DbMgr(em, SUPER_USER);
   const bundler = new Bundler();
 
+  // admin@admin.example.com is an admin user because of its admin.com domain name
+  // (see `isCoreTeamEmail`), meaning it will receive elevated privileges and
+  // doesn't behave like normal accounts.
+  // AVOID TESTING WITH THIS ACCOUNT.
   const { user: adminUser } = await seedTestUserAndProjects(em, bundler, {
-    email: "admin@example.com",
+    email: "admin@admin.example.com",
     firstName: "Plasmic",
     lastName: "Admin",
   });
+  // user@example.com and user2@example.com behave like normal accounts.
   const { user: user1 } = await seedTestUserAndProjects(em, bundler, {
     email: "user@example.com",
     firstName: "Plasmic",
@@ -51,13 +67,70 @@ async function seedTestDb(em: EntityManager) {
   const { enterpriseFt, teamFt, proFt, starterFt } = await seedTestFeatureTiers(
     em
   );
-  await seedTeam(em, user1, "Test Enterprise Org", enterpriseFt);
+
+  const enterpriseOrg = await seedTeam(
+    em,
+    user1,
+    "Test Enterprise Org",
+    enterpriseFt
+  );
+  await seedTeam(
+    em,
+    user1,
+    "Test Enterprise Child Org A",
+    enterpriseFt,
+    enterpriseOrg
+  );
+  await seedTeam(
+    em,
+    user1,
+    "Test Enterprise Child Org B",
+    enterpriseFt,
+    enterpriseOrg
+  );
   await seedTeam(em, user1, "Test Scale Org", teamFt);
   await seedTeam(em, user2, "Test Pro Org", proFt);
   await seedTeam(em, user2, "Test Starter Org", starterFt);
 
-  // Seed the Plume pkg, which must be done after some users have been created
-  await new PlumePkgMgr(db).seedPlumePkg();
+  await seedTestPromotionCodes(em);
+
+  // Seed the special pkgs, which must be done after some users have been created
+  const sysnames: InsertableId[] = [PLUME_INSERTABLE_ID, PLEXUS_INSERTABLE_ID];
+  await Promise.all(
+    sysnames.map(async (sysname) => await new PkgMgr(db, sysname).seedPkg())
+  );
+
+  await db.setDevFlagOverrides(
+    JSON.stringify(
+      {
+        plexus: true,
+        installables: ensureType<Installable[] | undefined>([
+          {
+            type: "ui-kit",
+            isInstallOnly: true,
+            isNew: true,
+            name: "Plasmic Design System",
+            projectId: getBundleInfo(PLEXUS_INSERTABLE_ID).projectId,
+            imageUrl: "https://static1.plasmic.app/plasmic-logo.png",
+            groupName: "PDS",
+            entryPoint: {
+              type: "arena",
+              name: "Entry",
+            },
+          },
+        ]),
+        insertableTemplates: ensureType<InsertableTemplatesGroup | undefined>({
+          type: "insertable-templates-group",
+          name: "root",
+          items: sysnames
+            .map(getDevflagForInsertableTemplateItem)
+            .filter((insertableGroup) => insertableGroup.items.length > 0),
+        }),
+      },
+      null,
+      2
+    )
+  );
 }
 
 async function seedTestUserAndProjects(
@@ -94,7 +167,6 @@ async function seedTestUserAndProjects(
       projectId: project.id,
       data: '{"hello": "world"}',
       revisionNum: 2,
-      seqIdAssign: undefined,
     });
     await db.getLatestProjectRev(project.id);
 
@@ -105,7 +177,6 @@ async function seedTestUserAndProjects(
       projectId: project.id,
       data: JSON.stringify(siteBundle),
       revisionNum: 3,
-      seqIdAssign: undefined,
     });
   }
 
@@ -120,125 +191,12 @@ async function seedTestUserAndProjects(
   return { user, projects };
 }
 
-/**
- * These feature tiers have Stripe IDs that map to our Stripe testmode account.
- * See docs/contributing/platform/02-integrations.md
- */
-async function seedTestFeatureTiers(em: EntityManager) {
-  const db0 = new DbMgr(em, SUPER_USER);
-  return {
-    enterpriseFt: await db0.addFeatureTier({
-      name: "Enterprise",
-      monthlyBasePrice: null,
-      monthlyBaseStripePriceId: null,
-      annualBasePrice: null,
-      annualBaseStripePriceId: null,
-      monthlySeatPrice: 80,
-      monthlySeatStripePriceId: "price_1Ji3EFHIopbCiFeiUCtiVOyB",
-      annualSeatPrice: 768,
-      annualSeatStripePriceId: "price_1Ji3EFHIopbCiFeiSj0U8o1K",
-      minUsers: 30,
-      maxUsers: 1_000,
-      maxWorkspaces: 10_000,
-      monthlyViews: 1_000_000,
-      versionHistoryDays: 180,
-      analytics: true,
-      contentRole: true,
-      designerRole: true,
-      editContentCreatorMode: true,
-      localization: true,
-      splitContent: true,
-      privateUsersIncluded: null,
-      maxPrivateUsers: null,
-      publicUsersIncluded: null,
-      maxPublicUsers: null,
-    }),
-    teamFt: await db0.addFeatureTier({
-      name: "Team",
-      monthlyBasePrice: 499,
-      monthlyBaseStripePriceId: "price_1N9VlSHIopbCiFeiTU6RyL48",
-      annualBasePrice: 4_788,
-      annualBaseStripePriceId: "price_1N9VlSHIopbCiFeibn88Ezt0",
-      monthlySeatPrice: 40,
-      monthlySeatStripePriceId: "price_1N9VlxHIopbCiFeiLf3ngIwB",
-      annualSeatPrice: 384,
-      annualSeatStripePriceId: "price_1N9VlxHIopbCiFeicxycQNAp",
-      minUsers: 8,
-      maxUsers: 30,
-      maxWorkspaces: 300,
-      monthlyViews: 500_000,
-      versionHistoryDays: 180,
-      analytics: true,
-      contentRole: true,
-      designerRole: true,
-      editContentCreatorMode: true,
-      localization: true,
-      splitContent: true,
-      privateUsersIncluded: null,
-      maxPrivateUsers: null,
-      publicUsersIncluded: null,
-      maxPublicUsers: null,
-    }),
-    proFt: await db0.addFeatureTier({
-      name: "Pro",
-      monthlyBasePrice: 129,
-      monthlyBaseStripePriceId: "price_1N9VkLHIopbCiFeiSChtf6dV",
-      annualBasePrice: 1_236,
-      annualBaseStripePriceId: "price_1N9VkLHIopbCiFeiFsiEryvl",
-      monthlySeatPrice: 20,
-      monthlySeatStripePriceId: "price_1N9VkpHIopbCiFeiNptqZ2BR",
-      annualSeatPrice: 192,
-      annualSeatStripePriceId: "price_1N9VkpHIopbCiFeiMi50AFEk",
-      minUsers: 4,
-      maxUsers: 10,
-      maxWorkspaces: 100,
-      monthlyViews: 250_000,
-      versionHistoryDays: 90,
-      analytics: false,
-      contentRole: false,
-      designerRole: false,
-      editContentCreatorMode: false,
-      localization: false,
-      splitContent: false,
-      privateUsersIncluded: null,
-      maxPrivateUsers: null,
-      publicUsersIncluded: null,
-      maxPublicUsers: null,
-    }),
-    starterFt: await db0.addFeatureTier({
-      name: "Starter",
-      monthlyBasePrice: 49,
-      monthlyBaseStripePriceId: "price_1N9VirHIopbCiFeicbMYaVhb",
-      annualBasePrice: 468,
-      annualBaseStripePriceId: "price_1N9VirHIopbCiFeiPRRXpINo",
-      monthlySeatPrice: 0,
-      monthlySeatStripePriceId: "price_1N9VjhHIopbCiFeic0V8lDJX",
-      annualSeatPrice: 0,
-      annualSeatStripePriceId: "price_1N9VjhHIopbCiFeiViCs7zEH",
-      minUsers: 4,
-      maxUsers: 10,
-      maxWorkspaces: 100,
-      monthlyViews: 250_000,
-      versionHistoryDays: 90,
-      analytics: false,
-      contentRole: false,
-      designerRole: false,
-      editContentCreatorMode: false,
-      localization: false,
-      splitContent: false,
-      privateUsersIncluded: null,
-      maxPrivateUsers: null,
-      publicUsersIncluded: null,
-      maxPublicUsers: null,
-    }),
-  };
-}
-
 async function seedTeam(
   em: EntityManager,
   user: User,
   name: string,
-  featureTier: FeatureTier
+  featureTier: FeatureTier,
+  parentTeam?: Team
 ) {
   const db = new DbMgr(em, normalActor(user.id));
   let team = await db.createTeam(name);
@@ -247,6 +205,7 @@ async function seedTeam(
   team = await db0.sudoUpdateTeam({
     id: team.id,
     featureTierId: featureTier.id,
+    parentTeamId: parentTeam?.id,
   });
 
   console.log(
@@ -254,4 +213,14 @@ async function seedTeam(
   );
 
   return team;
+}
+
+async function seedTestPromotionCodes(em: EntityManager) {
+  const db0 = new DbMgr(em, SUPER_USER);
+  await db0.createPromotionCode(
+    "FREETESTING",
+    "FREETESTING - Free trial for testing",
+    30,
+    null
+  );
 }

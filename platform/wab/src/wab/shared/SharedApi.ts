@@ -1,22 +1,9 @@
-import { modelSchemaHash } from "@/wab/classes-metas";
-import { Dict } from "@/wab/collections";
-import {
-  assert,
-  ensureType,
-  NotImplementedError,
-  omitNils,
-} from "@/wab/common";
-import { brand } from "@/wab/commons/types";
-import { executePlasmicDataOp } from "@plasmicapp/data-sources";
-import L, { pick, uniq } from "lodash";
-import semver from "semver";
-import Stripe from "stripe";
-import { AuthError } from "./ApiErrors/errors";
+import { toOpaque } from "@/wab/commons/types";
+import { AuthError } from "@/wab/shared/ApiErrors/errors";
 import {
   AddCommentReactionRequest,
   AddCommentReactionResponse,
   AddFeatureTierResponse,
-  AddToWhitelistRequest,
   ApiAnalyticsImpressionResponse,
   ApiAnalyticsProjectMeta,
   ApiAnalyticsQueryType,
@@ -42,11 +29,13 @@ import {
   ApiDirectoryEndUserGroup,
   ApiEndUser,
   ApiEndUserDirectory,
+  ApiEntityBase,
   ApiExecuteDataSourceStudioOpRequest,
   ApiFeatureTier,
   ApiNotificationSettings,
   ApiPermission,
   ApiProject,
+  ApiProjectMeta,
   ApiProjectRepository,
   ApiProjectRevision,
   ApiProjectWebhook,
@@ -78,6 +67,7 @@ import {
   CommentId,
   CommentReactionData,
   CommentReactionId,
+  CommitGraph,
   ConfirmEmailRequest,
   ConfirmEmailResponse,
   CreateBranchRequest,
@@ -88,6 +78,7 @@ import {
   CreateWorkspaceResponse,
   DeleteCommentResponse,
   DomainsForProjectResponse,
+  EditCommentRequest,
   ExistingGithubRepoRequest,
   FeatureTierId,
   ForgotPasswordRequest,
@@ -99,7 +90,6 @@ import {
   GetProjectResponse,
   GetSubscriptionResponse,
   GetTeamResponse,
-  GetWhitelistResponse,
   GetWorkspaceResponse,
   GitActionParams,
   GitBranchesResponse,
@@ -112,8 +102,6 @@ import {
   GrantRevokeResponse,
   ImageUploadRequest,
   ImageUploadResponse,
-  InviteRequest,
-  InviteResponse,
   JoinTeamRequest,
   JoinTeamResponse,
   ListAuthIntegrationsResponse,
@@ -122,7 +110,6 @@ import {
   ListDataSourceBasesResponse,
   ListDataSourcesResponse,
   ListFeatureTiersResponse,
-  ListInviteRequestsResponse,
   ListProjectsResponse,
   ListTeamProjectsResponse,
   ListTeamsResponse,
@@ -132,6 +119,8 @@ import {
   MayTriggerPaywall,
   NewGithubRepoRequest,
   NewGithubRepoResponse,
+  NextPublishVersionRequest,
+  NextPublishVersionResponse,
   PersonalApiToken,
   PlasmicHostingSettings,
   PostCommentRequest,
@@ -151,13 +140,13 @@ import {
   QueryCopilotFeedbackResponse,
   QueryCopilotRequest,
   QueryCopilotResponse,
-  RemoveWhitelistRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
   RevalidatePlasmicHostingRequest,
   RevalidatePlasmicHostingResponse,
   SelfResponse,
   SendCopilotFeedbackRequest,
+  SendEmailsResponse,
   SendEmailVerificationRequest,
   SendEmailVerificationResponse,
   SetCustomDomainForProjectRequest,
@@ -183,22 +172,34 @@ import {
   UpdateHostUrlResponse,
   UpdateNotificationSettingsRequest,
   UpdatePasswordResponse,
+  UpdateProjectMetaRequest,
   UpdateProjectResponse,
   UpdateSelfAdminModeRequest,
   UpdateSelfRequest,
   UpdateTeamRequest,
   UpdateWorkspaceRequest,
-  UserId,
   UsersResponse,
   WorkspaceId,
-} from "./ApiSchema";
-import { showProjectBranchId } from "./ApiSchemaUtil";
-import { Bundle } from "./bundles";
-import { OperationTemplate } from "./data-sources-meta/data-sources";
-import { CodeSandboxInfo } from "./db-json-blobs";
-import { GrantableAccessLevel } from "./EntUtil";
-import { LowerHttpMethod } from "./HttpClientUtil";
-import { UiConfig } from "./ui-config-utils";
+} from "@/wab/shared/ApiSchema";
+import { showProjectBranchId } from "@/wab/shared/ApiSchemaUtil";
+import { Bundle } from "@/wab/shared/bundles";
+import { Dict } from "@/wab/shared/collections";
+import {
+  assert,
+  ensureType,
+  NotImplementedError,
+  omitNils,
+} from "@/wab/shared/common";
+import { OperationTemplate } from "@/wab/shared/data-sources-meta/data-sources";
+import { CodeSandboxInfo } from "@/wab/shared/db-json-blobs";
+import { GrantableAccessLevel } from "@/wab/shared/EntUtil";
+import { LowerHttpMethod } from "@/wab/shared/HttpClientUtil";
+import { modelSchemaHash } from "@/wab/shared/model/classes-metas";
+import { UiConfig } from "@/wab/shared/ui-config-utils";
+import { executePlasmicDataOp } from "@plasmicapp/data-sources";
+import L, { pick, uniq } from "lodash";
+import semver from "semver";
+import Stripe from "stripe";
 
 export interface SiteInfo {
   createdAt: string | Date;
@@ -217,6 +218,7 @@ export interface SiteInfo {
   projectApiToken: string | null;
   workspaceId: WorkspaceId | null;
   workspaceName: string | null;
+  parentTeamId: TeamId | null;
   teamId: TeamId | null;
   teamName: string | null;
   featureTier: ApiFeatureTier | null;
@@ -255,14 +257,8 @@ export interface PkgInfo {
   projectId;
 }
 
-export interface PkgVersionInfoMeta {
+export interface PkgVersionInfoMeta extends ApiEntityBase {
   id: string;
-  createdAt: string | Date;
-  createdById: UserId | null;
-  updatedAt: string | Date;
-  updatedById: UserId | null;
-  deletedAt: string | Date | null;
-  deletedById: string | null;
   pkgId: string;
   version: string;
   tags?: string[];
@@ -280,6 +276,7 @@ export interface PkgVersionInfoMeta {
 export type PkgVersionInfo = PkgVersionInfoMeta & {
   model: Bundle;
 };
+
 export type WrappedStorageEvent = Pick<StorageEvent, "key" | "newValue">;
 
 export abstract class SharedApi {
@@ -291,7 +288,9 @@ export abstract class SharedApi {
     method: LowerHttpMethod,
     url: string,
     data?: {},
-    opts?: {},
+    opts?: {
+      headers: { [name: string]: string | undefined };
+    },
     hideDataOnError?: boolean,
     noErrorTransform?: boolean
   ): Promise<any>;
@@ -412,6 +411,7 @@ export abstract class SharedApi {
         revision: number;
         depPkgs: PkgVersionInfo[];
         deletedIids: string[];
+        modifiedComponentIids: string[];
       }
     | { data?: never; needsReload: true }
     | { data: null; needsReload?: never }
@@ -438,7 +438,7 @@ export abstract class SharedApi {
     }
   ): Promise<GetProjectResponse> {
     return this.get(
-      `/projects/${showProjectBranchId(brand(siteId), opts?.branchId)}`,
+      `/projects/${showProjectBranchId(toOpaque(siteId), opts?.branchId)}`,
       {
         ...(opts?.revisionId !== undefined
           ? { revisionId: opts.revisionId }
@@ -513,13 +513,14 @@ export abstract class SharedApi {
       hostlessDataVersion: number;
       incremental: boolean;
       toDeleteIids: string[];
+      modifiedComponentIids: string[];
       branchId?: BranchId;
     }
   ) {
     const { branchId, revisionNum, ...rest } = rev;
     return this.post(
       `/projects/${showProjectBranchId(
-        brand(projectId),
+        toOpaque(projectId),
         branchId
       )}/revisions/${revisionNum}`,
       {
@@ -534,6 +535,13 @@ export abstract class SharedApi {
     data: SetSiteInfoReq
   ): Promise<MayTriggerPaywall<UpdateProjectResponse>> {
     return this.put(`/projects/${siteId}`, data);
+  }
+
+  updateProjectMeta(
+    projectId: string,
+    data: UpdateProjectMetaRequest
+  ): Promise<ApiProjectMeta> {
+    return this.put(`/projects/${projectId}/meta`, data);
   }
 
   setShowHostingBadge(projectId: ProjectId, showBadge: boolean) {
@@ -565,13 +573,6 @@ export abstract class SharedApi {
       data
     );
     return res;
-  }
-
-  async isValidSamlEmail(email: string): Promise<boolean> {
-    const res = await this.get(
-      `/auth/saml/test?${new URLSearchParams({ email }).toString()}`
-    );
-    return res.valid;
   }
 
   async isValidSsoEmail(
@@ -677,6 +678,13 @@ export abstract class SharedApi {
     return this.post(`/projects/${projectId}/create-pkg`);
   }
 
+  getPkgVersionByProjectId(
+    projectId: string,
+    version
+  ): Promise<{ pkg: PkgVersionInfo; depPkgs: PkgVersionInfo[] }> {
+    return this.get(`/pkgs/projectId/${projectId}`, { version });
+  }
+
   /**
    * Gets the pkg at a particular version.
    * If the version is not specified, it will return the latest
@@ -710,6 +718,17 @@ export abstract class SharedApi {
       version: version ?? "latest",
       meta: true,
       ...(branchId ? { branchId } : {}),
+    });
+  }
+
+  async computeNextProjectVersion(
+    projectId,
+    { branchId, revisionNum }: NextPublishVersionRequest
+  ): Promise<NextPublishVersionResponse> {
+    return this.post(`/projects/${projectId}/next-publish-version`, {
+      projectId,
+      branchId,
+      revisionNum,
     });
   }
 
@@ -1027,8 +1046,16 @@ export abstract class SharedApi {
     return this.post(`/admin/reset-team-trial`, { teamId });
   }
 
-  async listTeamsForUser(userId: string): Promise<ListTeamsResponse> {
-    return this.post(`/admin/teams`, { userId });
+  async adminListTeams(
+    data:
+      | {
+          userId: string;
+        }
+      | {
+          featureTierIds: string[];
+        }
+  ): Promise<ListTeamsResponse> {
+    return this.post(`/admin/teams`, data);
   }
 
   async getTeamDiscourseInfo(teamId: TeamId): Promise<ApiTeamDiscourseInfo> {
@@ -1042,6 +1069,12 @@ export abstract class SharedApi {
     return this.put(`/admin/teams/${teamId}/sync-discourse-info`, data);
   }
 
+  async sendTeamSupportWelcomeEmail(
+    teamId: TeamId
+  ): Promise<SendEmailsResponse> {
+    return this.post(`/admin/teams/${teamId}/send-support-welcome-email`);
+  }
+
   async listProjectsForOwner(ownerId: string): Promise<ListProjectsResponse> {
     return this.post(`/admin/projects`, { ownerId });
   }
@@ -1052,8 +1085,11 @@ export abstract class SharedApi {
     return this.get(`/projects/${encodeURIComponent(projectId)}/branches`);
   }
 
-  async tryMergeBranch(data: TryMergeRequest): Promise<TryMergeResponse> {
-    return this.post(`/merge`, data);
+  async tryMergeBranch(
+    projectId: ProjectId,
+    data: TryMergeRequest
+  ): Promise<TryMergeResponse> {
+    return this.post(`/projects/${encodeURIComponent(projectId)}/merge`, data);
   }
 
   async createBranch(
@@ -1108,10 +1144,6 @@ export abstract class SharedApi {
 
   async changeProjectOwner(projectId: string, ownerEmail: string): Promise<{}> {
     return this.post(`/admin/change-project-owner`, { projectId, ownerEmail });
-  }
-
-  async upsertSamlConfig(args: any): Promise<any> {
-    return await this.post(`/admin/upsert-saml`, args);
   }
 
   async upsertSsoConfig(args: any): Promise<any> {
@@ -1177,28 +1209,8 @@ export abstract class SharedApi {
     return await this.post(`/admin/reset-tutorial-db`, { sourceId });
   }
 
-  async listInviteRequests(): Promise<ListInviteRequestsResponse> {
-    return this.get(`/admin/invite-requests`);
-  }
-
-  async getWhitelist(): Promise<GetWhitelistResponse> {
-    return this.get(`/admin/whitelist`);
-  }
-
-  async addToWhitelist(args: AddToWhitelistRequest) {
-    await this.post("/admin/whitelist", args);
-  }
-
-  async removeWhitelist(args: RemoveWhitelistRequest) {
-    await this.delete("/admin/whitelist", args);
-  }
-
   async adminLoginAs(args: { email: string }): Promise<LoginResponse> {
     return this.post("/admin/login-as", args);
-  }
-
-  async invite(args: InviteRequest): Promise<InviteResponse> {
-    return this.post("/admin/invite", args);
   }
 
   async getDevFlagOverrides(): Promise<GetDevFlagOverridesResponse> {
@@ -1291,10 +1303,6 @@ export abstract class SharedApi {
     stripeSubscriptionId: StripeSubscriptionId;
   }): Promise<{}> {
     return this.post("/admin/upgrade-team", args);
-  }
-
-  async updateCodeSandboxToken(token: string) {
-    return this.post("/admin/codesandbox-token", { token });
   }
 
   async getAppConfig(): Promise<AppConfigResponse> {
@@ -1616,6 +1624,16 @@ export abstract class SharedApi {
     return res as ApiCmsDatabase;
   }
 
+  async cloneCmsDatabase(
+    databaseId: CmsDatabaseId,
+    data?: Partial<{
+      name: string;
+    }>
+  ) {
+    const res = await this.post(`/cmse/databases/${databaseId}/clone`, data);
+    return res as ApiCmsDatabase;
+  }
+
   async deleteCmsDatabase(databaseId: CmsDatabaseId) {
     return await this.delete(`/cmse/databases/${databaseId}`);
   }
@@ -1807,9 +1825,8 @@ export abstract class SharedApi {
     projectId: ProjectId,
     branchId?: BranchId
   ): Promise<GetCommentsResponse> {
-    return this.get(
-      `/projects/${showProjectBranchId(brand(projectId), branchId)}/comments`
-    );
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
+    return this.get(`/comments/${projectBranchId}`);
   }
 
   async postComment(
@@ -1817,9 +1834,28 @@ export abstract class SharedApi {
     branchId: BranchId | undefined,
     data: CommentData
   ): Promise<PostCommentResponse> {
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
     return this.post(
-      `/projects/${showProjectBranchId(brand(projectId), branchId)}/comments`,
-      ensureType<PostCommentRequest>({ data })
+      `/comments/${projectBranchId}`,
+      ensureType<PostCommentRequest>(data)
+    );
+  }
+
+  async editComment(
+    projectId: ProjectId,
+    branchId: BranchId | undefined,
+    commentId: CommentId,
+    data: {
+      body?: string;
+      resolved?: boolean;
+    }
+  ): Promise<{}> {
+    return this.put(
+      `/comments/${showProjectBranchId(
+        toOpaque(projectId),
+        branchId
+      )}/comment/${commentId}`,
+      ensureType<EditCommentRequest>(data)
     );
   }
 
@@ -1828,12 +1864,8 @@ export abstract class SharedApi {
     branchId: BranchId | undefined,
     commentId: string
   ): Promise<DeleteCommentResponse> {
-    return this.delete(
-      `/projects/${showProjectBranchId(
-        brand(projectId),
-        branchId
-      )}/comment/${commentId}`
-    );
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
+    return this.delete(`/comments/${projectBranchId}/comment/${commentId}`);
   }
 
   async deleteThread(
@@ -1841,39 +1873,46 @@ export abstract class SharedApi {
     branchId: BranchId | undefined,
     threadId: string
   ): Promise<DeleteCommentResponse> {
-    return this.delete(
-      `/projects/${showProjectBranchId(
-        brand(projectId),
-        branchId
-      )}/thread/${threadId}`
-    );
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
+    return this.delete(`/comments/${projectBranchId}/thread/${threadId}`);
   }
+
   async updateNotificationSettings(
     projectId: ProjectId,
     branchId: BranchId | undefined,
     data: ApiNotificationSettings
   ): Promise<PostCommentResponse> {
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
     return this.put(
-      `/projects/${showProjectBranchId(
-        brand(projectId),
-        branchId
-      )}/notification-settings`,
+      `/comments/${projectBranchId}/notification-settings`,
       ensureType<UpdateNotificationSettingsRequest>(data)
     );
   }
 
   async addReactionToComment(
+    projectId: ProjectId,
+    branchId: BranchId | undefined,
     commentId: CommentId,
     data: CommentReactionData
   ): Promise<AddCommentReactionResponse> {
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
     return this.post(
-      `/comments/${encodeURIComponent(commentId)}/reactions`,
+      `/comments/${projectBranchId}/comment/${encodeURIComponent(
+        commentId
+      )}/reactions`,
       ensureType<AddCommentReactionRequest>({ data })
     );
   }
 
-  async removeReactionFromComment(reactionId: CommentReactionId): Promise<{}> {
-    return this.delete(`/reactions/${encodeURIComponent(reactionId)}`);
+  async removeReactionFromComment(
+    projectId: ProjectId,
+    branchId: BranchId | undefined,
+    reactionId: CommentReactionId
+  ): Promise<{}> {
+    const projectBranchId = showProjectBranchId(toOpaque(projectId), branchId);
+    return this.delete(
+      `/comments/${projectBranchId}/reactions/${encodeURIComponent(reactionId)}`
+    );
   }
 
   async getTeamAnalytics(
@@ -2230,6 +2269,15 @@ export abstract class SharedApi {
 
   async getAppMeta(projectId: string): Promise<any> {
     return this.get(`/admin/project/${projectId}/app-meta`);
+  }
+
+  async getProjectBranchesMetadata(projectId: string): Promise<{
+    branches: ApiBranch[];
+    pkgVersions: PkgVersionInfoMeta[];
+    commitGraph: CommitGraph;
+    users: ApiUser[];
+  }> {
+    return this.get(`/admin/project-branches-metadata/${projectId}`);
   }
 
   async processSvg(data: ProcessSvgRequest): Promise<ProcessSvgResponse> {

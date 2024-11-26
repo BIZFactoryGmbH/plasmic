@@ -1,38 +1,41 @@
-import {
-  ArenaFrame,
-  Component,
-  CustomFunction,
-  isKnownTplComponent,
-  Param,
-  RawText,
-  RichText,
-  State,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-  Variant,
-  VariantSetting,
-} from "@/wab/classes";
-import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
+import { Adoptee, InsertionSpec } from "@/wab/client/Dnd";
 import { RunFn } from "@/wab/client/components/canvas/CanvasText";
+import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import "@/wab/client/components/canvas/slate";
 import { ViewOps } from "@/wab/client/components/canvas/view-ops";
 import { makeClientPinManager } from "@/wab/client/components/variants/ClientPinManager";
 import { makeVariantsController } from "@/wab/client/components/variants/VariantsController";
 import { DevCliSvrEvaluator } from "@/wab/client/cseval";
 import { WithDbCtx } from "@/wab/client/db";
-import { Adoptee, InsertionSpec } from "@/wab/client/Dnd";
 import { Fiber } from "@/wab/client/react-global-hook/fiber";
 import {
   getMostRecentFiberVersion,
   globalHookCtx,
-  mkFrameValKeyToContextDataKey,
 } from "@/wab/client/react-global-hook/globalHook";
+import { mkFrameValKeyToContextDataKey } from "@/wab/client/react-global-hook/utils";
 import { requestIdleCallbackAsync } from "@/wab/client/requestidlecallback";
+import {
+  FreestyleState,
+  PointerState,
+  StudioCtx,
+} from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewportCtx } from "@/wab/client/studio-ctx/ViewportCtx";
+import { ComponentCtx } from "@/wab/client/studio-ctx/component-ctx";
 import { trackEvent } from "@/wab/client/tracking";
 import { ViewStateSnapshot } from "@/wab/client/undo-log";
+import { drainQueue } from "@/wab/commons/asyncutil";
+import { safeCallbackify } from "@/wab/commons/control";
+import { getArenaFrames } from "@/wab/shared/Arenas";
+import { RSH } from "@/wab/shared/RuleSetHelpers";
+import { getAncestorSlotArg } from "@/wab/shared/SlotUtils";
+import { $$$ } from "@/wab/shared/TplQuery";
+import { VariantTplMgr } from "@/wab/shared/VariantTplMgr";
+import { isBaseVariant } from "@/wab/shared/Variants";
+import {
+  allCustomFunctions,
+  getLinkedCodeProps,
+} from "@/wab/shared/cached-selectors";
+import { customFunctionId } from "@/wab/shared/code-components/code-components";
 import {
   arrayEq,
   assert,
@@ -48,52 +51,65 @@ import {
   switchType,
   tuple,
   withoutNils,
-} from "@/wab/common";
-import { drainQueue } from "@/wab/commons/asyncutil";
-import { safeCallbackify } from "@/wab/commons/control";
-import {
-  CodeComponent,
-  isCodeComponent,
-  isFrameComponent,
-} from "@/wab/components";
-import { DEVFLAGS } from "@/wab/devflags";
-import { getRawCode } from "@/wab/exprs";
-import { Pt, rectsIntersect } from "@/wab/geom";
-import { metaSvc } from "@/wab/metas";
-import { Selectable, SQ } from "@/wab/selection";
-import { getArenaFrames } from "@/wab/shared/Arenas";
-import { customFunctionId } from "@/wab/shared/code-components/code-components";
+} from "@/wab/shared/common";
 import {
   ComponentVariantFrame,
   GlobalVariantFrame,
   RootComponentVariantFrame,
   TransientComponentVariantFrame,
 } from "@/wab/shared/component-frame";
-import { CanvasEnv, evalCodeWithEnv } from "@/wab/shared/eval";
-import { RSH } from "@/wab/shared/RuleSetHelpers";
-import { isTplResizable } from "@/wab/shared/sizingutils";
-import { getAncestorSlotArg } from "@/wab/shared/SlotUtils";
-import { $$$ } from "@/wab/shared/TplQuery";
-import { isBaseVariant } from "@/wab/shared/Variants";
-import { VariantTplMgr } from "@/wab/shared/VariantTplMgr";
-import { isTplAttachedToSite } from "@/wab/sites";
-import { SlotSelection } from "@/wab/slots";
 import {
+  CodeComponent,
+  isCodeComponent,
+  isFrameComponent,
+} from "@/wab/shared/core/components";
+import { getRawCode } from "@/wab/shared/core/exprs";
+import { metaSvc } from "@/wab/shared/core/metas";
+import { SQ, Selectable } from "@/wab/shared/core/selection";
+import { isTplAttachedToSite } from "@/wab/shared/core/sites";
+import { SlotSelection, isSlotSelection } from "@/wab/shared/core/slots";
+import {
+  StateVariableType,
   getStateOnChangePropName,
   getStateValuePropName,
   getStateVarName,
-  StateVariableType,
-} from "@/wab/states";
-import * as Tpls from "@/wab/tpls";
-import { RawTextLike } from "@/wab/tpls";
+} from "@/wab/shared/core/states";
+import * as Tpls from "@/wab/shared/core/tpls";
+import { RawTextLike } from "@/wab/shared/core/tpls";
 import {
-  bestValForTpl,
+  ComponentEvalContext,
   ValComponent,
   ValNode,
   ValTag,
   ValTextTag,
-} from "@/wab/val-nodes";
-import { asTpl, asVal, isValSelectable, tplFromSelectable } from "@/wab/vals";
+  bestValForTpl,
+} from "@/wab/shared/core/val-nodes";
+import {
+  asTpl,
+  asVal,
+  isValSelectable,
+  tplFromSelectable,
+} from "@/wab/shared/core/vals";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { CanvasEnv, evalCodeWithEnv } from "@/wab/shared/eval";
+import { Pt, rectsIntersect } from "@/wab/shared/geom";
+import {
+  ArenaFrame,
+  Component,
+  CustomFunction,
+  Param,
+  RawText,
+  RichText,
+  State,
+  TplComponent,
+  TplNode,
+  TplSlot,
+  TplTag,
+  Variant,
+  VariantSetting,
+  isKnownTplComponent,
+} from "@/wab/shared/model/classes";
+import { isTplResizable } from "@/wab/shared/sizingutils";
 import {
   generateStateOnChangeProp,
   generateStateValueProp,
@@ -101,19 +117,13 @@ import {
 } from "@plasmicapp/react-web";
 import asynclib from "async";
 import $ from "jquery";
-import L, { defer, groupBy, head } from "lodash";
+import L, { defer, groupBy, head, isEqual } from "lodash";
 import * as mobx from "mobx";
-import { computed, observable } from "mobx";
+import { comparer, computed, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import * as React from "react";
 import { CSSProperties } from "react";
 import type { Editor as SlateEditor } from "slate";
-import {
-  allCustomFunctions,
-  getLinkedCodeProps,
-} from "src/wab/shared/cached-selectors";
-import { ComponentCtx } from "./component-ctx";
-import { FreestyleState, PointerState, StudioCtx } from "./StudioCtx";
 
 export class ViewMode {
   static live: ViewMode;
@@ -155,6 +165,7 @@ export interface SpotlightAndVariantsInfo {
   pinnedVariants: { [key: string]: boolean };
   showDefaultSlotContents: boolean;
   focusedSelectable: Selectable | undefined;
+  focusedTpl: TplNode | undefined;
 }
 
 export class ViewCtx extends WithDbCtx {
@@ -162,6 +173,10 @@ export class ViewCtx extends WithDbCtx {
   readonly viewportCtx: ViewportCtx;
 
   csEvaluator: DevCliSvrEvaluator;
+
+  get isFirstRenderComplete() {
+    return this.csEvaluator.isFirstRenderComplete;
+  }
 
   private disposals: (() => void)[] = [];
   private _isDisposed = false;
@@ -303,6 +318,10 @@ export class ViewCtx extends WithDbCtx {
 
   createSetContextDataFn = computedFn((valKey: string) => {
     return (value: any) => {
+      const oldValue = this._codeComponentValKeyToContextData.get(valKey);
+      if (isEqual(oldValue, value)) {
+        return;
+      }
       globalHookCtx.frameValKeyToContextData.set(
         mkFrameValKeyToContextDataKey(this.arenaFrame().uid, valKey),
         value
@@ -374,6 +393,39 @@ export class ViewCtx extends WithDbCtx {
       this._xFocusedTpls.set(tpls);
     }
   }
+
+  focusedTplAncestorsThroughComponents = computedFn(
+    () => {
+      const node = (() => {
+        const selectables = withoutNils(this.focusedSelectables());
+        if (selectables.length === 1) {
+          const selectable = selectables[0];
+          if (isSlotSelection(selectable)) {
+            return selectable;
+          } else {
+            return selectable.tpl;
+          }
+        }
+        const tpls = withoutNils(this.focusedTpls());
+        if (tpls.length === 1) {
+          return tpls[0];
+        }
+        return null;
+      })();
+      // Running `ancestorsThroughComponentsWithSlotSelections` every time focusedTpl changes may
+      // be expensive, can we do better?
+      return node
+        ? Tpls.ancestorsThroughComponentsWithSlotSelections(node, {
+            includeTplComponentRoot: true,
+          })
+        : [];
+    },
+    {
+      name: "ViewCtx.focusedTplAncestorsThroughComponents",
+      equals: comparer.structural,
+    }
+  );
+
   private _xFocusedSelectables = observable.box<(Selectable | null)[]>([], {
     name: "ViewCtx.focusedSelectables",
   });
@@ -1211,10 +1263,10 @@ export class ViewCtx extends WithDbCtx {
     return plainCanvasEnv;
   };
 
-  getComponentPropValuesAndContextData(
+  getComponentEvalContext(
     tpl: TplTag | TplComponent,
     param?: Param
-  ) {
+  ): ComponentEvalContext {
     const linkedProps = isKnownTplComponent(tpl)
       ? getLinkedCodeProps(tpl.component)
       : undefined;
@@ -1222,18 +1274,20 @@ export class ViewCtx extends WithDbCtx {
       ? linkedProps?.get(param.variable.name)
       : undefined;
     const actualTpl = maybeLinkedProp ? maybeLinkedProp[0] : tpl;
-    const valComp = this.maybeTpl2ValsInContext(actualTpl, {
+    const valComps = this.maybeTpl2ValsInContext(actualTpl, {
       allowAnyContext: true,
     });
-    if (valComp && valComp[0] instanceof ValComponent) {
+    if (valComps && valComps[0] instanceof ValComponent) {
+      const valComp = valComps[0];
       return {
-        componentPropValues:
-          (valComp[0] as ValComponent).codeComponentProps ?? {},
-        ccContextData: this.getContextData(valComp[0] as ValComponent) ?? null,
+        componentPropValues: valComp.codeComponentProps ?? {},
+        invalidArgs: valComp.invalidArgs ?? [],
+        ccContextData: this.getContextData(valComp) ?? null,
       };
     }
     return {
       componentPropValues: {},
+      invalidArgs: [],
       ccContextData: undefined,
     };
   }
@@ -2066,6 +2120,7 @@ export class ViewCtx extends WithDbCtx {
         ),
       },
       focusedSelectable: this.focusedSelectable() ?? undefined,
+      focusedTpl: this.focusedTpl() ?? undefined,
     };
   }
 
@@ -2139,7 +2194,8 @@ export class ViewCtx extends WithDbCtx {
             groupBy(
               allCustomFunctions(this.site)
                 .map(({ customFunction }) => customFunction)
-                .filter((f) => !!f.namespace)
+                .filter((f) => !!f.namespace),
+              (f) => f.namespace
             )
           ),
         ].map((functionOrGroup) =>

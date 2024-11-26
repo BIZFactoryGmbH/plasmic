@@ -3,11 +3,8 @@ import { PageParamsProvider } from "@plasmicapp/host";
 import { AssetModule, ComponentMeta, Split } from "@plasmicapp/loader-core";
 import { PlasmicQueryDataProvider } from "@plasmicapp/query";
 import * as React from "react";
-import {
-  ComponentRenderData,
-  InternalPlasmicComponentLoader,
-  PlasmicComponentLoader,
-} from "./loader";
+import { InternalPlasmicComponentLoader } from "./loader-client";
+import { ComponentRenderData, PlasmicComponentLoader } from "./loader-shared";
 import { MaybeWrap, useForceUpdate } from "./utils";
 import {
   ensureVariationCookies,
@@ -15,7 +12,7 @@ import {
   mergeGlobalVariantsSpec,
 } from "./variation";
 
-interface PlasmicRootContextValue extends PlasmicDataSourceContextValue {
+export interface PlasmicRootContextValue extends PlasmicDataSourceContextValue {
   globalVariants?: GlobalVariantSpec[];
   globalContextsProps?: Record<string, any>;
   loader: InternalPlasmicComponentLoader;
@@ -140,11 +137,15 @@ export function PlasmicRootProvider(
      */
     pageQuery?: Record<string, string | string[] | undefined>;
     /**
-     * Whether the React.Suspense boundaries should be removed
+     * Whether the internal Plasmic React.Suspense boundaries should be removed
      */
     disableLoadingBoundary?: boolean;
     /**
-     * Fallback value for the root-level React.Suspense
+     * Whether the root React.Suspense boundary should be removed
+     */
+    disableRootLoadingBoundary?: boolean;
+    /**
+     * Fallback value for React.Suspense boundary
      */
     suspenseFallback?: React.ReactNode;
   } & PlasmicDataSourceContextValue
@@ -167,12 +168,13 @@ export function PlasmicRootProvider(
     pageQuery,
     suspenseFallback,
     disableLoadingBoundary,
+    disableRootLoadingBoundary,
   } = props;
   const loader = (props.loader as any)
     .__internal as InternalPlasmicComponentLoader;
 
   if (prefetchedData) {
-    loader.registerPrefetchedBundle(prefetchedData?.bundle);
+    loader.registerPrefetchedBundle(prefetchedData.bundle);
   }
 
   const [splits, setSplits] = React.useState<Split[]>(loader.getActiveSplits());
@@ -192,6 +194,80 @@ export function PlasmicRootProvider(
     return () => loader.unsubscribePlasmicRoot(watcher);
   }, [watcher, loader]);
 
+  const currentContextValue = React.useContext(PlasmicRootContext);
+
+  const { user, userAuthToken, isUserLoading, authRedirectUri } = props;
+
+  const value = React.useMemo<PlasmicRootContextValue>(() => {
+    // Fallback to the value in `currentContextValue` if none is provided
+    const withCurrentContextValueFallback = <
+      K extends keyof PlasmicRootContextValue
+    >(
+      v: PlasmicRootContextValue[K],
+      key: K
+    ): PlasmicRootContextValue[K] => {
+      return (v !== undefined ? v : currentContextValue?.[key])!;
+    };
+    return {
+      globalVariants: [
+        ...mergeGlobalVariantsSpec(
+          globalVariants ?? [],
+          getGlobalVariantsFromSplits(splits, variation ?? {})
+        ),
+        ...(currentContextValue?.globalVariants ?? []),
+      ],
+      globalContextsProps: {
+        ...(currentContextValue?.globalContextsProps ?? {}),
+        ...(globalContextsProps ?? {}),
+      },
+      loader: withCurrentContextValueFallback(loader, "loader"),
+      variation: {
+        ...(currentContextValue?.variation ?? {}),
+        ...(variation ?? {}),
+      },
+      translator: withCurrentContextValueFallback(translator, "translator"),
+      Head: withCurrentContextValueFallback(Head, "Head"),
+      Link: withCurrentContextValueFallback(Link, "Link"),
+      user: withCurrentContextValueFallback(user, "user"),
+      userAuthToken: withCurrentContextValueFallback(
+        userAuthToken,
+        "userAuthToken"
+      ),
+      isUserLoading: withCurrentContextValueFallback(
+        isUserLoading,
+        "isUserLoading"
+      ),
+      authRedirectUri: withCurrentContextValueFallback(
+        authRedirectUri,
+        "authRedirectUri"
+      ),
+      suspenseFallback: withCurrentContextValueFallback(
+        suspenseFallback,
+        "suspenseFallback"
+      ),
+      disableLoadingBoundary: withCurrentContextValueFallback(
+        disableLoadingBoundary,
+        "disableLoadingBoundary"
+      ),
+    };
+  }, [
+    globalVariants,
+    variation,
+    globalContextsProps,
+    loader,
+    splits,
+    translator,
+    Head,
+    Link,
+    user,
+    userAuthToken,
+    isUserLoading,
+    authRedirectUri,
+    suspenseFallback,
+    disableLoadingBoundary,
+    currentContextValue,
+  ]);
+
   React.useEffect(() => {
     ensureVariationCookies(variation);
     loader.trackRender({
@@ -201,50 +277,15 @@ export function PlasmicRootProvider(
         teamIds: loader.getTeamIds(),
         projectIds: loader.getProjectIds(),
       },
-      variation,
+      variation: value.variation,
     });
-  }, [loader, variation]);
-
-  const { user, userAuthToken, isUserLoading, authRedirectUri } = props;
-
-  const value = React.useMemo<PlasmicRootContextValue>(
-    () => ({
-      globalVariants: mergeGlobalVariantsSpec(
-        globalVariants ?? [],
-        getGlobalVariantsFromSplits(splits, variation ?? {})
-      ),
-      globalContextsProps,
-      loader,
-      variation,
-      translator,
-      Head,
-      Link,
-      user,
-      userAuthToken,
-      isUserLoading,
-      authRedirectUri,
-      suspenseFallback,
-      disableLoadingBoundary,
-    }),
-    [
-      globalVariants,
-      variation,
-      globalContextsProps,
-      loader,
-      splits,
-      translator,
-      Head,
-      Link,
-      user,
-      userAuthToken,
-      isUserLoading,
-      authRedirectUri,
-      suspenseFallback,
-      disableLoadingBoundary,
-    ]
-  );
+  }, [loader, value]);
 
   const reactMajorVersion = +React.version.split(".")[0];
+
+  const shouldDisableRootLoadingBoundary =
+    disableRootLoadingBoundary ??
+    loader.getBundle().disableRootLoadingBoundaryByDefault;
 
   return (
     <PlasmicQueryDataProvider
@@ -265,7 +306,7 @@ export function PlasmicRootProvider(
           query={pageQuery}
         >
           <MaybeWrap
-            cond={!disableLoadingBoundary && reactMajorVersion >= 18}
+            cond={!shouldDisableRootLoadingBoundary && reactMajorVersion >= 18}
             wrapper={(contents) => (
               <React.Suspense fallback={suspenseFallback ?? "Loading..."}>
                 {contents}

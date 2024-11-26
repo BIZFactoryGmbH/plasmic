@@ -1,15 +1,15 @@
 import { UU } from "@/wab/client/cli-routes";
+import { useCmsDatabase } from "@/wab/client/components/cms/cms-contexts";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import {
   DefaultCmsLeftTabsProps,
   PlasmicCmsLeftTabs,
 } from "@/wab/client/plasmic/plasmic_kit_cms/PlasmicCmsLeftTabs";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import { accessLevelRank } from "@/wab/shared/EntUtil";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import * as React from "react";
 import { useRouteMatch } from "react-router";
-import { useCmsDatabase } from "./cms-contexts";
 
 export type CmsLeftTabsProps = DefaultCmsLeftTabsProps;
 

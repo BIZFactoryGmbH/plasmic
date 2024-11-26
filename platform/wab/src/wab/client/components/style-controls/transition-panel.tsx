@@ -1,10 +1,10 @@
 import { Transition } from "@/wab/client/components/sidebar-tabs/TransitionsSection";
 import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
+import StyleSelect from "@/wab/client/components/style-controls/StyleSelect";
 import { Textbox } from "@/wab/client/components/widgets/Textbox";
-import { asValidCssTime } from "@/wab/css";
-import { observer } from "mobx-react-lite";
+import { asValidCssTime } from "@/wab/shared/css";
+import { observer } from "mobx-react";
 import React, { useState } from "react";
-import StyleSelect from "./StyleSelect";
 
 interface TransitionPanelProps {
   transition: Transition;
@@ -61,8 +61,9 @@ export const TransitionPanel = observer(function TransitionPanel(
       s[idx] === "0" &&
       s[idx + 1] >= "0" &&
       s[idx + 1] <= "9"
-    )
+    ) {
       idx++;
+    }
     return s.substr(idx);
   };
 

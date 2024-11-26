@@ -1,41 +1,41 @@
-import {
-  Component,
-  ComponentDataQuery,
-  DataSourceOpExpr,
-  isKnownDataSourceOpExpr,
-  isKnownTemplatedString,
-  TplComponent,
-} from "@/wab/classes";
 import { WithContextMenu } from "@/wab/client/components/ContextMenu";
-import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
-import { IconLinkButton } from "@/wab/client/components/widgets";
-import { DataQueriesTooltip } from "@/wab/client/components/widgets/DetailedTooltips";
-import { Icon } from "@/wab/client/components/widgets/Icon";
-import { LabeledListItem } from "@/wab/client/components/widgets/LabeledListItem";
-import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelWithDetailedTooltip";
-import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { RightTabKey, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { TutorialEventsType } from "@/wab/client/tours/tutorials/tutorials-events";
-import { spawn } from "@/wab/common";
-import { isPageComponent } from "@/wab/components";
-import { asCode } from "@/wab/exprs";
-import { getTplComponentFetchers } from "@/wab/shared/cached-selectors";
-import { toVarName } from "@/wab/shared/codegen/util";
-import { DATA_QUERY_LOWER, DATA_QUERY_PLURAL_CAP } from "@/wab/shared/Labels";
-import { renameQueryAndFixExprs } from "@/wab/shared/refactoring";
-import { addEmptyQuery } from "@/wab/shared/TplMgr";
-import { tryGetTplOwnerComponent } from "@/wab/tpls";
-import { PlasmicDataSourceContextProvider } from "@plasmicapp/react-web";
-import { Menu } from "antd";
-import { autorun } from "mobx";
-import { observer } from "mobx-react-lite";
-import React from "react";
 import {
   DataSourceOpExprSummary,
   DataSourceOpValuePreview,
   useDataSourceOpExprBottomModal,
-} from "./DataSource/DataSourceOpPicker";
+} from "@/wab/client/components/sidebar-tabs/DataSource/DataSourceOpPicker";
+import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
+import { IconLinkButton } from "@/wab/client/components/widgets";
+import { DataQueriesTooltip } from "@/wab/client/components/widgets/DetailedTooltips";
+import { Icon } from "@/wab/client/components/widgets/Icon";
+import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelWithDetailedTooltip";
+import { LabeledListItem } from "@/wab/client/components/widgets/LabeledListItem";
+import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
+import { RightTabKey, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
+import { TutorialEventsType } from "@/wab/client/tours/tutorials/tutorials-events";
+import { spawn } from "@/wab/shared/common";
+import { isPageComponent } from "@/wab/shared/core/components";
+import { asCode } from "@/wab/shared/core/exprs";
+import { DATA_QUERY_LOWER, DATA_QUERY_PLURAL_CAP } from "@/wab/shared/Labels";
+import { addEmptyQuery } from "@/wab/shared/TplMgr";
+import { getTplComponentFetchers } from "@/wab/shared/cached-selectors";
+import { toVarName } from "@/wab/shared/codegen/util";
+import {
+  Component,
+  ComponentDataQuery,
+  DataSourceOpExpr,
+  TplComponent,
+  isKnownDataSourceOpExpr,
+  isKnownTemplatedString,
+} from "@/wab/shared/model/classes";
+import { renameQueryAndFixExprs } from "@/wab/shared/refactoring";
+import { tryGetTplOwnerComponent } from "@/wab/shared/core/tpls";
+import { PlasmicDataSourceContextProvider } from "@plasmicapp/react-web";
+import { Menu } from "antd";
+import { autorun } from "mobx";
+import { observer } from "mobx-react";
+import React from "react";
 
 const DataQueryRow = observer(
   ({
@@ -166,7 +166,7 @@ function ComponentQueriesSection_(props: {
 
   const componentType = isPageComponent(component) ? "page" : "component";
 
-  let handleAddDataQuery = () => {
+  const handleAddDataQuery = () => {
     // Intercept add query requests during tour to configure tutorialdb for the user
     if (
       studioCtx.onboardingTourState.triggers.includes(

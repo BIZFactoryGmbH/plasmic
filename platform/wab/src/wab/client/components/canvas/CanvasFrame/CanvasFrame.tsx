@@ -1,39 +1,57 @@
-import { ArenaFrame } from "@/wab/classes";
-import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
+import { DragMoveFrameManager } from "@/wab/client/FreestyleManipulator";
 import { CanvasActions } from "@/wab/client/components/canvas/CanvasActions/CanvasActions";
+import { CanvasArtboardSelectionHandle } from "@/wab/client/components/canvas/CanvasFrame/CanvasArtboardSelectionHandle";
+import styles from "@/wab/client/components/canvas/CanvasFrame/CanvasFrame.module.scss";
+import { CanvasHeader } from "@/wab/client/components/canvas/CanvasFrame/CanvasHeader";
+import { headRegexp } from "@/wab/client/components/canvas/CanvasFrame/headRegexp";
+import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import {
   absorbLinkClick,
   closestTaggedNonTextDomElt,
   showCanvasPageNavigationNotification,
 } from "@/wab/client/components/canvas/studio-canvas-util";
-import { CommentOverlays } from "@/wab/client/components/comments/CommentOverlays";
+import { CanvasCommentMarkers } from "@/wab/client/components/comments/CanvasCommentMarkers";
 import { bindShortcutHandlers } from "@/wab/client/shortcuts/shortcut-handler";
 import { STUDIO_SHORTCUTS } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { assert, cx, ensure, spawn, spawnWrapper, tuple } from "@/wab/common";
 import { ScreenDimmer } from "@/wab/commons/components/ScreenDimmer";
-import { AnyArena, getArenaName, getFrameHeight } from "@/wab/shared/Arenas";
+import {
+  XDraggable,
+  XDraggableEvent,
+} from "@/wab/commons/components/XDraggable";
+import { AsyncGeneratorReturnType } from "@/wab/commons/types";
+import {
+  AnyArena,
+  getArenaName,
+  getFrameHeight,
+  isPositionManagedFrame,
+} from "@/wab/shared/Arenas";
 import { siteToAllGlobalVariants } from "@/wab/shared/cached-selectors";
 import {
   toClassName,
   toJsIdentifier,
   toVarName,
 } from "@/wab/shared/codegen/util";
-import { getPublicUrl } from "@/wab/urls";
+import {
+  assert,
+  cx,
+  ensure,
+  spawn,
+  spawnWrapper,
+  tuple,
+} from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { Pt } from "@/wab/shared/geom";
+import { ArenaFrame } from "@/wab/shared/model/classes";
+import { getPublicUrl } from "@/wab/shared/urls";
 import { Spin } from "antd";
 import $ from "jquery";
 import L from "lodash";
 import { reaction } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useMountedState, useUnmount } from "react-use";
-import { AsyncGeneratorReturnType } from "src/wab/commons/types";
-import { DEVFLAGS } from "src/wab/devflags";
-import { CanvasArtboardSelectionHandle } from "./CanvasArtboardSelectionHandle";
-import styles from "./CanvasFrame.module.scss";
-import { CanvasHeader } from "./CanvasHeader";
-import { headRegexp } from "./headRegexp";
 
 interface CanvasFrameProps {
   studioCtx: StudioCtx;
@@ -379,21 +397,62 @@ export const CanvasFrame = observer(function CanvasFrame({
       })
     );
   }, [studioCtx]);
-  const handleArenaHandleClick = useCallback(
-    (e?: React.MouseEvent<HTMLElement>) => {
-      if (studioCtx.isInteractiveMode) {
-        return;
+  const handleArenaHandleClick = useCallback(() => {
+    if (studioCtx.isInteractiveMode) {
+      return;
+    }
+    spawn(
+      studioCtx.change(({ success }) => {
+        studioCtx.setStudioFocusOnlyOnFrame(arenaFrame);
+        return success();
+      })
+    );
+  }, [studioCtx]);
+
+  const dragMoveManager = useRef<DragMoveFrameManager | undefined>(undefined);
+
+  const startMove = (e: XDraggableEvent) => {
+    const clientPt = new Pt(e.mouseEvent.pageX, e.mouseEvent.pageY);
+    if (isPositionManagedFrame(studioCtx, arenaFrame)) {
+      return;
+    }
+    dragMoveManager.current = new DragMoveFrameManager(
+      studioCtx,
+      arenaFrame,
+      clientPt
+    );
+
+    if (dragMoveManager.current && dragMoveManager.current.aborted()) {
+      dragMoveManager.current = undefined;
+    } else {
+      studioCtx.setIsDraggingObject(true);
+    }
+  };
+
+  const dragMove = async (e: XDraggableEvent) => {
+    if (dragMoveManager.current) {
+      if (dragMoveManager.current.aborted()) {
+        await stopMove();
+      } else {
+        const clientPt = new Pt(e.mouseEvent.pageX, e.mouseEvent.pageY);
+        await dragMoveManager.current.drag(clientPt, e.mouseEvent);
+        if (dragMoveManager.current && dragMoveManager.current.aborted()) {
+          await stopMove();
+        }
       }
-      spawn(
-        studioCtx.change(({ success }) => {
-          studioCtx.setStudioFocusOnlyOnFrame(arenaFrame);
-          return success();
-        })
-      );
-      e?.stopPropagation();
-    },
-    [studioCtx]
-  );
+    }
+  };
+
+  const stopMove = async () => {
+    await studioCtx.change(({ success }) => {
+      if (dragMoveManager.current) {
+        dragMoveManager.current.endDrag();
+        dragMoveManager.current = undefined;
+      }
+      studioCtx.setIsDraggingObject(false);
+      return success();
+    });
+  };
 
   useEffect(() => {
     if (loadState === "ready-to-load" && iframeRef.current) {
@@ -613,13 +672,22 @@ export const CanvasFrame = observer(function CanvasFrame({
         )}
 
         <CanvasHeader studioCtx={studioCtx} frame={arenaFrame} arena={arena} />
-        <CanvasArtboardSelectionHandle
-          frame={arenaFrame}
-          onClick={handleArenaHandleClick}
-        />
-        {studioCtx.rightTabKey === "comments" && (
-          <CommentOverlays arena={arena} arenaFrame={arenaFrame} />
-        )}
+        <XDraggable
+          onStart={(e) => startMove(e)}
+          onDrag={(e) => dragMove(e)}
+          onStop={async () => stopMove()}
+        >
+          <span>
+            <CanvasArtboardSelectionHandle
+              frame={arenaFrame}
+              onClick={handleArenaHandleClick}
+            />
+          </span>
+        </XDraggable>
+        {studioCtx.appCtx.appConfig.comments &&
+          studioCtx.showCommentsOverlay && (
+            <CanvasCommentMarkers arena={arena} arenaFrame={arenaFrame} />
+          )}
         {studioCtx.appCtx.appConfig.warningsInCanvas && (
           <CanvasActions arena={arena} arenaFrame={arenaFrame} />
         )}

@@ -1,10 +1,8 @@
-import { Site } from "@/wab/classes";
 import { ResizableImage } from "@/wab/client/dom-utils";
-import { ImageAssetType } from "@/wab/image-asset-type";
-import { svgoProcess } from "@/wab/server/svgo";
-import { ProcessSvgRequest, ProcessSvgResponse } from "@/wab/shared/ApiSchema";
 import { TplMgr } from "@/wab/shared/TplMgr";
 import { VariantTplMgr } from "@/wab/shared/VariantTplMgr";
+import { ImageAssetType } from "@/wab/shared/core/image-asset-type";
+import { Site } from "@/wab/shared/model/classes";
 import fs from "fs";
 import { map, split, uniq } from "lodash";
 import path from "path";
@@ -60,37 +58,18 @@ export const createSiteOps = (tplMgr: TplMgr) => {
   };
 };
 
-export const createAppCtx = () => {
-  // AppCtx/API mock with the minimum required to pass Figma spec.
-  return {
-    api: {
-      processSvg: async function (
-        data: ProcessSvgRequest
-      ): Promise<ProcessSvgResponse> {
-        return svgoProcess(data.svgXml);
-      },
-    },
-  };
-};
-
-export const FILES_PATH = path.join(
-  __dirname,
-  "..",
-  "__tests__",
-  "figma",
-  "files"
-);
-
 export const getFigmaFilesIds = () => {
-  const files = fs.readdirSync(FILES_PATH);
+  const files = fs.readdirSync(path.join(__dirname, "figma", "files"));
   return uniq(map(files, (file) => split(file, "-")[0]));
 };
 
-const getFilePath = (fileName) =>
-  path.join(__dirname, "..", "__tests__", "figma", "files", fileName);
-
 export const getTestFigmaData = (id) => {
-  const figdataPath = getFilePath(`${id}-figdata.json`);
+  const figdataPath = path.join(
+    __dirname,
+    "figma",
+    "files",
+    `${id}-figdata.json`
+  );
   const raw = fs.readFileSync(figdataPath);
   // @ts-ignore
   return JSON.parse(raw);

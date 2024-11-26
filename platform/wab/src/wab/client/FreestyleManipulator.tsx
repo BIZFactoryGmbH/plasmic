@@ -1,8 +1,10 @@
-import { ArenaFrame, Site } from "@/wab/classes";
+import { Dims, offsetPxAsUnits } from "@/wab/client/DimManip";
 import { getOffsetRect } from "@/wab/client/dom";
+import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
 import {
-  absmax,
   CustomError,
+  absmax,
   ensure,
   ensureArray,
   ensureInstance,
@@ -12,30 +14,30 @@ import {
   safeCast,
   spawn,
   tuple,
-} from "@/wab/common";
+} from "@/wab/shared/common";
 import {
-  lazyDerefTokenRefsWithDeps,
   TokenType,
+  lazyDerefTokenRefsWithDeps,
 } from "@/wab/commons/StyleToken";
 import {
   Box,
   ClientRect,
   Corner,
   DimProp,
-  dimProps,
+  Pt,
+  Rect,
+  Side,
   dimPropToSizeAxis,
+  dimProps,
   ensureSide,
   isEndSide,
   isStandardSide,
   oppSideOrCorner,
-  Pt,
-  Rect,
-  Side,
   sideOrCornerToSides,
   sideToOrient,
   sizeAxisToSides,
-} from "@/wab/geom";
-import { Selectable } from "@/wab/selection";
+} from "@/wab/shared/geom";
+import { Selectable } from "@/wab/shared/core/selection";
 import {
   ensureActivatedScreenVariantsForFrameByWidth,
   getFrameHeight,
@@ -43,23 +45,21 @@ import {
   isPositionManagedFrame,
 } from "@/wab/shared/Arenas";
 import {
+  Size,
   createNumericSize,
   parseAtomicSize,
   showSizeCss,
-  Size,
-} from "@/wab/shared/Css";
+} from "@/wab/shared/css-size";
+import { IRuleSetHelpers } from "@/wab/shared/RuleSetHelpers";
 import { makeMergedExpProxy } from "@/wab/shared/exprs";
 import {
-  getRshPositionType,
   PositionLayoutType,
+  getRshPositionType,
 } from "@/wab/shared/layoututils";
-import { IRuleSetHelpers } from "@/wab/shared/RuleSetHelpers";
+import { ArenaFrame, Site } from "@/wab/shared/model/classes";
 import { isSpecialSizeVal } from "@/wab/shared/sizingutils";
-import { ValComponent, ValTag } from "@/wab/val-nodes";
+import { ValComponent, ValTag } from "@/wab/shared/core/val-nodes";
 import { failable } from "ts-failable";
-import { Dims, offsetPxAsUnits } from "./DimManip";
-import { StudioCtx } from "./studio-ctx/StudioCtx";
-import { ViewCtx } from "./studio-ctx/view-ctx";
 
 export interface ManipState {
   /**
@@ -338,7 +338,7 @@ export class FreestyleManipulator {
     for (const dimProp of dimProps) {
       if (state.lastOffsetRect[dimProp] !== desiredOffsetRect[dimProp]) {
         if (isStandardSide(dimProp)) {
-          if (exp.get(dimProp) !== "auto")
+          if (exp.get(dimProp) !== "auto") {
             this.updateDimProp(
               state,
               exp,
@@ -346,6 +346,7 @@ export class FreestyleManipulator {
               undefined,
               desiredOffsetRect[dimProp]
             );
+          }
         } else {
           // If a width/height already is set, we continue setting it.
 

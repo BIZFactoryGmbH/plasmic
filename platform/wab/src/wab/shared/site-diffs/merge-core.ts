@@ -1,23 +1,9 @@
-import * as classes from "@/wab/classes";
-import {
-  Arena,
-  ArenaChild,
-  Component,
-  ComponentArena,
-  ImageAsset,
-  Mixin,
-  ObjInst,
-  PageArena,
-  Param,
-  Site,
-  Split,
-  State,
-  StyleToken,
-  Variant,
-  VariantGroup,
-} from "@/wab/classes";
-import { meta } from "@/wab/classes-metas";
-import { spanWhile } from "@/wab/collections";
+import { removeFromArray } from "@/wab/commons/collections";
+import { Lookup, pathSelector } from "@/wab/commons/path-selector";
+import { TplMgr } from "@/wab/shared/TplMgr";
+import { Bundler, addrKey } from "@/wab/shared/bundler";
+import { toVarName } from "@/wab/shared/codegen/util";
+import { spanWhile } from "@/wab/shared/collections";
 import {
   arrayEq,
   assert,
@@ -34,51 +20,70 @@ import {
   tuple,
   unexpected,
   uniqueName,
+  withoutNils,
   xGroupBy,
   xIntersect,
   xKeyBy,
   xUnion,
-} from "@/wab/common";
-import { removeFromArray } from "@/wab/commons/collections";
-import { Lookup, pathSelector } from "@/wab/commons/path-selector";
-import { getComponentDisplayName, PageComponent } from "@/wab/components";
+} from "@/wab/shared/common";
+import {
+  PageComponent,
+  getComponentDisplayName,
+} from "@/wab/shared/core/components";
+import { ChangeRecorder } from "@/wab/shared/core/observable-model";
+import { SplitType } from "@/wab/shared/core/splits";
+import {
+  TplNamable,
+  flattenTpls,
+  isTplNamable,
+  trackComponentRoot,
+  trackComponentSite,
+} from "@/wab/shared/core/tpls";
+import mobx from "@/wab/shared/import-mobx";
+import { instUtil } from "@/wab/shared/model/InstUtil";
+import * as classes from "@/wab/shared/model/classes";
+import {
+  Arena,
+  ArenaChild,
+  Component,
+  ComponentArena,
+  ImageAsset,
+  Mixin,
+  ObjInst,
+  PageArena,
+  Param,
+  Site,
+  Split,
+  State,
+  StyleToken,
+  Variant,
+  VariantGroup,
+} from "@/wab/shared/model/classes";
+import { meta } from "@/wab/shared/model/classes-metas";
 import {
   Class,
   Field,
   isWeakRefField,
   withoutUids,
-} from "@/wab/model/model-meta";
-import { ChangeRecorder } from "@/wab/observable-model";
-import { addrKey, Bundler } from "@/wab/shared/bundler";
-import { toVarName } from "@/wab/shared/codegen/util";
-import { instUtil } from "@/wab/shared/core/InstUtil";
+} from "@/wab/shared/model/model-meta";
 import {
+  NodeCtx,
+  NodeFieldCtx,
   areSameInstType,
   assertSameInstType,
   createNodeCtx,
   nextCtx,
-  NodeCtx,
-  NodeFieldCtx,
   walkModelTree,
-} from "@/wab/shared/core/model-tree-util";
-import mobx from "@/wab/shared/import-mobx";
+} from "@/wab/shared/model/model-tree-util";
 import {
   fixDanglingReferenceConflicts,
   getEmptyDeletedAssetsSummary,
   updateSummaryFromDeletedInstances,
 } from "@/wab/shared/server-updates-utils";
 import {
-  assertSiteInvariants,
   InvariantError,
+  assertSiteInvariants,
 } from "@/wab/shared/site-invariants";
-import { TplMgr } from "@/wab/shared/TplMgr";
-import { SplitType } from "@/wab/splits";
-import {
-  flattenTpls,
-  isTplNamable,
-  trackComponentRoot,
-  trackComponentSite,
-} from "@/wab/tpls";
 import {
   countBy,
   difference,
@@ -93,18 +98,21 @@ import {
   zip,
 } from "lodash";
 import isEqual from "lodash/isEqual";
+
+// site-diffs has circular dependencies
+// keeping these imports last seems to make sure everything works properly
 import {
   fixDuplicatedCodeComponents,
   fixPagePaths,
   fixSwappedTplComponents,
   fixVirtualSlotArgs,
-} from "./merge-components";
-import { fixProjectDependencies } from "./merge-deps";
-import { fixDuplicatedRegisteredTokens } from "./merge-tokens";
+} from "@/wab/shared/site-diffs/merge-components";
+import { fixProjectDependencies } from "@/wab/shared/site-diffs/merge-deps";
+import { fixDuplicatedRegisteredTokens } from "@/wab/shared/site-diffs/merge-tokens";
 import {
   FieldConflictDescriptorMeta,
   modelConflictsMeta,
-} from "./model-conflicts-meta";
+} from "@/wab/shared/site-diffs/model-conflicts-meta";
 
 export type UpdateData = {
   field: Field;
@@ -1538,7 +1546,12 @@ function getOrSetSeen(
   );
 }
 
-function walkAndFixNames(site: Site, bundler: Bundler, seenMap: SeenNamesMap) {
+function walkAndFixNames(
+  site: Site,
+  bundler: Bundler,
+  seenMap: SeenNamesMap,
+  isDeletedInst: (inst: ObjInst) => boolean
+) {
   const autoReconciliations: AutoReconciliation[] = [];
   const walked = walkModelTree(createNodeCtx(site));
   for (const inst of walked) {
@@ -1549,11 +1562,13 @@ function walkAndFixNames(site: Site, bundler: Bundler, seenMap: SeenNamesMap) {
         (fieldMeta.arrayType && fieldMeta.conflictType === "rename") ||
         fieldMeta.forceRename
       ) {
-        const value: ObjInst[] = inst[field.name].filter((v: any) =>
-          fieldMeta.excludeFromRename
-            ? !fieldMeta.excludeFromRename(v, inst)
-            : true
-        );
+        const value: ObjInst[] = inst[field.name]
+          .filter((v: any) =>
+            fieldMeta.excludeFromRename
+              ? !fieldMeta.excludeFromRename(v, inst)
+              : true
+          )
+          .filter((v: any) => !isDeletedInst(v));
         const nameKey = fieldMeta.nameKey.split(".");
         const allNames = countBy(value.map((obj) => pathGet(obj, nameKey)));
         const seen = getOrSetSeen(
@@ -1599,38 +1614,72 @@ function walkAndFixNames(site: Site, bundler: Bundler, seenMap: SeenNamesMap) {
   return autoReconciliations;
 }
 
-function preFixNames(a: Site, b: Site, bundler: Bundler) {
+function preFixNames(
+  a: Site,
+  b: Site,
+  bundler: Bundler,
+  isDeletedInst: (inst: ObjInst) => boolean
+) {
   const allSeen: SeenNamesMap = new Map();
   const autoReconciliations: AutoReconciliation[] = [];
   mobx.runInAction(() => {
-    autoReconciliations.push(...walkAndFixNames(a, bundler, allSeen));
+    autoReconciliations.push(
+      ...walkAndFixNames(a, bundler, allSeen, isDeletedInst)
+    );
   });
   mobx.runInAction(() => {
-    autoReconciliations.push(...walkAndFixNames(b, bundler, allSeen));
+    autoReconciliations.push(
+      ...walkAndFixNames(b, bundler, allSeen, isDeletedInst)
+    );
   });
   return autoReconciliations;
 }
 
 type FlattenedTplNodes = {
-  nodes: Record<string, classes.TplNode>;
+  nodes: Record<string, TplNamable>;
   names: string[];
 };
 
-function preFixTplNames(a: Site, b: Site, bundler: Bundler) {
+function preFixTplNames(
+  a: Site,
+  b: Site,
+  ancestor: Site,
+  bundler: Bundler,
+  isDeletedInst: (inst: ObjInst) => boolean
+) {
   const autoReconciliations: AutoReconciliation[] = [];
 
   const getNodesAndNames = (
-    tplMgr: TplMgr,
-    component: classes.Component
+    component: classes.Component,
+    ancestorNodes: Record<string, TplNamable> = {}
   ): FlattenedTplNodes => {
+    const nodes = flattenTpls(component.tplTree).filter(
+      (node): node is TplNamable => {
+        if (!isTplNamable(node)) {
+          return false;
+        }
+        if (isDeletedInst(node)) {
+          return false;
+        }
+
+        // This means it's a new node
+        const iid = bundler.addrOf(node).iid;
+        if (!(iid in ancestorNodes)) {
+          return true;
+        }
+
+        return node.name !== ancestorNodes[iid].name;
+      }
+    );
+    const params = component.params.filter((param) => !isDeletedInst(param));
     return {
       nodes: Object.fromEntries(
-        flattenTpls(component.tplTree).map((node) => [
-          bundler.addrOf(node).iid,
-          node,
-        ])
+        nodes.map((node) => [bundler.addrOf(node).iid, node])
       ),
-      names: tplMgr.getExistingTplAndExplicitStateNames(component),
+      names: withoutNils([
+        ...nodes.filter(isTplNamable).map((node) => node.name),
+        ...params.map((param) => param.variable.name),
+      ]),
     };
   };
 
@@ -1644,6 +1693,9 @@ function preFixTplNames(a: Site, b: Site, bundler: Bundler) {
         continue;
       }
       if (iid in otherTree.nodes) {
+        continue;
+      }
+      if (isDeletedInst(tpl)) {
         continue;
       }
 
@@ -1674,6 +1726,10 @@ function preFixTplNames(a: Site, b: Site, bundler: Bundler) {
 
   const aTplMgr = new TplMgr({ site: a });
   const bTplMgr = new TplMgr({ site: b });
+  const ancestorComponents: Record<number, classes.Component> = {};
+  for (const component of ancestor.components) {
+    ancestorComponents[bundler.addrOf(component).iid] = component;
+  }
   const aComponents: Record<number, classes.Component> = {};
   for (const component of a.components) {
     aComponents[bundler.addrOf(component).iid] = component;
@@ -1683,9 +1739,16 @@ function preFixTplNames(a: Site, b: Site, bundler: Bundler) {
     if (!(componentIid in aComponents)) {
       continue;
     }
+    // If the component exist in both branches, it should exist in the ancestor too
+    const ancestorComponent = ensure(
+      ancestorComponents[componentIid],
+      "Ancestor component must exist"
+    );
     const aComponent = aComponents[componentIid];
-    const aFlattened = getNodesAndNames(aTplMgr, aComponent);
-    const bFlattened = getNodesAndNames(bTplMgr, bComponent);
+    const ancestorFlattened = getNodesAndNames(ancestorComponent);
+
+    const aFlattened = getNodesAndNames(aComponent, ancestorFlattened.nodes);
+    const bFlattened = getNodesAndNames(bComponent, ancestorFlattened.nodes);
     fixSelfTplNames(aComponent, aFlattened, bFlattened);
     fixSelfTplNames(bComponent, bFlattened, aFlattened);
   }
@@ -1750,9 +1813,34 @@ function runMergeFnAndApplyFixes(
 ): { autoReconciliations: AutoReconciliation[] } {
   const autoReconciliations: AutoReconciliation[] = [];
 
-  autoReconciliations.push(...preFixNames(a, b, bundler));
+  // Since some operations will be processed prior to the merge, we need to ignore some instances
+  // that will not be present in the final merged site, as they will be deleted.
+  const iidsToBeDeleted = computeIidsToBeDeletedInMerge(
+    ancestor,
+    a,
+    b,
+    bundler
+  );
+  const isDeletedInst = (inst: ObjInst) =>
+    iidsToBeDeleted.has(bundler.addrOf(inst).iid);
 
-  autoReconciliations.push(...preFixTplNames(a, b, bundler));
+  // Some operations can be harder to execute once we merge the elements in a single site, which
+  // we will process before the merge, by directly changing a and b sites. This
+  // will make merging have a simpler handling
+  //
+  // It's possible to identify some cases by looking into `customRenameFn` in model-conflicts-meta.ts.
+  //
+  // An example of this case is the renaming a component.param referent to a state/variable, as those
+  // elements can be referred by expr instances which only have the name, it's necessary to update
+  // the expr instances to refer to the new name instead of the old one. If we merge the sites first
+  // we may end up with duplicated names and it won't be clear which one requires being renamed.
+  autoReconciliations.push(...preFixNames(a, b, bundler, isDeletedInst));
+
+  // Similar to the previous case, the name of a element is used to create expr instances referent to
+  // implicit states, so we update it prior to the merge to avoid duplicated names.
+  autoReconciliations.push(
+    ...preFixTplNames(a, b, ancestor, bundler, isDeletedInst)
+  );
 
   mobx.runInAction(() => {
     recorder.withRecording(() => {
@@ -1762,11 +1850,11 @@ function runMergeFnAndApplyFixes(
 
       fixDuplicatedRegisteredTokens(mergedSite);
 
-      fixVirtualSlotArgs(mergedSite);
-
       fixSwappedTplComponents(ancestor, a, b, mergedSite);
 
       fixDuplicatedContentFields(mergedSite, recorder, bundler);
+
+      fixVirtualSlotArgs(mergedSite, recorder);
 
       fixDanglingReferenceConflicts(
         mergedSite,
@@ -1783,14 +1871,38 @@ function runMergeFnAndApplyFixes(
       fixProjectDependencies(ancestor, a, b, mergedSite, bundler);
 
       autoReconciliations.push(
-        ...walkAndFixNames(mergedSite, bundler, new Map())
+        ...walkAndFixNames(mergedSite, bundler, new Map(), isDeletedInst)
       );
 
       autoReconciliations.push(...fixPagePaths(mergedSite));
     });
   });
 
-  return { autoReconciliations };
+  const fixAutoReconciliationsInsts = (
+    arr: AutoReconciliation[]
+  ): AutoReconciliation[] => {
+    const mergedSiteUuid = bundler.addrOf(mergedSite).uuid;
+    const getMergedInst = (inst: ObjInst) => {
+      return bundler.objByAddr({
+        uuid: mergedSiteUuid,
+        iid: bundler.addrOf(inst).iid,
+      });
+    };
+    return arr.map((r) => {
+      if (r.violation === "duplicate-page-path") {
+        return r;
+      }
+      return {
+        ...r,
+        mergedInst: getMergedInst(r.mergedInst) ?? r.mergedInst,
+        mergedParent: getMergedInst(r.mergedParent) ?? r.mergedParent,
+      };
+    });
+  };
+
+  return {
+    autoReconciliations: fixAutoReconciliationsInsts(autoReconciliations),
+  };
 }
 
 /**
@@ -1977,4 +2089,29 @@ export function tryMerge(
     autoReconciliations: autoReconciliations,
     mergedSite,
   };
+}
+
+function computeIidsToBeDeletedInMerge(
+  ancestor: Site,
+  left: Site,
+  right: Site,
+  bundler: Bundler
+) {
+  const ancestorIids = walkModelTree(createNodeCtx(ancestor)).map(
+    (inst) => bundler.addrOf(inst).iid
+  );
+  const leftIids = new Set(
+    walkModelTree(createNodeCtx(left)).map((inst) => bundler.addrOf(inst).iid)
+  );
+  const rightIids = new Set(
+    walkModelTree(createNodeCtx(right)).map((inst) => bundler.addrOf(inst).iid)
+  );
+  return new Set(
+    ancestorIids.filter((iid) => {
+      // If in some of the sides the iid that was in the ancestor is not present, then it was deleted
+      // in that side, this is the default behavior of the merge and is going to be shown in the UI
+      // to the user, so that the deletion can be confirmed.
+      return !leftIids.has(iid) || !rightIids.has(iid);
+    })
+  );
 }

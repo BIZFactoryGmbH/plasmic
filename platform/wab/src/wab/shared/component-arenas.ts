@@ -1,4 +1,37 @@
 import {
+  assert,
+  ensure,
+  ensureArray,
+  ensureArrayOfInstances,
+  partitions,
+  replaceAll,
+  setsEq,
+  sortAs,
+} from "@/wab/shared/common";
+import { removeFromArray } from "@/wab/commons/collections";
+import {
+  getSuperComponentVariantGroupToComponent,
+  isPageComponent,
+  isPlainComponent,
+} from "@/wab/shared/core/components";
+import {
+  ensurePositionManagedFrame,
+  FrameViewMode,
+  getActivatedVariantsForFrame,
+  getArenaFrameCellsInGrid,
+  getArenaFramesInGrid,
+  getFrameSizeForTargetScreenVariant,
+  isComponentArena,
+  maybeResizeFrameForTargetScreenVariant,
+  mkArenaFrame,
+  resizeFrameForScreenVariant,
+} from "@/wab/shared/Arenas";
+import {
+  findNonEmptyCombos,
+  usedGlobalVariantGroups,
+} from "@/wab/shared/cached-selectors";
+import { parseScreenSpec } from "@/wab/shared/css-size";
+import {
   ArenaFrame,
   ArenaFrameCell,
   ArenaFrameGrid,
@@ -15,46 +48,12 @@ import {
   Site,
   Variant,
   VariantGroup,
-} from "@/wab/classes";
+} from "@/wab/shared/model/classes";
+import { FramePinManager } from "@/wab/shared/PinManager";
 import {
-  assert,
-  ensure,
-  ensureArray,
-  ensureArrayOfInstances,
-  partitions,
-  replaceAll,
-  setsEq,
-  sortAs,
-} from "@/wab/common";
-import { removeFromArray } from "@/wab/commons/collections";
-import {
-  getSuperComponentVariantGroupToComponent,
-  isPageComponent,
-  isPlainComponent,
-} from "@/wab/components";
-import { getComponentArena } from "@/wab/sites";
-import orderBy from "lodash/orderBy";
-import pick from "lodash/pick";
-import uniqBy from "lodash/uniqBy";
-import {
-  ensurePositionManagedFrame,
-  FrameViewMode,
-  getActivatedVariantsForFrame,
-  getArenaFrameCellsInGrid,
-  getArenaFramesInGrid,
-  getFrameSizeForTargetScreenVariant,
-  isComponentArena,
-  maybeResizeFrameForTargetScreenVariant,
-  mkArenaFrame,
-  resizeFrameForScreenVariant,
-} from "./Arenas";
-import {
-  findNonEmptyCombos,
-  usedGlobalVariantGroups,
-} from "./cached-selectors";
-import { parseScreenSpec } from "./Css";
-import { FramePinManager } from "./PinManager";
-import { getComponentDefaultSize, isExplicitPixelSize } from "./sizingutils";
+  getComponentDefaultSize,
+  isExplicitPixelSize,
+} from "@/wab/shared/sizingutils";
 import {
   ensureValidCombo,
   ensureVariantSetting,
@@ -67,7 +66,12 @@ import {
   isPrivateStyleVariant,
   isScreenVariant,
   isScreenVariantGroup,
-} from "./Variants";
+} from "@/wab/shared/Variants";
+import { isTplRootWithCodeComponentVariants } from "@/wab/shared/code-components/variants";
+import { getComponentArena } from "@/wab/shared/core/sites";
+import orderBy from "lodash/orderBy";
+import pick from "lodash/pick";
+import uniqBy from "lodash/uniqBy";
 
 export function mkComponentArena({
   site,
@@ -788,7 +792,11 @@ export function getComponentArenaRowLabel(
   const group = ensureMaybeKnownVariantGroup(row.rowKey);
 
   if (!group) {
-    return row.cols.length === 1 ? "Base" : "Base + Interactions";
+    return row.cols.length === 1
+      ? "Base"
+      : isTplRootWithCodeComponentVariants(component.tplTree)
+      ? "Base + Registered"
+      : "Base + Interactions";
   }
 
   if (component.variantGroups.includes(group as ComponentVariantGroup)) {

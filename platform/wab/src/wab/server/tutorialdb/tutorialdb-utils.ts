@@ -1,4 +1,4 @@
-import { mkShortUuid } from "@/wab/common";
+import { mkShortUuid } from "@/wab/shared/common";
 import { withSpan } from "@/wab/server/util/apm-util";
 import { generateSomeApiToken } from "@/wab/server/util/Tokens";
 import fs from "fs";
@@ -127,7 +127,7 @@ async function withSuperTutorialDbConnection<T>(
 /**
  * super connection for creating and dropping databases
  */
-async function getSuperTutorialDbConnection(opts?: {
+export async function getSuperTutorialDbConnection(opts?: {
   database?: string;
   type?: TutorialType;
 }) {

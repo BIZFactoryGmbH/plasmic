@@ -1,4 +1,7 @@
 import { U, UU } from "@/wab/client/cli-routes";
+import FreeTrialModal from "@/wab/client/components/dashboard/FreeTrialModal";
+import { documentTitle } from "@/wab/client/components/dashboard/page-utils";
+import WorkspaceSection from "@/wab/client/components/dashboard/WorkspaceSection";
 import { Spinner } from "@/wab/client/components/widgets";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import {
@@ -10,16 +13,13 @@ import {
   DefaultTeamPageProps,
   PlasmicTeamPage,
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicTeamPage";
-import { isNonNil } from "@/wab/common";
 import { TeamId } from "@/wab/shared/ApiSchema";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
+import { isNonNil } from "@/wab/shared/common";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
 import { ORGANIZATION_LOWER } from "@/wab/shared/Labels";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import { notification } from "antd";
 import * as React from "react";
-import FreeTrialModal from "./FreeTrialModal";
-import { documentTitle } from "./page-utils";
-import WorkspaceSection from "./WorkspaceSection";
 
 interface TeamPageProps extends DefaultTeamPageProps {
   teamId: TeamId;
@@ -55,7 +55,7 @@ function TeamPage_(props: TeamPageProps, ref: HTMLElementRefOf<"div">) {
   const numProjects = asyncData?.value?.projects.length || 0;
   const numMembers =
     asyncData?.value?.members.filter(
-      (member) => !isCoreTeamEmail(member.email, appCtx.appConfig)
+      (member) => !isAdminTeamEmail(member.email, appCtx.appConfig)
     ).length || 0;
   const workspaces = asyncData?.value?.workspaces || [];
   const perms = asyncData?.value?.perms || [];

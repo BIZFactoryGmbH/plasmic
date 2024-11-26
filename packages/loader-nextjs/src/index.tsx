@@ -1,33 +1,16 @@
+import type { CodeModule } from "@plasmicapp/loader-core";
 import {
+  PlasmicRootProvider as CommonPlasmicRootProvider,
   ComponentLookupSpec,
   FetchComponentDataOpts as InternalFetchComponentDataOpts,
   InternalPlasmicComponentLoader,
   PlasmicComponentLoader,
-  PlasmicRootProvider as CommonPlasmicRootProvider,
+  extractPlasmicQueryData as internalExtractPlasmicQueryData,
 } from "@plasmicapp/loader-react";
 import { IncomingMessage, ServerResponse } from "http";
-// NextHead and NextLink must be default imported (`import Pkg`) instead of a namespace import (`import * as Pkg`).
-// Otherwise, there's a Next.js 12 bug when referencing these dependencies due to default import interop.
-// The transpiled CommonJS code would create a `default` field on the package,
-// causing React to think it's an invalid React object:
-// ```
-// const NextHead = __defaultInterop(require('next/head.js'))
-// assert(typeof NextHead === 'object')
-// assert(typeof NextHead.default === 'function')
-// ```
-import type { CodeModule } from "@plasmicapp/loader-core";
-import NextHead from "next/head.js";
-import NextLink from "next/link.js";
-import * as NextRouter from "next/router.js";
-import Script from "next/script";
-import * as React from "react";
-import { initPlasmicLoaderWithCache } from "./cache";
-import type { ComponentRenderData, NextInitOptions } from "./shared-exports";
-
 export {
   DataCtxReader,
   DataProvider,
-  extractPlasmicQueryData,
   GlobalActionsContext,
   GlobalActionsProvider,
   PageParamsProvider,
@@ -49,7 +32,25 @@ export type {
   PropType,
   TokenRegistration,
 } from "@plasmicapp/loader-react";
+export { ExtractPlasmicQueryData as __EXPERMIENTAL__ExtractPlasmicQueryData } from "@plasmicapp/nextjs-app-router";
 export * from "./shared-exports";
+// NextHead and NextLink must be default imported (`import Pkg`) instead of a namespace import (`import * as Pkg`).
+// Otherwise, there's a Next.js 12 bug when referencing these dependencies due to default import interop.
+// The transpiled CommonJS code would create a `default` field on the package,
+// causing React to think it's an invalid React object:
+// ```
+// const NextHead = __defaultInterop(require('next/head.js'))
+// assert(typeof NextHead === 'object')
+// assert(typeof NextHead.default === 'function')
+// ```
+import NextHead from "next/head.js";
+import NextLink from "next/link.js";
+import * as NextRouter from "next/router.js";
+import Script from "next/script";
+import * as React from "react";
+import { initPlasmicLoaderWithCache } from "./cache";
+import { wrapRouterContext } from "./mocks";
+import type { ComponentRenderData, NextInitOptions } from "./shared-exports";
 
 type ServerRequest = IncomingMessage & {
   cookies: {
@@ -112,6 +113,7 @@ export class NextJsPlasmicComponentLoader extends PlasmicComponentLoader {
     };
 
     return this._getActiveVariation({
+      enableUnseededExperiments: true,
       traits: {
         ...extractBuiltinTraits(),
         ...opts.traits,
@@ -224,6 +226,46 @@ export function initPlasmicLoader(opts: NextInitOptions) {
   return loader;
 }
 
+/**
+ * Performs a prepass over Plasmic content, kicking off the necessary
+ * data fetches, and populating the fetched data into a cache.  This
+ * cache can be passed as prefetchedQueryData into PlasmicRootProvider.
+ *
+ * To limit rendering errors that can occur when you do this, we recommend
+ * that you pass in _only_ the PlasmicComponents that you are planning to use
+ * as the argument.  For example:
+ *
+ *   const cache = await extractPlasmicQueryData(
+ *     <PlasmicRootProvider loader={PLASMIC} prefetchedData={plasmicData}>
+ *       <PlasmicComponent component="Home" componentProps={{
+ *         // Specify the component prop overrides you are planning to use
+ *         // to render the page, as they may change what data is fetched.
+ *         ...
+ *       }} />
+ *       <PlasmicComponent component="NavBar" componentProps={{
+ *         ...
+ *       }} />
+ *       ...
+ *     </PlasmicRootProvider>
+ *   );
+ *
+ * If your PlasmicComponent will be wrapping components that require special
+ * context set up, you should also wrap the element above with those context
+ * providers.
+ *
+ * You should avoid passing in elements that are not related to Plasmic, as any
+ * rendering errors from those elements during the prepass may result in data
+ * not being populated in the cache.
+ *
+ * @param element a React element containing instances of PlasmicComponent.
+ *   Will attempt to satisfy all data needs from usePlasmicDataQuery()
+ *   in this element tree.
+ * @returns an object mapping query key to fetched data
+ */
+export async function extractPlasmicQueryData(element: React.ReactElement) {
+  return internalExtractPlasmicQueryData(await wrapRouterContext(element));
+}
+
 const PlasmicNextLink = React.forwardRef(function PlasmicNextLink(
   props: React.ComponentProps<typeof NextLink>,
   ref: React.Ref<HTMLAnchorElement>
@@ -297,6 +339,32 @@ function renderDynamicPayloadScripts(
   if (!missingModulesData || missingModulesData.length === 0) {
     return null;
   }
+
+  const isBrowser = typeof window !== "undefined";
+
+  if (isBrowser) {
+    // `next/script` seems to not be correctly added to `<head>` in the initial
+    // HTML sometimes when using custom documents:
+    // https://linear.app/plasmic/issue/PLA-10652
+
+    // Make sure to create the promises in this case - the script to actually fetch
+    // the chunks will be added once hydration is completed.
+    if (!(globalThis as any).__PlasmicBundlePromises) {
+      (globalThis as any).__PlasmicBundlePromises = {};
+    }
+    for (const { fileName } of missingModulesData) {
+      if (!(globalThis as any).__PlasmicBundlePromises[fileName]) {
+        (globalThis as any).__PlasmicBundlePromises[fileName] = new Promise(
+          (resolve) => {
+            (globalThis as any).__PlasmicBundlePromises[
+              "__promise_resolve_" + fileName
+            ] = resolve;
+          }
+        );
+      }
+    }
+  }
+
   return (
     <>
       <Script
@@ -328,16 +396,14 @@ function renderDynamicPayloadScripts(
               .join("\n")}`.trim(),
         }}
       ></Script>
-      {missingModulesData.length > 0 && (
-        <Script
-          strategy="beforeInteractive"
-          key={"load:" + missingModulesData.map((m) => m.fileName).join(";")}
-          id={"load:" + missingModulesData.map((m) => m.fileName).join(";")}
-          defer
-          async
-          src={loader.getChunksUrl(prefetchedData.bundle, missingModulesData)}
-        />
-      )}
+      <Script
+        strategy="beforeInteractive"
+        key={"load:" + missingModulesData.map((m) => m.fileName).join(";")}
+        id={"load:" + missingModulesData.map((m) => m.fileName).join(";")}
+        defer
+        async
+        src={loader.getChunksUrl(prefetchedData.bundle, missingModulesData)}
+      />
     </>
   );
 }

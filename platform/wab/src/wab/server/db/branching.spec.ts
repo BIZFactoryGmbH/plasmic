@@ -1,21 +1,21 @@
-import { ProjectDependency, Site } from "@/wab/classes";
-import { assert, ensure, sortBy, tuple } from "@/wab/common";
+import { assert, ensure, sortBy, tuple } from "@/wab/shared/common";
 import { TokenType } from "@/wab/commons/StyleToken";
-import { withoutUids } from "@/wab/model/model-meta";
+import { getLastBundleVersion } from "@/wab/server/db/BundleMigrator";
+import { DbMgr } from "@/wab/server/db/DbMgr";
 import {
   Branch,
   PkgVersion,
   ProjectRevision,
 } from "@/wab/server/entities/Entities";
+import { DbTestArgs, withDb } from "@/wab/server/test/backend-util";
 import { BranchId, MainBranchId, ProjectId } from "@/wab/shared/ApiSchema";
-import { Bundler } from "@/wab/shared/bundler";
-import { BranchSide } from "@/wab/shared/site-diffs/merge-core";
 import { TplMgr } from "@/wab/shared/TplMgr";
-import { createSite } from "@/wab/sites";
+import { Bundler } from "@/wab/shared/bundler";
+import { ProjectDependency, Site } from "@/wab/shared/model/classes";
+import { withoutUids } from "@/wab/shared/model/model-meta";
+import { BranchSide } from "@/wab/shared/site-diffs/merge-core";
+import { createSite } from "@/wab/shared/core/sites";
 import L, { omit } from "lodash";
-import { getLastBundleVersion } from "./BundleMigrator";
-import { DbMgr } from "./DbMgr";
-import { DbTestArgs, withDb } from "./test-util";
 
 const bundler = new Bundler();
 
@@ -37,13 +37,13 @@ class Helpers {
       data: JSON.stringify(
         bundler.bundle(site, this.projectId, await getLastBundleVersion())
       ),
-      seqIdAssign: undefined,
     });
     await db.savePartialRevision({
       ...commonArgs,
       data: JSON.stringify(commonArgs),
       deletedIids: "{}",
       projectRevisionId: rev.id,
+      modifiedComponentIids: [],
     });
     this.revisionNum++;
   }

@@ -1,6 +1,7 @@
-import { Component, Param } from "@/wab/classes";
 import { WithContextMenu } from "@/wab/client/components/ContextMenu";
 import { ComponentPropModal } from "@/wab/client/components/modals/ComponentPropModal";
+import { confirm } from "@/wab/client/components/quick-modals";
+import { ValuePreview } from "@/wab/client/components/sidebar-tabs/data-tab";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
 import { IconLinkButton } from "@/wab/client/components/widgets";
 import { EditableLabel } from "@/wab/client/components/widgets/EditableLabel";
@@ -9,28 +10,29 @@ import { LabeledListItem } from "@/wab/client/components/widgets/LabeledListItem
 import { SimpleReorderableList } from "@/wab/client/components/widgets/SimpleReorderableList";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { moveIndex, spawn } from "@/wab/common";
+import { moveIndex, spawn } from "@/wab/shared/common";
 import {
   canChangeParamExportType,
   canDeleteParam,
   canRenameParam,
+  findPropUsages,
   getRealParams,
   isCodeComponent,
   removeComponentParam,
-} from "@/wab/components";
-import { ParamExportType } from "@/wab/lang";
-import { toVarName } from "@/wab/shared/codegen/util";
+} from "@/wab/shared/core/components";
+import { ParamExportType } from "@/wab/shared/core/lang";
 import {
   COMPONENT_PROP_LOWER,
   COMPONENT_PROP_PLURAL_CAP,
 } from "@/wab/shared/Labels";
 import { getSlotParams } from "@/wab/shared/SlotUtils";
+import { toVarName } from "@/wab/shared/codegen/util";
+import { Component, Param } from "@/wab/shared/model/classes";
 import { Menu } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
 import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
 import { FaCheck } from "react-icons/fa";
-import { ValuePreview } from "./data-tab";
 
 export const ComponentPropsDefinitionSection = observer(
   function ComponentParamsPanel(props: {
@@ -225,11 +227,29 @@ function makeParamMenu(
       )}
       {!isCodeComponent(component) && canDeleteParam(component, param) && (
         <Menu.Item
-          onClick={() =>
-            studioCtx.changeUnsafe(() => {
+          onClick={async () => {
+            const usages = findPropUsages(component, param);
+            if (usages?.length > 0) {
+              const confirmed = await confirm({
+                title: "Confirm deletion",
+                message: `Prop "${
+                  param.displayName ?? param.variable.name
+                }" is still being used by ${component.name} in ${
+                  usages.length
+                } ${
+                  usages.length > 1 ? "different locations" : "location"
+                }. Are you sure you want to delete it?`,
+                confirmLabel: "Delete",
+              });
+              if (!confirmed) {
+                return;
+              }
+            }
+
+            await studioCtx.changeUnsafe(() => {
               removeComponentParam(studioCtx.site, component, param);
-            })
-          }
+            });
+          }}
         >
           Delete {COMPONENT_PROP_LOWER}
         </Menu.Item>

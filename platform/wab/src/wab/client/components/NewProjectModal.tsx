@@ -1,4 +1,7 @@
-import StartersSection from "@/StartersSection";
+import StartersSection from "@/wab/client/components/StartersSection";
+import StarterGroup from "@/wab/client/components/StarterGroup";
+import { BareModal } from "@/wab/client/components/studio/BareModal";
+import { Tab, Tabs } from "@/wab/client/components/widgets";
 import {
   useAllProjectsData,
   useAppCtx,
@@ -9,11 +12,8 @@ import {
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicNewProjectModal";
 import { zIndex } from "@/wab/client/z-index";
 import { WorkspaceId } from "@/wab/shared/ApiSchema";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import StarterGroup from "./StarterGroup";
-import { BareModal } from "./studio/BareModal";
-import { Tab, Tabs } from "./widgets";
 
 interface NewProjectModalProps extends DefaultNewProjectModalProps {
   onCancel: () => void;

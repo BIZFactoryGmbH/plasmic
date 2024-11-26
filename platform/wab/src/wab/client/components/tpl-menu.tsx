@@ -1,48 +1,29 @@
-import {
-  isKnownRawText,
-  isKnownRenderExpr,
-  isKnownVirtualRenderExpr,
-  RawText,
-  TplNode,
-} from "@/wab/classes";
 import { mkProjectLocation, openNewTab } from "@/wab/client/cli-routes";
-import { isStyleClip } from "@/wab/client/clipboard";
+import { isStyleClip } from "@/wab/client/clipboard/local";
+import { makeFrameMenu } from "@/wab/client/components/frame-menu";
+import {
+  MenuBuilder,
+  MenuItemContent,
+} from "@/wab/client/components/menu-builder";
+import { SlotsTooltip } from "@/wab/client/components/widgets/DetailedTooltips";
+import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelWithDetailedTooltip";
 import { getComboForAction } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
 import { getVisibilityChoicesForTpl } from "@/wab/client/utils/tpl-client-utils";
-import { asOne, ensure, ensureInstance, filterMapTruthy } from "@/wab/common";
-import { isCodeComponent, isFrameComponent } from "@/wab/components";
-import { Selectable } from "@/wab/selection";
 import { MainBranchId } from "@/wab/shared/ApiSchema";
 import { isMixedArena } from "@/wab/shared/Arenas";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
 import {
-  FRAME_CAP,
-  HORIZ_CONTAINER_CAP,
-  VERT_CONTAINER_CAP,
-} from "@/wab/shared/Labels";
+  asOne,
+  ensure,
+  ensureInstance,
+  filterMapTruthy,
+} from "@/wab/shared/common";
 import {
-  getContainerTypeName,
-  PositionLayoutType,
-} from "@/wab/shared/layoututils";
-import {
-  isTplAutoSizable,
-  isTplDefaultSized,
-  resetTplSize,
-} from "@/wab/shared/sizingutils";
-import {
-  getAncestorSlotArg,
-  isCodeComponentSlot,
-  revertToDefaultSlotContents,
-} from "@/wab/shared/SlotUtils";
-import { $$$ } from "@/wab/shared/TplQuery";
-import { isBaseVariant } from "@/wab/shared/Variants";
-import {
-  clearTplVisibility,
-  getVisibilityLabel,
-  hasVisibilitySetting,
-} from "@/wab/shared/visibility-utils";
-import { SlotSelection } from "@/wab/slots";
+  isCodeComponent,
+  isFrameComponent,
+} from "@/wab/shared/core/components";
+import { Selectable } from "@/wab/shared/core/selection";
+import { SlotSelection } from "@/wab/shared/core/slots";
 import {
   areSiblings,
   canConvertToSlot,
@@ -60,15 +41,47 @@ import {
   isTplTag,
   isTplTagOrComponent,
   isTplTextBlock,
+  tplChildrenOnly,
   tryGetVariantSettingStoringText,
-} from "@/wab/tpls";
-import { ValComponent } from "@/wab/val-nodes";
-import { Menu, notification } from "antd";
+} from "@/wab/shared/core/tpls";
+import { ValComponent } from "@/wab/shared/core/val-nodes";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
+import {
+  FRAME_CAP,
+  HORIZ_CONTAINER_CAP,
+  VERT_CONTAINER_CAP,
+} from "@/wab/shared/Labels";
+import {
+  getContainerTypeName,
+  PositionLayoutType,
+} from "@/wab/shared/layoututils";
+import {
+  isKnownRawText,
+  isKnownRenderExpr,
+  isKnownTplSlot,
+  isKnownVirtualRenderExpr,
+  RawText,
+  TplNode,
+} from "@/wab/shared/model/classes";
+import {
+  isTplAutoSizable,
+  isTplDefaultSized,
+  resetTplSize,
+} from "@/wab/shared/sizingutils";
+import {
+  getAncestorSlotArg,
+  isCodeComponentSlot,
+  revertToDefaultSlotContents,
+} from "@/wab/shared/SlotUtils";
+import { $$$ } from "@/wab/shared/TplQuery";
+import { isBaseVariant } from "@/wab/shared/Variants";
+import {
+  clearTplVisibility,
+  getVisibilityLabel,
+  hasVisibilitySetting,
+} from "@/wab/shared/visibility-utils";
+import { Menu, notification, Tooltip } from "antd";
 import React from "react";
-import { makeFrameMenu } from "./frame-menu";
-import { MenuBuilder, MenuItemContent } from "./menu-builder";
-import { SlotsTooltip } from "./widgets/DetailedTooltips";
-import { LabelWithDetailedTooltip } from "./widgets/LabelWithDetailedTooltip";
 
 export function makeSelectableMenu(viewCtx: ViewCtx, node: Selectable) {
   if (node instanceof SlotSelection) {
@@ -123,7 +136,7 @@ export function makeSlotSelectionMenu(
   });
 
   if (
-    isCoreTeamEmail(
+    isAdminTeamEmail(
       viewCtx.appCtx.selfInfo?.email,
       viewCtx.studioCtx.appCtx.appConfig
     )
@@ -344,24 +357,45 @@ export function makeTplMenu(
       }
     }
 
-    // "Ungroup" may only be performed on a non-root TplTag with children.
+    // "Ungroup" may only be performed on a TplTag or TplComponent with children.
+    const children =
+      isTplTag(tpl) || isTplComponent(tpl) ? tplChildrenOnly(tpl) : false;
     if (
-      tpl.parent &&
-      isTplTag(tpl) &&
-      tpl.children.length > 0 &&
+      children &&
+      children.length > 0 &&
       !isTplColumns(tpl) &&
       !isTplColumn(tpl) &&
       !isInsideRichText &&
       !contentEditorMode
-    )
+    ) {
+      // Ungroup is disabled if the tpl is the root and has more than 1 child.
+      // If the only child is a known slot, it is also disabled, because slots can't
+      // be at the root of the component.
+      const ungroupDisabled =
+        !tpl.parent &&
+        (children.length !== 1 ||
+          (children.length === 1 && isKnownTplSlot(children[0])));
       pushEdit(
         <Menu.Item
           key="ungroup"
           onClick={() => viewCtx.getViewOps().ungroup(tpl)}
+          disabled={ungroupDisabled}
         >
-          Ungroup
+          <Tooltip
+            open={
+              ungroupDisabled
+                ? undefined /* uncontrolled (show tooltip) */
+                : false
+            }
+            title={
+              "Root element can only be ungrouped if it contains a single element"
+            }
+          >
+            Ungroup
+          </Tooltip>
         </Menu.Item>
       );
+    }
 
     if (
       isTplComponent(tpl) &&
@@ -887,7 +921,7 @@ export function makeTplMenu(
   }
 
   if (
-    isCoreTeamEmail(
+    isAdminTeamEmail(
       viewCtx.appCtx.selfInfo?.email,
       viewCtx.studioCtx.appCtx.appConfig
     )
@@ -908,6 +942,7 @@ export function makeTplMenu(
               component: viewCtx.currentComponent(),
               tpl,
               dom: dom ? dom[0] : undefined,
+              val: maybeVal,
             });
           }}
         >

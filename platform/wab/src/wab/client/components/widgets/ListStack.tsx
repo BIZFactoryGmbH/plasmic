@@ -10,7 +10,7 @@
  */
 
 import { useDisplayed } from "@/wab/client/dom-utils";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import { removeFromArray } from "@/wab/commons/collections";
 import {
   combineProps,
@@ -19,7 +19,7 @@ import {
 } from "@/wab/commons/components/ReactUtil";
 import L from "lodash";
 import { observable, runInAction } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import ResizeObserver from "resize-observer-polyfill";
 
@@ -77,7 +77,7 @@ function useListStackContext() {
  */
 function getHeightExcept(root: HTMLElement, excepts: HTMLElement[]) {
   function getPathToRoot(elt: HTMLElement) {
-    let path: HTMLElement[] = [];
+    const path: HTMLElement[] = [];
     while (true) {
       path.push(elt);
       if (elt === root || !elt.parentElement) {

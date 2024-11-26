@@ -1,8 +1,8 @@
+import { DbMgr } from "@/wab/server/db/DbMgr";
 import { ApiProjectWebhook } from "@/wab/shared/ApiSchema";
-import axios, { Method } from "axios";
+import axios, { AddressFamily, Method } from "axios";
 import dns from "dns";
 import isPrivateIp from "private-ip";
-import { DbMgr } from "./db/DbMgr";
 export async function triggerWebhook(
   mgr: DbMgr,
   projectId: string,
@@ -33,6 +33,8 @@ export async function triggerWebhookOnly(
       url,
       headers,
       data: payload,
+      // Disable redirects to avoid SSRF attacks.
+      maxRedirects: 0,
       // Disable axios default transform to always get a string response.
       transformResponse: (res) => res,
     });
@@ -43,6 +45,7 @@ export async function triggerWebhookOnly(
       data: error.response?.data,
     };
   }
+
   return response;
 }
 

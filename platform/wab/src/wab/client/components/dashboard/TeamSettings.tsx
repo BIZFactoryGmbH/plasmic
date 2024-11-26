@@ -1,3 +1,7 @@
+import {
+  getTeamMenuItems,
+  TeamMenu,
+} from "@/wab/client/components/dashboard/dashboard-actions";
 import { Spinner } from "@/wab/client/components/widgets";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import {
@@ -8,13 +12,13 @@ import {
   DefaultTeamSettingsProps,
   PlasmicTeamSettings,
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicTeamSettings";
-import { ensure, swallowAsync } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
+import { ensure } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { TeamId } from "@/wab/shared/ApiSchema";
 import { accessLevelRank, GrantableAccessLevel } from "@/wab/shared/EntUtil";
+import { getAccessLevelToResource } from "@/wab/shared/perms";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import * as React from "react";
-import { getTeamMenuItems, TeamMenu } from "./dashboard-actions";
 
 interface TeamSettingsProps extends DefaultTeamSettingsProps {
   teamId: TeamId;
@@ -36,11 +40,6 @@ function TeamSettings_(props: TeamSettingsProps, ref: HTMLElementRefOf<"div">) {
         ? { subscription: subscriptionResp.subscription }
         : {};
 
-    const teamOwner = team.team.createdById
-      ? (await swallowAsync(appCtx.api.getUsersById([team.team.createdById])))
-          ?.users?.[0]
-      : undefined;
-
     const isWhiteLabeled = !!team.team.whiteLabelInfo;
 
     return {
@@ -58,12 +57,14 @@ function TeamSettings_(props: TeamSettingsProps, ref: HTMLElementRefOf<"div">) {
   const subscription = asyncData?.value?.subscription;
   const tier = team?.featureTier ?? DEVFLAGS.freeTier;
 
-  const readOnly =
-    !team ||
-    accessLevelRank(
-      appCtx.perms.find((p) => p.teamId === team.id && p.userId === selfInfo.id)
-        ?.accessLevel || "blocked"
-    ) < accessLevelRank("editor");
+  const userAccessLevel = team
+    ? getAccessLevelToResource(
+        { type: "team", resource: team },
+        appCtx.selfInfo,
+        perms
+      )
+    : "blocked";
+  const readOnly = accessLevelRank(userAccessLevel) < accessLevelRank("editor");
 
   const teamMenuItems = team ? getTeamMenuItems(appCtx, team) : [];
 

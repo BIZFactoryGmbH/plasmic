@@ -1,10 +1,11 @@
+import styles from "@/wab/client/components/studio/Shortcuts.module.scss";
 import {
   FREE_CONTAINER_ICON,
   HORIZ_STACK_ICON,
   TEXT_ICON,
   VERT_STACK_ICON,
 } from "@/wab/client/icons";
-import { mkNoActionShortcuts, Shortcut } from "@/wab/client/shortcuts/shortcut";
+import { Shortcut, mkNoActionShortcuts } from "@/wab/client/shortcuts/shortcut";
 import {
   CHROME_SHORTCUT_GROUP,
   EDIT_SHORTCUT_GROUP,
@@ -14,11 +15,10 @@ import {
   VIEW_SHORTCUT_GROUP,
 } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { SearchOutlined } from "@ant-design/icons";
 import { Input, Tag } from "antd";
 import cn from "classnames";
 import L from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 import {
   FaArrowDown,
@@ -27,8 +27,7 @@ import {
   FaArrowUp,
   FaRegHandRock,
 } from "react-icons/fa";
-import { Modal } from "src/wab/client/components/widgets/Modal";
-import styles from "./Shortcuts.module.scss";
+import { Modal } from "@/wab/client/components/widgets/Modal";
 
 export const ShortcutsModal = observer(
   ({ children }: { children: React.ReactNode }) => {
@@ -49,7 +48,6 @@ export const ShortcutsModal = observer(
         >
           <div className={styles.scrollableShortcuts}>
             <Input
-              addonBefore={<SearchOutlined />}
               placeholder="Search shortcuts here..."
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles.searchInput}
@@ -97,7 +95,9 @@ function ShortcutSection(props: {
     (chunk) => chunk.shortcuts.length > 0
   );
 
-  if (!isSectionShowing) return null;
+  if (!isSectionShowing) {
+    return null;
+  }
 
   return (
     <div className="mb-xlg">

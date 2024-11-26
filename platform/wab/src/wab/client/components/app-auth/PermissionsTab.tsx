@@ -5,6 +5,15 @@ import {
   useGetProjectReleases,
 } from "@/wab/client/api-hooks";
 import { AppCtx } from "@/wab/client/app-ctx";
+import {
+  useAppAccessRules,
+  useAppAuthConfig,
+  useAppRoles,
+  useDirectoryGroups,
+  useMutateHostAppAuthData,
+} from "@/wab/client/components/app-auth/app-auth-contexts";
+import { APP_AUTH_TRACKING_EVENT } from "@/wab/client/components/app-auth/constants";
+import PermissionRule from "@/wab/client/components/app-auth/PermissionRule";
 import { Spinner } from "@/wab/client/components/widgets";
 import Button from "@/wab/client/components/widgets/Button";
 import Chip from "@/wab/client/components/widgets/Chip";
@@ -14,8 +23,8 @@ import {
 } from "@/wab/client/plasmic/plasmic_kit_end_user_management/PlasmicPermissionsTab";
 import { isUserProjectEditor } from "@/wab/client/studio-ctx/StudioCtx";
 import { trackEvent } from "@/wab/client/tracking";
-import { ensure, isValidEmail, withoutFalsy, withoutNils } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
+import { ensure, isValidEmail, withoutFalsy, withoutNils } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { ApiAppEndUserAccessRule, ApiProject } from "@/wab/shared/ApiSchema";
 import { DomainValidator } from "@/wab/shared/hosting";
 import { prodUrlForProject } from "@/wab/shared/project-urls";
@@ -25,15 +34,6 @@ import { uniqBy, without } from "lodash";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import validator from "validator";
-import {
-  useAppAccessRules,
-  useAppAuthConfig,
-  useAppRoles,
-  useDirectoryGroups,
-  useMutateHostAppAuthData,
-} from "./app-auth-contexts";
-import { APP_AUTH_TRACKING_EVENT } from "./constants";
-import PermissionRule from "./PermissionRule";
 
 export interface PermissionsTabProps extends DefaultPermissionsTabProps {
   directoryId: string;

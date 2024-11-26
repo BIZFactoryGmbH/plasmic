@@ -1,14 +1,14 @@
-import { Component } from "@/wab/classes";
-import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
+import { StringPropEditor } from "@/wab/client/components/sidebar-tabs/ComponentProps/StringPropEditor";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
+import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { PageParamsTooltip } from "@/wab/client/components/widgets/DetailedTooltips";
 import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelWithDetailedTooltip";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensure } from "@/wab/common";
-import { extractParamsFromPagePath } from "@/wab/components";
-import { observer } from "mobx-react-lite";
+import { ensure } from "@/wab/shared/common";
+import { extractParamsFromPagePath } from "@/wab/shared/core/components";
+import { Component } from "@/wab/shared/model/classes";
+import { observer } from "mobx-react";
 import React from "react";
-import { StringPropEditor } from "./ComponentProps/StringPropEditor";
 
 const PageParamsPanel = observer(function PageParamsPanel(props: {
   page: Component;

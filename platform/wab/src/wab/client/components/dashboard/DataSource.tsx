@@ -1,17 +1,17 @@
 import { AppCtx } from "@/wab/client/app-ctx";
+import { promptMoveToWorkspace } from "@/wab/client/components/dashboard/dashboard-actions";
 import { confirmDeleteDataSource } from "@/wab/client/components/data-source-ui";
 import { Matcher } from "@/wab/client/components/view-common";
 import {
   DefaultDataSourceProps,
   PlasmicDataSource,
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicDataSource";
-import { assert } from "@/wab/common";
+import { assert } from "@/wab/shared/common";
 import { MaybeWrap } from "@/wab/commons/components/ReactUtil";
 import { ApiDataSource } from "@/wab/shared/ApiSchema";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import { Dropdown, Menu, notification } from "antd";
 import * as React from "react";
-import { promptMoveToWorkspace } from "./dashboard-actions";
 
 export interface DataSourceProps extends DefaultDataSourceProps {
   appCtx: AppCtx;

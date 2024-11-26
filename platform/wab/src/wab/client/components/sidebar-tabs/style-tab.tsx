@@ -1,12 +1,16 @@
 import {
-  Component,
-  isKnownRenderExpr,
-  isKnownVirtualRenderExpr,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-} from "@/wab/classes";
+  TplComponentNameSection,
+  TplTagNameSection,
+} from "@/wab/client/components/sidebar-tabs/ComponentPropsSection";
+import { ComponentTab } from "@/wab/client/components/sidebar-tabs/ComponentTab/ComponentTab";
+import { PageTab } from "@/wab/client/components/sidebar-tabs/PageTab/PageTab";
+import {
+  canRenderMixins,
+  canRenderPrivateStyleVariants,
+  getOrderedSectionRender,
+  Section,
+  StyleTabFilter,
+} from "@/wab/client/components/sidebar-tabs/Sections";
 import { NamedPanelHeader } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { SidebarModalProvider } from "@/wab/client/components/sidebar/SidebarModal";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
@@ -21,16 +25,32 @@ import { useCurrentRecordingTarget } from "@/wab/client/hooks/useCurrentRecordin
 import SlotIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Slot";
 import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { cx, spawn } from "@/wab/common";
-import { Slot, SlotProvider } from "@/wab/commons/components/Slots";
+import { isDedicatedArena } from "@/wab/shared/Arenas";
+import { cx, spawn } from "@/wab/shared/common";
 import {
   getComponentDisplayName,
   isCodeComponent,
   isFrameComponent,
   isPageComponent,
-} from "@/wab/components";
-import { isDedicatedArena } from "@/wab/shared/Arenas";
-import { MIXINS_CAP } from "@/wab/shared/Labels";
+} from "@/wab/shared/core/components";
+import { isTplAttachedToSite } from "@/wab/shared/core/sites";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import {
+  isTplComponent,
+  isTplSlot,
+  isTplTag,
+  isTplVariantable,
+} from "@/wab/shared/core/tpls";
+import { MIXINS_CAP, PRIVATE_STYLE_VARIANTS_CAP } from "@/wab/shared/Labels";
+import {
+  Component,
+  isKnownRenderExpr,
+  isKnownVirtualRenderExpr,
+  TplComponent,
+  TplNode,
+  TplSlot,
+  TplTag,
+} from "@/wab/shared/model/classes";
 import {
   getAncestorTplSlot,
   isCodeComponentSlot,
@@ -41,33 +61,12 @@ import {
   getPrivateStyleVariantsForTag,
   isBaseVariant,
 } from "@/wab/shared/Variants";
-import { isTplAttachedToSite } from "@/wab/sites";
-import { SlotSelection } from "@/wab/slots";
 import { selectionControlsColor } from "@/wab/styles/css-variables";
-import {
-  isTplComponent,
-  isTplSlot,
-  isTplTag,
-  isTplVariantable,
-} from "@/wab/tpls";
 import { Alert, Button } from "antd";
 import * as mobx from "mobx";
 import { observer } from "mobx-react";
 import * as React from "react";
 import { createContext, useContext } from "react";
-import {
-  TplComponentNameSection,
-  TplTagNameSection,
-} from "./ComponentPropsSection";
-import { ComponentTab } from "./ComponentTab/ComponentTab";
-import { PageTab } from "./PageTab/PageTab";
-import {
-  canRenderMixins,
-  canRenderPrivateStyleVariants,
-  getOrderedSectionRender,
-  Section,
-  StyleTabFilter,
-} from "./Sections";
 
 export const StyleTabContext = createContext<StyleTabFilter>("all");
 
@@ -79,7 +78,7 @@ const StyleTabForTpl = observer(function _StyleTabForTpl(props: {
   const styleTabFilter = useContext(StyleTabContext);
   const [showMixins, setShowMixins] = React.useState(isMixinSet(tpl, viewCtx));
   const [showPrivateStyleVariants, setShowPrivateStyleVariants] =
-    React.useState(isPrivateStyleVariantSet(tpl, viewCtx));
+    React.useState(hasPrivateStyleVariant(tpl, viewCtx));
   React.useEffect(() => {
     const mixinDisposal = mobx.reaction(
       () => {
@@ -97,7 +96,7 @@ const StyleTabForTpl = observer(function _StyleTabForTpl(props: {
     const privateStyleVariantsDisposal = mobx.reaction(
       () => {
         const curTpl = viewCtx.focusedTpl(false);
-        return !!curTpl && isPrivateStyleVariantSet(curTpl, viewCtx);
+        return !!curTpl && hasPrivateStyleVariant(curTpl, viewCtx);
       },
       (privateStyleVariantsVisible) =>
         setShowPrivateStyleVariants(privateStyleVariantsVisible),
@@ -130,7 +129,7 @@ const StyleTabForTpl = observer(function _StyleTabForTpl(props: {
     showStyleSections
   ) {
     applyMenu.push({
-      label: "Element States",
+      label: PRIVATE_STYLE_VARIANTS_CAP,
       onClick: () => setShowPrivateStyleVariants(true),
     });
   }
@@ -305,36 +304,33 @@ const StyleTabBottomPanel = observer(function StyleTabBottomPanel(props: {
 
   return (
     <SidebarModalProvider containerSelector=".style-tab">
-      <SlotProvider>
-        <div className="canvas-editor__right-pane__bottom style-tab">
-          <div
-            className="canvas-editor__right-pane__bottom__scroll"
-            style={
-              focused
-                ? {
-                    borderLeft:
-                      currentTarget === "baseVariant"
-                        ? "1px solid transparent"
-                        : `1px solid var(${selectionControlsColor})`,
-                  }
-                : undefined
-            }
-          >
-            {focused instanceof SlotSelection ? (
-              <SlotSelectionMessage node={focused} viewCtx={viewCtx} />
-            ) : tpl === component.tplTree && isCodeComponent(component) ? (
-              <CodeComponentRootMessage component={component} />
-            ) : isCodeComponent(component) && isTplSlot(tpl) ? (
-              <CodeComponentTplSlotMessage component={component} />
-            ) : tpl ? (
-              <>
-                <StyleTabForTpl viewCtx={viewCtx} tpl={tpl} />
-              </>
-            ) : null}
-          </div>
+      <div className="canvas-editor__right-pane__bottom style-tab">
+        <div
+          className="canvas-editor__right-pane__bottom__scroll"
+          style={
+            focused
+              ? {
+                  borderLeft:
+                    currentTarget === "baseVariant"
+                      ? "1px solid transparent"
+                      : `1px solid var(${selectionControlsColor})`,
+                }
+              : undefined
+          }
+        >
+          {focused instanceof SlotSelection ? (
+            <SlotSelectionMessage node={focused} viewCtx={viewCtx} />
+          ) : tpl === component.tplTree && isCodeComponent(component) ? (
+            <CodeComponentRootMessage component={component} />
+          ) : isCodeComponent(component) && isTplSlot(tpl) ? (
+            <CodeComponentTplSlotMessage component={component} />
+          ) : tpl ? (
+            <>
+              <StyleTabForTpl viewCtx={viewCtx} tpl={tpl} />
+            </>
+          ) : null}
         </div>
-        <Slot />
-      </SlotProvider>
+      </div>
     </SidebarModalProvider>
   );
 });
@@ -394,16 +390,20 @@ const SlotSelectionMessage = observer(function SlotSelectionMessage(props: {
   return (
     <div className="canvas-editor__right-float-pane">
       <SidebarSection>
-        <div className="flex flex-vcenter">
-          <Icon icon={SlotIcon} className="component-fg mr-sm" />
-          <div className="code text-xlg flex-fill">
-            {node.slotParam.variable.name}
+        <div className="flex flex-col gap-lg">
+          <div className="flex flex-vcenter">
+            <Icon icon={SlotIcon} className="component-fg mr-sm" />
+            <div className="code text-xlg flex-fill">
+              {node.slotParam.variable.name}
+            </div>
+            <div className="ml-sm">
+              Slot for <code>{getComponentDisplayName(component)}</code>
+            </div>
           </div>
-          <div className="ml-sm">
-            Slot for <code>{getComponentDisplayName(component)}</code>
-          </div>
+          <p className="text-m">{node.slotParam.about}</p>
         </div>
       </SidebarSection>
+
       {arg &&
         isKnownRenderExpr(arg.expr) &&
         !isKnownVirtualRenderExpr(arg.expr) && (
@@ -458,10 +458,12 @@ const TplSlotMessage = observer(function TplSlotMessage(props: {
           showIcon={true}
           message={
             <div>
-              This is a slot target; instances of{" "}
+              This is a slot target - instances of{" "}
               <code>{getComponentDisplayName(component)}</code> can customize
               the content of this slot target. You can provide default text
-              styles to control how text and icons look in this slot.
+              styles to control how text and icons look in this slot. You cannot
+              reference dynamic values specific to this component, since the
+              owner of the slot content is the instance parent.
             </div>
           }
         />
@@ -543,7 +545,7 @@ function isMixinSet(tpl: TplNode, viewCtx: ViewCtx) {
   return effectiveVs.rs.mixins.length > 0;
 }
 
-function isPrivateStyleVariantSet(tpl: TplNode, viewCtx: ViewCtx) {
+function hasPrivateStyleVariant(tpl: TplNode, viewCtx: ViewCtx) {
   if (!isTplTag(tpl)) {
     return false;
   }

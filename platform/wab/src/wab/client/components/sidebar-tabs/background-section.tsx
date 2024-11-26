@@ -1,16 +1,3 @@
-import {
-  Background,
-  BackgroundLayer,
-  bgClipTextTag,
-  ColorFill,
-  ImageBackground,
-  LinearGradient,
-  mkBackgroundLayer,
-  NoneBackground,
-  RadialGradient,
-  Stop,
-} from "@/wab/bg-styles";
-import { isKnownImageAsset, Site } from "@/wab/classes";
 import { EllipseControl } from "@/wab/client/components/EllipseControl";
 import {
   FullRow,
@@ -37,6 +24,7 @@ import { StyleWrapper } from "@/wab/client/components/style-controls/StyleWrappe
 import { UnloggedDragCatcher } from "@/wab/client/components/style-controls/UnloggedDragCatcher";
 import * as widgets from "@/wab/client/components/widgets";
 import { ColorPicker } from "@/wab/client/components/widgets/ColorPicker";
+import { useClientTokenResolver } from "@/wab/client/components/widgets/ColorPicker/client-token-resolver";
 import { DimTokenSpinner } from "@/wab/client/components/widgets/DimTokenSelector";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import IconButton from "@/wab/client/components/widgets/IconButton";
@@ -50,7 +38,14 @@ import RepeatGridIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Repeat
 import RepeatHIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__RepeatH";
 import PaintBucketFillIcon from "@/wab/client/plasmic/plasmic_kit_design_system/icons/PlasmicIcon__PaintBucketFill";
 import { makeVariantedStylesHelperFromCurrentCtx } from "@/wab/client/utils/style-utils";
-import { arrayMoveIndex } from "@/wab/collections";
+import {
+  isTokenRef,
+  replaceAllTokenRefs,
+  tryParseTokenRef,
+} from "@/wab/commons/StyleToken";
+import * as cssPegParser from "@/wab/gen/cssPegParser";
+import { TokenValueResolver } from "@/wab/shared/cached-selectors";
+import { arrayMoveIndex } from "@/wab/shared/collections";
 import {
   assert,
   ensure,
@@ -60,29 +55,63 @@ import {
   switchType,
   unexpected,
   uniqueKey,
-} from "@/wab/common";
-import { isTokenRef, tryParseTokenRef } from "@/wab/commons/StyleToken";
-import * as css from "@/wab/css";
-import * as cssPegParser from "@/wab/gen/cssPegParser";
-import { isStandardSide, oppSides } from "@/wab/geom";
-import { ImageAssetType } from "@/wab/image-asset-type";
-import { mkImageAssetRef, tryParseImageAssetRef } from "@/wab/image-assets";
+} from "@/wab/shared/common";
+import {
+  Background,
+  BackgroundLayer,
+  bgClipTextTag,
+  ColorFill,
+  ImageBackground,
+  LinearGradient,
+  mkBackgroundLayer,
+  NoneBackground,
+  RadialGradient,
+  Stop,
+} from "@/wab/shared/core/bg-styles";
+import { ImageAssetType } from "@/wab/shared/core/image-asset-type";
+import {
+  mkImageAssetRef,
+  tryParseImageAssetRef,
+} from "@/wab/shared/core/image-assets";
+import {
+  allColorTokens,
+  allMixins,
+  allStyleTokens,
+} from "@/wab/shared/core/sites";
+import { CssVarResolver } from "@/wab/shared/core/styles";
+import * as css from "@/wab/shared/css";
+import { isStandardSide, oppSides } from "@/wab/shared/geom";
+import { isKnownImageAsset, Site } from "@/wab/shared/model/classes";
 import { joinCssValues, splitCssValue } from "@/wab/shared/RuleSetHelpers";
+import { userImgUrl } from "@/wab/shared/urls";
 import Chroma from "@/wab/shared/utils/color-utils";
 import { VariantedStylesHelper } from "@/wab/shared/VariantedStylesHelper";
-import { allColorTokens, allMixins, allStyleTokens } from "@/wab/sites";
-import { CssVarResolver } from "@/wab/styles";
-import { userImgUrl } from "@/wab/urls";
 import { Tooltip } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { basename } from "path";
 import React, { useState } from "react";
 
 export const resolvedBackgroundImageCss = (
   bgImg: BackgroundLayer["image"],
+  clientTokenResolver: TokenValueResolver,
   site: Site,
   vsh?: VariantedStylesHelper
 ) => {
+  let cssValue = bgImg.showCss();
+
+  // First try resolving with client token resolver.
+  // Client token resolver is needed for registered style tokens that have a selector.
+  cssValue = replaceAllTokenRefs(cssValue, (tokenId) => {
+    const token = allColorTokens(site, {
+      includeDeps: "all",
+    }).find((t) => t.uuid === tokenId);
+    if (token) {
+      return clientTokenResolver(token, vsh);
+    } else {
+      return undefined;
+    }
+  });
+
   const resolver = new CssVarResolver(
     allStyleTokens(site, { includeDeps: "all" }),
     allMixins(site, { includeDeps: "all" }),
@@ -91,7 +120,7 @@ export const resolvedBackgroundImageCss = (
     {},
     vsh
   );
-  return resolver.resolveTokenRefs(bgImg.showCss());
+  return resolver.resolveTokenRefs(cssValue);
 };
 
 function mkEmptyLayer() {
@@ -122,6 +151,7 @@ export const BackgroundSection = observer(function BackgroundSection(
 
   const [inspected, setInspected] = useState<number>();
   const sc = useStyleComponent();
+  const clientTokenResolver = useClientTokenResolver();
 
   const vsh = props.vsh ?? makeVariantedStylesHelperFromCurrentCtx(studioCtx);
 
@@ -306,6 +336,7 @@ export const BackgroundSection = observer(function BackgroundSection(
                               style={{
                                 backgroundImage: resolvedBackgroundImageCss(
                                   layer.image,
+                                  clientTokenResolver,
                                   studioCtx.site,
                                   vsh
                                 ),

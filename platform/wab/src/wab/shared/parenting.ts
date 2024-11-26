@@ -1,4 +1,9 @@
+import { ensure, ensureInstance } from "@/wab/shared/common";
+import { findVarRefs, isCodeComponent } from "@/wab/shared/core/components";
+import { Selectable } from "@/wab/shared/core/selection";
+import { isTagListContainer } from "@/wab/shared/core/rich-text-util";
 import {
+  isKnownSlotParam,
   isKnownTplSlot,
   TplComponent,
   TplNode,
@@ -6,11 +11,12 @@ import {
   TplTag,
   Type,
   Var,
-} from "@/wab/classes";
-import { ensure, ensureInstance } from "@/wab/common";
-import { findVarRefs, isCodeComponent } from "@/wab/components";
-import { Selectable } from "@/wab/selection";
-import { SlotSelection } from "@/wab/slots";
+} from "@/wab/shared/model/classes";
+import { nodeConformsToType } from "@/wab/shared/model/model-util";
+import { getPlumeEditorPlugin } from "@/wab/shared/plume/plume-registry";
+import { getParentOrSlotSelection } from "@/wab/shared/SlotUtils";
+import { $$$ } from "@/wab/shared/TplQuery";
+import { SlotSelection } from "@/wab/shared/core/slots";
 import {
   getComponentIfRoot,
   hasChildrenSlot,
@@ -24,13 +30,8 @@ import {
   isTplSlot,
   isTplTag,
   isTplTextBlock,
-} from "@/wab/tpls";
-import { ValNode } from "@/wab/val-nodes";
-import { nodeConformsToType } from "./core/model-util";
-import { isTagListContainer } from "./core/rich-text-util";
-import { getPlumeEditorPlugin } from "./plume/plume-registry";
-import { getParentOrSlotSelection } from "./SlotUtils";
-import { $$$ } from "./TplQuery";
+} from "@/wab/shared/core/tpls";
+import { ValNode } from "@/wab/shared/core/val-nodes";
 
 export type CantAddChildMsg =
   | CantAddToTplComponentMsg
@@ -115,8 +116,21 @@ export function canAddChildrenAndWhy(
 ): true | CantAddChildMsg {
   if (tpl instanceof SlotSelection) {
     return canAddChildrenToSlotSelectionAndWhy(tpl, child);
-  } else if (isTplComponent(tpl) && !hasChildrenSlot(tpl)) {
-    return { type: "CantAddToTplComponent", tpl };
+  } else if (isTplComponent(tpl)) {
+    if (!hasChildrenSlot(tpl)) {
+      return { type: "CantAddToTplComponent", tpl };
+    }
+    const slotParam = ensure(
+      tpl.component.params.find((p) => p.variable.name === "children"),
+      "Should have children slot"
+    );
+    if (!isKnownSlotParam(slotParam)) {
+      return { type: "CantAddToTplComponent", tpl };
+    }
+    const slotType = getSlotLikeType(slotParam.tplSlot);
+    if (child && !nodeConformsToType(child, slotType)) {
+      return { type: "ViolatesSlotType", slotType };
+    }
   } else if (isTplTag(tpl)) {
     const component = getComponentIfRoot(tpl);
     if (component && isCodeComponent(component)) {

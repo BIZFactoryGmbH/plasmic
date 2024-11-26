@@ -6,11 +6,11 @@ import {
   DefaultShareButtonProps,
   PlasmicShareButton,
 } from "@/wab/client/plasmic/plasmic_kit_top_bar/PlasmicShareButton";
-import { ensure, spawn } from "@/wab/common";
-import { observer } from "mobx-react-lite";
+import { ensure, spawn } from "@/wab/shared/common";
+import { observer } from "mobx-react";
 import * as React from "react";
 
-interface ShareButtonProps extends DefaultShareButtonProps {}
+type ShareButtonProps = DefaultShareButtonProps;
 
 const ShareButton = observer((props: ShareButtonProps) => {
   const appCtx = useAppCtx();

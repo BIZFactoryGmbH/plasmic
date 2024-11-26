@@ -1,11 +1,5 @@
-import {
-  Component,
-  isKnownVirtualRenderExpr,
-  Param,
-  TplComponent,
-} from "@/wab/classes";
-import { ensure, withoutNils } from "@/wab/common";
-import { codeLit } from "@/wab/exprs";
+import { ensure, withoutNils } from "@/wab/shared/common";
+import { codeLit } from "@/wab/shared/core/exprs";
 import { internalCanvasElementProps } from "@/wab/shared/canvas-constants";
 import {
   generateSubstituteComponentCalls,
@@ -26,7 +20,21 @@ import {
   paramToVarName,
   toVarName,
 } from "@/wab/shared/codegen/util";
-import { typeFactory } from "@/wab/shared/core/model-util";
+import {
+  Component,
+  isKnownVirtualRenderExpr,
+  Param,
+  TplComponent,
+} from "@/wab/shared/model/classes";
+import { typeFactory } from "@/wab/shared/model/model-util";
+import { PlumePlugin } from "@/wab/shared/plume/plume-registry";
+import {
+  ensureValidPlumeCodeMeta,
+  isPlumeTypeElement,
+  makeComponentImportPath,
+  maybeIncludeSerializedDefaultSlotContent,
+  traverseReactEltTree,
+} from "@/wab/shared/plume/plume-utils";
 import { getTplComponentArg, setTplComponentArg } from "@/wab/shared/TplMgr";
 import { $$$ } from "@/wab/shared/TplQuery";
 import { ensureBaseVariantSetting } from "@/wab/shared/Variants";
@@ -34,14 +42,6 @@ import type { SelectRef } from "@plasmicapp/react-web";
 import { omit, pick } from "lodash";
 import { computedFn } from "mobx-utils";
 import type React from "react";
-import { PlumePlugin } from "./plume-registry";
-import {
-  ensureValidPlumeCodeMeta,
-  isPlumeTypeElement,
-  makeComponentImportPath,
-  maybeIncludeSerializedDefaultSlotContent,
-  traverseReactEltTree,
-} from "./plume-utils";
 
 const RESERVED_PROPS = [
   "isOpen",

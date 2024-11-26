@@ -1,4 +1,13 @@
-import { ensure, uncheckedCast } from "@/wab/common";
+/**
+ * This module handles loading secrets from secrets.json.
+ *
+ * Plasmic should run without any secrets.json file.
+ * But for testing some features, you'll need to set up certain variables.
+ *
+ * By default, secrets are read from ~/.plasmic/secrets.json.
+ */
+
+import { ensure, uncheckedCast } from "@/wab/shared/common";
 import fs from "fs";
 import * as os from "os";
 
@@ -7,11 +16,6 @@ interface Secrets {
     /** AKA consumer key */
     clientId: string;
     /** AKA consumer secret */
-    clientSecret: string;
-  };
-  okta?: {
-    domain: string;
-    clientId: string;
     clientSecret: string;
   };
   airtableSso?: {
@@ -26,11 +30,11 @@ interface Secrets {
   };
   encryptionKey?: string;
   dataSourceOperationEncryptionKey?: string;
-  smtpPass?: string;
-  codesandboxToken?: string;
+  smtpAuth?: {
+    user: string;
+    pass: string;
+  };
   intercomToken?: string;
-  /** Optional Segment write key. Should have this on prod. */
-  segmentWriteKey?: string;
   openaiApiKey?: string;
   anthropicApiKey?: string;
   github?: {
@@ -89,32 +93,12 @@ export function getGoogleClientSecret() {
   return loadSecrets().google?.clientSecret ?? "fake";
 }
 
-export function hasOkta() {
-  return "okta" in loadSecrets();
-}
-
-export function getOktaDomain() {
-  return loadSecrets().okta?.domain ?? "fake";
-}
-
-export function getOktaClientId() {
-  return loadSecrets().okta?.clientId ?? "fake";
-}
-
-export function getOktaClientSecret() {
-  return loadSecrets().okta?.clientSecret ?? "fake";
-}
-
-export function getSmtpPass() {
-  return loadSecrets().smtpPass;
+export function getSmtpAuth() {
+  return loadSecrets().smtpAuth;
 }
 
 export function getIntercomToken() {
   return loadSecrets().intercomToken;
-}
-
-export function getCodesandboxToken() {
-  return loadSecrets().codesandboxToken ?? "fake";
 }
 
 export function getGithubSecrets() {
@@ -158,15 +142,6 @@ export function getDiscourseConnectSecret() {
 
 export function getDiscourseApiKey() {
   return ensure(loadSecrets().discourse?.apiKey, "Discourse API key required");
-}
-
-/**
- * Return "XXX" if no Segment write key provided. This is fine with the
- * Analytics library; it will still make requests but these are just going to be
- * invalid and silently ignored (won't result in any console errors).
- */
-export function getSegmentWriteKey() {
-  return loadSecrets().segmentWriteKey || "XXX";
 }
 
 export function getVercelSecrets() {

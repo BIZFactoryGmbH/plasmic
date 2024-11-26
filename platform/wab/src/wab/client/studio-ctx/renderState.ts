@@ -1,4 +1,3 @@
-import { TplNode } from "@/wab/classes";
 import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import { getRealClassNames } from "@/wab/client/components/canvas/styles-name";
 import { SubDeps } from "@/wab/client/components/canvas/subdeps";
@@ -12,10 +11,16 @@ import {
   removeWhere,
   withoutNils,
   xSetDefault,
-} from "@/wab/common";
-import { Selectable } from "@/wab/selection";
-import { makeSlotSelectionKey, SlotSelection } from "@/wab/slots";
-import { cloneValNode, ValComponent, ValNode, ValSlot } from "@/wab/val-nodes";
+} from "@/wab/shared/common";
+import { Selectable } from "@/wab/shared/core/selection";
+import { SlotSelection, makeSlotSelectionKey } from "@/wab/shared/core/slots";
+import {
+  ValComponent,
+  ValNode,
+  ValSlot,
+  cloneValNode,
+} from "@/wab/shared/core/val-nodes";
+import { TplNode } from "@/wab/shared/model/classes";
 import $ from "jquery";
 import { maxBy } from "lodash";
 
@@ -90,6 +95,12 @@ class RenderStateImpl {
   }
 
   private cachedValNodes = new Map<string, WeakRef<ValNode>>();
+
+  unregisterFromKey(fullKey: string) {
+    this.cachedValNodes.delete(fullKey);
+    this._valKey2fullKeys.delete(fullKey);
+    this._fullKey2vals.delete(fullKey);
+  }
 
   recomputeCachedVal(fullKey: string): ValNode | undefined {
     const registeredValsSet = this._fullKey2vals.get(fullKey);

@@ -13,26 +13,20 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
+import {
+  Flex as Flex__,
+  SingleChoiceArg,
+  StrictProps,
+  classNames,
+  createPlasmicElementProxy,
+  deriveRenderOpts,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
+} from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import * as pp from "@plasmicapp/react-web";
-import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
-  SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
-  StrictProps,
-  deriveRenderOpts,
-  ensureGlobalVariants,
-} from "@plasmicapp/react-web";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -64,13 +58,13 @@ export const PlasmicSelect__Overlay__ArgProps = new Array<ArgPropType>(
 );
 
 export type PlasmicSelect__Overlay__OverridesType = {
-  root?: p.Flex<"div">;
-  top?: p.Flex<"div">;
-  middle?: p.Flex<"div">;
-  left?: p.Flex<"div">;
-  main?: p.Flex<"div">;
-  right?: p.Flex<"div">;
-  bottom?: p.Flex<"div">;
+  root?: Flex__<"div">;
+  top?: Flex__<"div">;
+  middle?: Flex__<"div">;
+  left?: Flex__<"div">;
+  main?: Flex__<"div">;
+  right?: Flex__<"div">;
+  bottom?: Flex__<"div">;
 };
 
 export interface DefaultSelect__OverlayProps
@@ -88,20 +82,27 @@ function PlasmicSelect__Overlay__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "relativePlacement",
@@ -111,9 +112,10 @@ function PlasmicSelect__Overlay__RenderFunc(props: {
           $props.relativePlacement,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -208,7 +210,7 @@ function PlasmicSelect__Overlay__RenderFunc(props: {
             ),
           })}
         >
-          {p.renderPlasmicSlot({
+          {renderPlasmicSlot({
             defaultContents: null,
             value: args.children,
           })}
@@ -310,6 +312,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicSelect__Overlay__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

@@ -1,5 +1,10 @@
 import { RightTabKey } from "@/wab/client/studio-ctx/StudioCtx";
 import {
+  changeRightTabKeyStepFunc,
+  TURN_OFF_INTERACTIVE_MODE_STEP_FUNC,
+  TURN_ON_INTERACTIVE_MODE_STEP_FUNC,
+} from "@/wab/client/tours/tutorials/frags/basic-steps";
+import {
   ensureFocusedTpl,
   isTableLinkedToRightQuery,
   isTableSelectRowsBy,
@@ -11,12 +16,7 @@ import {
   StudioTutorialStep,
   TutorialStepFunctionality,
 } from "@/wab/client/tours/tutorials/tutorials-types";
-import { ensure } from "@/wab/common";
-import {
-  changeRightTabKeyStepFunc,
-  TURN_OFF_INTERACTIVE_MODE_STEP_FUNC,
-  TURN_ON_INTERACTIVE_MODE_STEP_FUNC,
-} from "./basic-steps";
+import { ensure } from "@/wab/shared/common";
 
 const CONFIGURE_TABLE_STEP_FUNC: TutorialStepFunctionality<OnNextCtx> = {
   target: STUDIO_ELEMENTS_TARGETS.componentPropsData,

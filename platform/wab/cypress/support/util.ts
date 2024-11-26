@@ -4,7 +4,7 @@
  */
 import * as _ from "lodash";
 import * as platform from "platform";
-import { HostLessPackageInfo, State } from "../../src/wab/classes";
+import { ACTIONS_META } from "../../src/wab/client/state-management/interactions-meta";
 import { StudioCtx } from "../../src/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "../../src/wab/client/studio-ctx/view-ctx";
 import { testIds } from "../../src/wab/client/test-helpers/test-ids";
@@ -12,6 +12,12 @@ import {
   updateVariableOperations,
   updateVariantOperations,
 } from "../../src/wab/client/test-helpers/test-state-management";
+import type {
+  ApiDataSource,
+  ApiUpdateDataSourceRequest,
+  CreateSiteRequest,
+  SetSiteInfoReq,
+} from "../../src/wab/shared/ApiSchema";
 import {
   ensureArray,
   ensureType,
@@ -19,14 +25,14 @@ import {
   spawnWrapper,
   unexpected,
   withoutNils,
-} from "../../src/wab/common";
-import { DevFlagsType } from "../../src/wab/devflags";
+} from "../../src/wab/shared/common";
 import {
-  ApiDataSource,
-  ApiUpdateDataSourceRequest,
-  CreateSiteRequest,
-} from "../../src/wab/shared/ApiSchema";
-import { StateAccessType, StateVariableType } from "../../src/wab/states";
+  StateAccessType,
+  StateVariableType,
+} from "../../src/wab/shared/core/states";
+import { DevFlagsType } from "../../src/wab/shared/devflags";
+import { GrantableAccessLevel } from "../../src/wab/shared/EntUtil";
+import { HostLessPackageInfo, State } from "../../src/wab/shared/model/classes";
 import bundles from "../bundles";
 
 // Attention: we ban cy.window, cy.document, cy.focused, Cypress.$.
@@ -315,7 +321,10 @@ export function switchArena(name: string) {
   return cy.waitForNewFrame(
     () => {
       cy.get(`[id="proj-nav-button"]`).click({ force: true });
-      cy.get(`[data-test-id="panel-top-search-input"]`).type(name);
+      cy.get(`[data-test-id="nav-dropdown-clear-search"]`).click({
+        force: true,
+      });
+      cy.get(`[data-test-id="nav-dropdown-search-input"]`).type(name);
       cy.contains(name).click({ force: true }).wait(1000);
     },
     { skipWaitInit: true }
@@ -357,7 +366,7 @@ export function createNewPageInOwnArena(
   return waitForNewFrame(() => {
     // Create page
     cy.get("#proj-nav-button").click();
-    cy.get("#proj-panel-plus-btn").click();
+    cy.get("#nav-dropdown-plus-btn").click();
     cy.get(".ant-dropdown-menu-item").first().click();
     // Work around Cypress flaky input bug: https://github.com/cypress-io/cypress/issues/28172
     cy.get('[data-test-id="prompt"]:not([disabled])')
@@ -388,8 +397,10 @@ export function submitPrompt(answer: string) {
   cy.get(`button[data-test-id="prompt-submit"]`).click();
 }
 
-export function linkNewProp(propName: string, defaultValue?: string) {
-  cy.get(`input[data-test-id="prop-name"]`).type(propName);
+export function linkNewProp(propName?: string, defaultValue?: string) {
+  if (propName) {
+    cy.get(`input[data-test-id="prop-name"]`).clear().type(propName);
+  }
   if (defaultValue) {
     cy.get(`input[data-plasmic-prop="default-value"]`).type(defaultValue);
   }
@@ -403,20 +414,12 @@ export function createNewEventHandler(
   cy.switchToComponentDataTab();
   cy.get(`[data-test-id="add-prop-btn"]`).click({ force: true });
   cy.get(`[data-test-id="prop-name"]`).type(eventName);
-  cy.get(`[data-test-id="prop-type"]`)
-    .parent()
-    .within(() => {
-      cy.get("select").select("eventHandler", { force: true });
-    });
+  cy.selectPropOption(`[data-test-id="prop-type"]`, { key: "eventHandler" });
   for (const arg of args) {
     cy.get(`[data-test-id="add-arg"]`).click();
     cy.get(`[data-test-id="arg-name"]`).last().type(arg.name);
-    cy.get(`[data-test-id="arg-type"]`)
-      .last()
-      .parent()
-      .within(() => {
-        cy.get("select").select(arg.type, { force: true });
-      });
+    cy.get(`[data-test-id="arg-type"]`).last().click();
+    cy.selectOption({ key: arg.type });
   }
   cy.get(`button[data-test-id="prop-submit"]`).click();
 }
@@ -969,6 +972,8 @@ export function projectPanel() {
   switchToTreeTab();
   cy.get("#proj-nav-button").click();
   cy.wait(500);
+  cy.get(`[data-test-id="nav-dropdown-expand-all"]`).click();
+  cy.wait(500);
   return cy.get(testIds.projectPanel.selector);
 }
 
@@ -1147,7 +1152,7 @@ function toggleElementStates() {
     .click()
     .wait(200)
     .get(".ant-dropdown-menu")
-    .contains("Element States")
+    .contains("Element states")
     .click()
     .wait(200);
 }
@@ -1335,12 +1340,16 @@ export function setupNewProject({
   devFlags = {},
   name,
   email = "user2@example.com",
+  defaultAccessLevel,
+  inviteOnly,
   skipTours = true,
 }: {
   skipVisit?: boolean;
   devFlags?: Partial<DevFlagsType>;
   name?: string;
   email?: string;
+  defaultAccessLevel?: GrantableAccessLevel;
+  inviteOnly?: boolean;
   skipTours?: boolean;
 } = {}): Cypress.Chainable<string> {
   return cy
@@ -1348,18 +1357,36 @@ export function setupNewProject({
     .request({
       url: "/api/v1/projects",
       method: "POST",
-      log: false,
       body: ensureType<CreateSiteRequest>({
         name: name ? `[cypress] ${name}` : undefined,
       }),
     })
     .its("body.project.id", { log: false })
     .then((projectId: string) => {
-      Cypress.log({
+      cy.log({
         name: "Project",
         message: projectId,
       });
       Cypress.env("projectId", projectId);
+    })
+    .then(() => {
+      const body: SetSiteInfoReq = {};
+      if (defaultAccessLevel !== undefined) {
+        body.defaultAccessLevel = defaultAccessLevel;
+      }
+      if (inviteOnly !== undefined) {
+        body.inviteOnly = inviteOnly;
+      }
+      if (Object.keys(body).length > 0) {
+        return cy.request({
+          url: `/api/v1/projects/${Cypress.env("projectId")}`,
+          method: "PUT",
+          body,
+        });
+      }
+    })
+    .then(() => {
+      const projectId = Cypress.env("projectId");
       if (!skipVisit) {
         openProject({ projectId, devFlags });
         if (skipTours) {
@@ -1462,7 +1489,7 @@ export function setupHostlessProject(props: {
     .setupNewProject({
       name: props.name,
       devFlags: { setHostLessProject: true },
-      email: "admin@example.com",
+      email: "admin@admin.example.com",
     })
     .then((hostlessProjectId: string) => {
       cy.withinStudioIframe(() => {
@@ -1495,7 +1522,6 @@ export function openProject({
 }) {
   Cypress.env("projectId", projectId);
   cy.visit(`/projects/${projectId}${appendPath}`, {
-    log: false,
     qs: { runningInCypress: true, ...qs, ...devFlags },
     timeout: 120000,
   });
@@ -1832,12 +1858,32 @@ export function expandSection(sectionId: string) {
   ).click({ timeout: 30000 });
 }
 
-export function selectDataPlasmicProp(prop: string, value: string) {
-  cy.get(`[data-plasmic-prop="${prop}"]`)
-    .parent()
-    .within(() => {
-      cy.get("select").select(value, { force: true });
-    });
+export function selectDataPlasmicProp(
+  prop: string,
+  value: string | { key: string }
+) {
+  return selectPropOption(`[data-plasmic-prop="${prop}"]`, value);
+}
+
+export function selectPropOption(
+  propSelector: string,
+  value: string | { key: string }
+) {
+  cy.get(propSelector).click();
+  cy.selectOption(value);
+}
+
+export function selectOption(value: string | { key: string }) {
+  // This is the old code, which should work, but stopped working since upgrading react-aria.
+  // Cypress is doing its job correctly, setting the value of the hidden select.
+  // However, at some point, before our code (react-web) handles the event,
+  // somehow the value is reset to the original value.
+  //  cy.get("select").select(value, { force: true });
+  if (typeof value === "string") {
+    cy.contains(`[role=option] *`, value).parents("[role=option]").click();
+  } else {
+    cy.get(`[data-key="${value.key}"]`).click();
+  }
 }
 
 export function pickIntegration(maybeName?: string) {
@@ -1859,14 +1905,16 @@ export function pickIntegration(maybeName?: string) {
 }
 
 export function multiSelectDataPlasmicProp(prop: string, values: string[]) {
-  cy.get(`[data-plasmic-prop="${prop}"]`).click({ force: true });
-  cy.get(
+  cy.get(`[data-plasmic-prop="${prop}"]`).click();
+
+  // Remove existing values, if any
+  Cypress.$(
     `[data-plasmic-prop="${prop}"] [data-test-id="multi-select-value"]`
   ).each(() => {
-    cy.get(`[data-plasmic-prop="${prop}"]`)
-      .click({ force: true })
-      .type("{backspace}");
+    cy.get(`[data-plasmic-prop="${prop}"]`).click().type("{backspace}");
   });
+
+  // Add values
   for (const val of values) {
     cy.get(`[data-plasmic-prop="${prop}"]`).type(`${val}{enter}`);
   }
@@ -2030,7 +2078,7 @@ export function changeStateAccessType(
       .click({ force: true })
       .wait(200);
   }
-  cy.selectDataPlasmicProp("access-type", newAccessType);
+  cy.selectDataPlasmicProp("access-type", { key: newAccessType });
   cy.get(`[data-test-id="close-sidebar-modal"]`).click().wait(200);
 }
 
@@ -2058,7 +2106,7 @@ export function addState(state: StateType) {
   cy.get('[data-test-id="add-state-btn"]').click().wait(200);
   cy.get(`[data-plasmic-prop="variable-name"]`).click();
   cy.justType(`{selectAll}{backspace}${state.name}`).wait(200);
-  cy.selectDataPlasmicProp("variable-type", state.variableType);
+  cy.selectDataPlasmicProp("variable-type", { key: state.variableType });
   if (state.isInitValDynamicValue || state.initialValue == null) {
     cy.get(`[data-test-id="prop-editor-row-initial-value"]`).rightclick();
     cy.contains("Use dynamic value").click();
@@ -2074,10 +2122,11 @@ export function addState(state: StateType) {
     });
   }
   if (state.accessType !== "private") {
-    cy.get('[data-test-id="allow-external-access"]')
-      .click({ force: true })
+    cy.get('label [data-test-id="allow-external-access"]')
+      .parents("label")
+      .click()
       .wait(200);
-    cy.selectDataPlasmicProp("access-type", state.accessType);
+    cy.selectDataPlasmicProp("access-type", { key: state.accessType });
   }
   cy.get('[data-test-id="confirm"]').click().wait(200);
 }
@@ -2100,8 +2149,10 @@ export function addInteraction(
   cy.get(`[data-test-id="add-interaction"]`).click().wait(200);
   justType(`${eventHandler}{enter}`);
   ensureArray(interactions).forEach((interaction, interactionIndex, list) => {
-    cy.selectDataPlasmicProp("action-name", interaction.actionName);
+    cy.wait(500);
+    cy.selectDataPlasmicProp("action-name", { key: interaction.actionName });
     for (const argName in interaction.args) {
+      cy.wait(500);
       if (argName === "operation") {
         const argVal =
           interaction.actionName === "updateVariable"
@@ -2115,7 +2166,7 @@ export function addInteraction(
                   argName
                 ] as keyof typeof updateVariantOperations
               ];
-        cy.selectDataPlasmicProp(argName, `${argVal}`);
+        cy.selectDataPlasmicProp(argName, { key: `${argVal}` });
       } else if (argName === "variable") {
         const argVal = interaction.args[argName] as string[];
         cy.get(`[data-plasmic-prop="${argName}"]`).click();
@@ -2189,7 +2240,7 @@ export function switchInteractiveMode() {
 
 export function upsertDevFlags(devFlags: Partial<DevFlagsType>) {
   return cy
-    .login("admin@example.com")
+    .login("admin@admin.example.com")
     .request({
       url: "/api/v1/admin/devflags",
       method: "GET",
@@ -2214,7 +2265,7 @@ export function upsertDevFlags(devFlags: Partial<DevFlagsType>) {
 
 export function createTutorialDb(type: string) {
   return cy
-    .login("admin@example.com")
+    .login("admin@admin.example.com")
     .request({
       url: "/api/v1/admin/create-tutorial-db",
       method: "POST",
@@ -2272,7 +2323,7 @@ export function cloneProject(opts: {
 }
 
 export function deleteProjectAndRevisions(projectId: string) {
-  return cy.login("admin@example.com").request({
+  return cy.login("admin@admin.example.com").request({
     url: `/api/v1/admin/delete-project-and-revisions`,
     method: "DELETE",
     body: {
@@ -2329,11 +2380,11 @@ export function createDataSourceOperation(
     { value: string; isDynamicValue?: boolean; inputType?: string; opts?: any }
   >
 ) {
+  cy.wait(2000);
   cy.selectDataPlasmicProp("data-source-modal-pick-integration-btn", name);
-  cy.selectDataPlasmicProp(
-    "data-source-modal-pick-operation-btn",
-    args["operation"].value
-  );
+  cy.selectDataPlasmicProp("data-source-modal-pick-operation-btn", {
+    key: args["operation"].value,
+  });
   if (args["resource"]) {
     cy.selectDataPlasmicProp(
       "data-source-modal-pick-resource-btn",

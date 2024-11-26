@@ -1,27 +1,17 @@
-import {
-  Component,
-  Site,
-  TplNode,
-  Variant,
-  VariantGroup,
-  VariantSetting,
-} from "@/wab/classes";
-import { xAddAll } from "@/wab/common";
+import { xAddAll } from "@/wab/shared/common";
+import { VariantGroupType, isGlobalVariant } from "@/wab/shared/Variants";
 import { flattenComponent } from "@/wab/shared/cached-selectors";
-import { plasmicImgAttrStyles } from "@/wab/shared/core/style-props";
-import { makeLayoutAwareRuleSet } from "@/wab/shared/layoututils";
-import { isGlobalVariant, VariantGroupType } from "@/wab/shared/Variants";
-import { createExpandedRuleSetMerger } from "@/wab/styles";
-import { isTplTag, isTplVariantable } from "@/wab/tpls";
-import L from "lodash";
-import { ComponentGenHelper } from "./codegen-helpers";
-import { getReactWebPackageName } from "./react-p";
-import { makeGlobalVariantIdFileName, makeUseClient } from "./react-p/utils";
+import { ComponentGenHelper } from "@/wab/shared/codegen/codegen-helpers";
+import { getReactWebPackageName } from "@/wab/shared/codegen/react-p";
+import {
+  makeGlobalVariantIdFileName,
+  makeUseClient,
+} from "@/wab/shared/codegen/react-p/utils";
 import {
   extractUsedGlobalVariantsForTokens,
   extractUsedTokensForComponents,
-} from "./style-tokens";
-import { ExportOpts } from "./types";
+} from "@/wab/shared/codegen/style-tokens";
+import { ExportOpts } from "@/wab/shared/codegen/types";
 import {
   DEFAULT_CONTEXT_VALUE,
   jsLiteral,
@@ -29,7 +19,20 @@ import {
   stripExtension,
   toClassName,
   toVarName,
-} from "./util";
+} from "@/wab/shared/codegen/util";
+import { plasmicImgAttrStyles } from "@/wab/shared/core/style-props";
+import { makeLayoutAwareRuleSet } from "@/wab/shared/layoututils";
+import {
+  Component,
+  Site,
+  TplNode,
+  Variant,
+  VariantGroup,
+  VariantSetting,
+} from "@/wab/shared/model/classes";
+import { createExpandedRuleSetMerger } from "@/wab/shared/core/styles";
+import { isTplTag, isTplVariantable } from "@/wab/shared/core/tpls";
+import L from "lodash";
 
 export interface GlobalVariantConfig {
   // uuid of VariantGroup
@@ -74,21 +77,8 @@ export function ${makeGlobalVariantGroupUseName(vg)}() {
   return React.useContext(${contextName});
 }
   `;
-  let screenProvider = "";
 
   if (vg.type === "global-screen") {
-    screenProvider = `
-      /**
-       *  @deprecated Plasmic now uses a custom hook for Screen variants, which is
-       *  automatically included in your components. Please remove this provider
-       *  from your code.
-       */
-      export function ScreenVariantProvider(props: React.PropsWithChildren) {
-        console.warn('DEPRECATED: Plasmic now uses a custom hook for Screen variants, which is automatically included in your components. Please remove this provider from your code.');
-        return props.children;
-      }
-    `;
-
     const variants = vg.variants.filter(
       (v) => v.mediaQuery && v.mediaQuery.trim().length > 0
     );
@@ -132,7 +122,6 @@ export function ${makeGlobalVariantGroupUseName(vg)}() {
     export const ${contextName} = React.createContext<${
     vg.multi ? `${valueType}[]` : valueType
   } | undefined>("${DEFAULT_CONTEXT_VALUE}" as any);
-    ${screenProvider}
     ${serializedHook}
     export default ${contextName};
     /* prettier-ignore-end */

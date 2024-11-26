@@ -1,10 +1,10 @@
-import { VariantGroup } from "@/wab/classes";
 import {
   EditableLabel,
   EditableLabelHandles,
 } from "@/wab/client/components/widgets/EditableLabel";
 import { VARIANTS_CAP } from "@/wab/shared/Labels";
-import { observer } from "mobx-react-lite";
+import { VariantGroup } from "@/wab/shared/model/classes";
+import { observer } from "mobx-react";
 import * as React from "react";
 
 interface EditableGroupLabelProps {
@@ -30,6 +30,6 @@ function EditableGroupLabel_(
   );
 }
 
-export const EditableGroupLabel = observer(EditableGroupLabel_, {
-  forwardRef: true,
-});
+export const EditableGroupLabel = observer(
+  React.forwardRef(EditableGroupLabel_)
+);

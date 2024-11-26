@@ -1,4 +1,20 @@
-import { TplNode, Variant } from "@/wab/classes";
+import { useCanvasForceUpdate } from "@/wab/client/components/canvas/canvas-hooks";
+import { mkUseCanvasObserver } from "@/wab/client/components/canvas/canvas-observer";
+import {
+  PinMap,
+  useRenderedFrameRoot,
+} from "@/wab/client/components/canvas/canvas-rendering";
+import {
+  ClientPinManager,
+  makeVariantEvalState,
+} from "@/wab/client/components/variants/ClientPinManager";
+import { globalHookCtx } from "@/wab/client/react-global-hook/globalHook";
+import {
+  RenderState,
+  getRenderState,
+} from "@/wab/client/studio-ctx/renderState";
+import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
+import { ContextFactory } from "@/wab/shared/code-components/context-factory";
 import {
   ensure,
   ensureInstance,
@@ -7,33 +23,23 @@ import {
   tuple,
   undefinedToDefault,
   xOmitNils,
-} from "@/wab/common";
-import { allComponentVariants, isContextCodeComponent } from "@/wab/components";
-import { ContextFactory } from "@/wab/shared/code-components/context-factory";
+} from "@/wab/shared/common";
 import {
   ComponentVariantFrame,
   GlobalVariantFrame,
 } from "@/wab/shared/component-frame";
 import { wrapWithContext } from "@/wab/shared/contexts";
+import {
+  allComponentVariants,
+  isContextCodeComponent,
+} from "@/wab/shared/core/components";
+import { allGlobalVariants } from "@/wab/shared/core/sites";
+import { ValComponent, ValNode } from "@/wab/shared/core/val-nodes";
 import { ValState } from "@/wab/shared/eval/val-state";
+import { TplNode, Variant } from "@/wab/shared/model/classes";
 import { getImplicitlyActivatedStyleVariants } from "@/wab/shared/Variants";
-import { allGlobalVariants } from "@/wab/sites";
-import { ValComponent, ValNode } from "@/wab/val-nodes";
 import { autorun, observable } from "mobx";
 import React from "react";
-import { useCanvasForceUpdate } from "./components/canvas/canvas-hooks";
-import { mkUseCanvasObserver } from "./components/canvas/canvas-observer";
-import {
-  PinMap,
-  useRenderedFrameRoot,
-} from "./components/canvas/canvas-rendering";
-import {
-  ClientPinManager,
-  makeVariantEvalState,
-} from "./components/variants/ClientPinManager";
-import { globalHookCtx } from "./react-global-hook/globalHook";
-import { getRenderState, RenderState } from "./studio-ctx/renderState";
-import { ViewCtx } from "./studio-ctx/view-ctx";
 import defer = setTimeout;
 
 function getActivatedVariants(
@@ -69,6 +75,14 @@ export abstract class BaseCliSvrEvaluator {
   private _postEvalTasks: (() => any)[] = [];
   private _contextFactory: ContextFactory;
   private _renderState: RenderState;
+  private _isFirstRenderComplete = observable.box(false);
+
+  get isFirstRenderComplete() {
+    return this._isFirstRenderComplete.get();
+  }
+  set isFirstRenderComplete(v) {
+    this._isFirstRenderComplete.set(v);
+  }
 
   constructor({ viewCtx }: { viewCtx: ViewCtx }) {
     this._viewCtx = viewCtx;
@@ -157,6 +171,9 @@ export abstract class BaseCliSvrEvaluator {
     if (this.rootNode == null) {
       this.rootNode = this.renderRoot();
       viewCtx.canvasCtx.rerender(this.rootNode, viewCtx);
+      this.addPostEval(() => {
+        this.isFirstRenderComplete = true;
+      });
     }
   }
 

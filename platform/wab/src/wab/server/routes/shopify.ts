@@ -1,4 +1,3 @@
-import { Site } from "@/wab/classes";
 import {
   ensure,
   ensureString,
@@ -6,16 +5,19 @@ import {
   safeCast,
   swallowAsync,
   tuple,
-} from "@/wab/common";
+} from "@/wab/shared/common";
 import { bytesToStringUTF8, hexToBytes } from "@/wab/commons/string-encodings";
-import { isPageComponent } from "@/wab/components";
+import { isPageComponent } from "@/wab/shared/core/components";
 import { Config } from "@/wab/server/config";
 import { DbMgr } from "@/wab/server/db/DbMgr";
 import { User } from "@/wab/server/entities/Entities";
+import { genLoaderHtmlBundleSandboxed } from "@/wab/server/routes/loader";
+import { getUser, superDbMgr, userDbMgr } from "@/wab/server/routes/util";
 import { getShopifySecrets } from "@/wab/server/secrets";
 import { UnauthorizedError } from "@/wab/shared/ApiErrors/errors";
-import { ProjectId } from "@/wab/shared/ApiSchema";
-import { getPublicUrl } from "@/wab/urls";
+import { ProjectId, UserId } from "@/wab/shared/ApiSchema";
+import { Site } from "@/wab/shared/model/classes";
+import { getPublicUrl } from "@/wab/shared/urls";
 import Shopify, {
   ApiVersion,
   DataType,
@@ -28,8 +30,6 @@ import glob from "glob";
 import https from "https";
 import { matchPath } from "react-router-dom";
 import { z } from "zod";
-import { genLoaderHtmlBundleSandboxed } from "./loader";
-import { getUser, superDbMgr, userDbMgr } from "./util";
 
 const always = !process.env.NEVER;
 
@@ -134,10 +134,7 @@ export type ShopifyCreateScriptTagRequest = z.infer<
   typeof ShopifyCreateScriptTagRequest
 >;
 
-export async function getShopifyClientForUserId(
-  dbMgr: DbMgr,
-  userId: string & { __brand: "UserId" }
-) {
+export async function getShopifyClientForUserId(dbMgr: DbMgr, userId: UserId) {
   const token = await dbMgr.tryGetOauthToken(userId, "shopify");
   if (!token) {
     throw new Error("Missing Shopify token");
@@ -183,7 +180,9 @@ export async function getProducts(req: Request, res: Response) {
     ),
   });
   res.json({ html });
-  if (always) return;
+  if (always) {
+    return;
+  }
 
   const { client } = await getShopifyClient(req);
   const products = await client.get({ path: "products" });

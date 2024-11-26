@@ -1,3 +1,19 @@
+import { ensure, ensureArrayOfInstances, partitions } from "@/wab/shared/common";
+import { insertAt, removeFromArray } from "@/wab/commons/collections";
+import { allComponentVariants } from "@/wab/shared/core/components";
+import {
+  ensureActivatedScreenVariantsForArena,
+  ensureActivatedScreenVariantsForFrameByWidth,
+  FrameViewMode,
+  isHeightAutoDerived,
+  mkArenaFrame,
+  updateAutoDerivedFrameHeight,
+} from "@/wab/shared/Arenas";
+import { usedGlobalVariantGroups } from "@/wab/shared/cached-selectors";
+import {
+  ensureCellKey,
+  makeComponentArenaCustomMatrix,
+} from "@/wab/shared/component-arenas";
 import {
   ArenaFrame,
   ArenaFrameCell,
@@ -11,32 +27,8 @@ import {
   Site,
   Variant,
   VariantGroup,
-} from "@/wab/classes";
-import { ensure, ensureArrayOfInstances, partitions } from "@/wab/common";
-import { insertAt, removeFromArray } from "@/wab/commons/collections";
-import { allComponentVariants } from "@/wab/components";
-import {
-  allGlobalVariants,
-  getResponsiveStrategy,
-  getSiteScreenSizes,
-} from "@/wab/sites";
-import { orderBy } from "lodash";
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { IObservableArray } from "mobx";
-import {
-  ensureActivatedScreenVariantsForArena,
-  ensureActivatedScreenVariantsForFrameByWidth,
-  FrameViewMode,
-  isHeightAutoDerived,
-  mkArenaFrame,
-  updateAutoDerivedFrameHeight,
-} from "./Arenas";
-import { usedGlobalVariantGroups } from "./cached-selectors";
-import {
-  ensureCellKey,
-  makeComponentArenaCustomMatrix,
-} from "./component-arenas";
-import { ResponsiveStrategy } from "./responsiveness";
+} from "@/wab/shared/model/classes";
+import { ResponsiveStrategy } from "@/wab/shared/responsiveness";
 import {
   ensureVariantSetting,
   isGlobalVariant,
@@ -44,7 +36,15 @@ import {
   isScreenVariant,
   isScreenVariantGroup,
   makeVariantName,
-} from "./Variants";
+} from "@/wab/shared/Variants";
+import {
+  allGlobalVariants,
+  getResponsiveStrategy,
+  getSiteScreenSizes,
+} from "@/wab/shared/core/sites";
+import { orderBy } from "lodash";
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
+import { IObservableArray } from "mobx";
 
 export function mkPageArena({
   component,
@@ -89,7 +89,6 @@ export function makePageArenaFrame(
     name: "",
     width: width,
     height: height,
-    viewportHeight: height,
     component,
     targetVariants: [...locals],
     targetGlobalVariants: [...globals],
@@ -175,7 +174,6 @@ export function syncPageArenaFrameSize(
       const frame = row.cols[index].frame;
       frame.width = anchor.width;
       frame.height = anchor.height;
-      frame.viewportHeight = anchor.viewportHeight;
       if (isHeightAutoDerived(anchor) && anchor._height) {
         updateAutoDerivedFrameHeight(frame, anchor._height.get());
       }

@@ -1,24 +1,27 @@
-import { Component, Site } from "@/wab/classes";
+import { DocsPortalCtx } from "@/wab/client/components/docs/DocsPortalCtx";
+import { DocsPortalEditor } from "@/wab/client/components/docs/DocsPortalEditor";
+import { DocsPreviewCanvas } from "@/wab/client/components/docs/DocsPreviewCanvas";
+import {
+  depsForComponent,
+  serializeComponent,
+} from "@/wab/client/components/docs/serialize-docs-preview";
 import {
   DefaultCodePreviewSnippetProps,
   PlasmicCodePreviewSnippet,
 } from "@/wab/client/plasmic/plasmic_kit_docs_portal/PlasmicCodePreviewSnippet";
-import { ensure, mkUuid } from "@/wab/common";
-import { isSubComponent } from "@/wab/components";
+import { ensure, mkUuid } from "@/wab/shared/common";
+import { isSubComponent } from "@/wab/shared/core/components";
 import { getExportedComponentName } from "@/wab/shared/codegen/react-p/utils";
+import { Component, Site } from "@/wab/shared/model/classes";
 import {
-  getPlumeDocsPlugin,
   PlumeDocsExample,
+  getPlumeDocsPlugin,
 } from "@/wab/shared/plume/plume-registry";
 import { observable } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as Prettier from "prettier";
 import parserTypescript from "prettier/parser-typescript";
 import * as React from "react";
-import { DocsPortalCtx } from "./DocsPortalCtx";
-import { DocsPortalEditor } from "./DocsPortalEditor";
-import { DocsPreviewCanvas } from "./DocsPreviewCanvas";
-import { depsForComponent, serializeComponent } from "./serialize-docs-preview";
 
 function mkDeps(site: Site, component: Component): Record<string, Component> {
   const deps: Record<string, Component> = {};

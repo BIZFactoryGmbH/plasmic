@@ -1,5 +1,7 @@
-import { Component, HostLessPackageInfo, Site, TplNode } from "@/wab/classes";
+import { reportError } from "@/wab/client/ErrorNotifications";
 import {
+  confirmRemovedCodeComponentVariants,
+  confirmRemovedTokens,
   duplicateCodeComponentErrorDescription,
   fixInvalidReactVersion,
   fixMissingCodeComponents,
@@ -15,11 +17,32 @@ import {
   getSortedHostLessPkgs,
 } from "@/wab/client/components/studio/studio-bundles";
 import { scriptExec } from "@/wab/client/dom-utils";
-import { reportError } from "@/wab/client/ErrorNotifications";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
 import { trackEvent } from "@/wab/client/tracking";
+import { isBuiltinCodeComponent } from "@/wab/shared/code-components/builtin-code-components";
 import {
+  BadElementSchemaError,
+  BadPresetSchemaError,
+  CodeComponentRegistrationTypeError,
+  CodeComponentSyncCallbackFns,
+  CyclicComponentReferencesError,
+  DuplicateCodeComponentError,
+  DuplicatedComponentParamError,
+  InvalidCodeLibraryError,
+  InvalidCustomFunctionError,
+  InvalidTokenError,
+  SelfReferencingComponent,
+  UnknownComponentError,
+  UnknownComponentPropError,
+  appendCodeComponentMetaToModel,
+  customFunctionId,
+  elementSchemaToTpl,
+  getPropTypeType,
+  syncCodeComponents,
+} from "@/wab/shared/code-components/code-components";
+import {
+  WritablePart,
   assert,
   assignReadonly,
   ensure,
@@ -28,39 +51,23 @@ import {
   safeCast,
   switchType,
   unexpected,
-  WritablePart,
   xDifference,
-} from "@/wab/common";
+} from "@/wab/shared/common";
 import {
   CodeComponent,
   ComponentType,
   isCodeComponent,
   isDefaultComponent,
-} from "@/wab/components";
-import { isBuiltinCodeComponent } from "@/wab/shared/code-components/builtin-code-components";
+} from "@/wab/shared/core/components";
+import { isHostLessPackage } from "@/wab/shared/core/sites";
+import { TplCodeComponent } from "@/wab/shared/core/tpls";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
 import {
-  appendCodeComponentMetaToModel,
-  BadElementSchemaError,
-  BadPresetSchemaError,
-  CodeComponentRegistrationTypeError,
-  CodeComponentSyncCallbackFns,
-  customFunctionId,
-  CyclicComponentReferencesError,
-  DuplicateCodeComponentError,
-  DuplicatedComponentParamError,
-  elementSchemaToTpl,
-  getPropTypeType,
-  InvalidCodeLibraryError,
-  InvalidCustomFunctionError,
-  InvalidTokenError,
-  SelfReferencingComponent,
-  syncCodeComponents,
-  UnknownComponentError,
-  UnknownComponentPropError,
-} from "@/wab/shared/code-components/code-components";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
-import { isHostLessPackage } from "@/wab/sites";
-import { TplCodeComponent } from "@/wab/tpls";
+  Component,
+  HostLessPackageInfo,
+  Site,
+  TplNode,
+} from "@/wab/shared/model/classes";
 import {
   ComponentMeta,
   GlobalContextMeta,
@@ -232,6 +239,9 @@ export const ccClientCallbackFns: CodeComponentSyncCallbackFns = {
       ),
     });
   },
+  confirmRemovedCodeComponentVariants: (removedSelectorsByComponent) =>
+    confirmRemovedCodeComponentVariants(removedSelectorsByComponent),
+  confirmRemovedTokens: (removedTokens) => confirmRemovedTokens(removedTokens),
 };
 
 export async function syncCodeComponentsAndHandleErrors(
@@ -335,7 +345,7 @@ export async function maybeConvertToHostLessProject(studioCtx: StudioCtx) {
   if (
     (studioCtx.appCtx.appConfig.setHostLessProject ||
       isHostLessPackage(studioCtx.site)) &&
-    isCoreTeamEmail(
+    isAdminTeamEmail(
       studioCtx.appCtx.selfInfo?.email,
       studioCtx.appCtx.appConfig
     )

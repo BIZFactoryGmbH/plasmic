@@ -9,9 +9,8 @@ import Button from "@/wab/client/components/widgets/Button";
 import Select from "@/wab/client/components/widgets/Select";
 import { Textbox } from "@/wab/client/components/widgets/Textbox";
 import { useApi } from "@/wab/client/contexts/AppContexts";
-import { ensure, notNil } from "@/wab/common";
+import { ensure, notNil } from "@/wab/shared/common";
 import GLogo from "@/wab/commons/images/g-logo.png";
-import { RequiredSubKeys } from "@/wab/commons/types";
 import {
   ApiDataSource,
   ApiUpdateDataSourceRequest,
@@ -36,8 +35,9 @@ import { Alert, Form, FormInstance, Input, notification } from "antd";
 import jsonrepair from "jsonrepair";
 import { isEqual, noop } from "lodash";
 import React from "react";
-import { Modal } from "src/wab/client/components/widgets/Modal";
+import { Modal } from "@/wab/client/components/widgets/Modal";
 import useSWR, { useSWRConfig } from "swr";
+import type { SetRequired } from "type-fest";
 
 export interface DataSourceModalProps {
   workspaceId: WorkspaceId;
@@ -129,7 +129,7 @@ const DATA_SOURCE_ALIASES: DataSourceAlias[] = [
   },
 ];
 
-type DataSourceFormData = RequiredSubKeys<
+type DataSourceFormData = SetRequired<
   ApiUpdateDataSourceRequest,
   "name" | "credentials" | "settings" | "source"
 >;

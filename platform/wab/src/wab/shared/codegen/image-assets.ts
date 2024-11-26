@@ -1,3 +1,32 @@
+import { assert, ensure, isNumeric, tuple } from "@/wab/shared/common";
+import { isPageComponent } from "@/wab/shared/core/components";
+import { ImageAssetType } from "@/wab/shared/core/image-asset-type";
+import {
+  extractAllAssetRefs,
+  getTagAttrForImageAsset,
+} from "@/wab/shared/core/image-assets";
+import possibleStandardNames from "@/wab/shared/codegen/react-attrs";
+import {
+  getReactWebPackageName,
+  ImportAliasesMap,
+} from "@/wab/shared/codegen/react-p";
+import {
+  makeAssetIdFileName,
+  makeImportedPictureRef,
+} from "@/wab/shared/codegen/react-p/utils";
+import { ExportOpts } from "@/wab/shared/codegen/types";
+import {
+  jsLiteral,
+  jsString,
+  stripExtension,
+  toClassName,
+  toVarName,
+} from "@/wab/shared/codegen/util";
+import {
+  parseDataUrl,
+  parseDataUrlToSvgXml,
+  parseSvgXml,
+} from "@/wab/shared/data-urls";
 import {
   Component,
   Expr,
@@ -8,46 +37,23 @@ import {
   Mixin,
   Site,
   TplNode,
-} from "@/wab/classes";
-import { assert, ensure, isNumeric, tuple } from "@/wab/common";
-import { isPageComponent } from "@/wab/components";
-import { ImageAssetType } from "@/wab/image-asset-type";
-import {
-  extractAllAssetRefs,
-  getTagAttrForImageAsset,
-} from "@/wab/image-assets";
-import {
-  parseDataUrl,
-  parseDataUrlToSvgXml,
-  parseSvgXml,
-} from "@/wab/shared/data-urls";
+} from "@/wab/shared/model/classes";
 import {
   ReadonlyIRuleSetHelpersX,
   readonlyRSH,
   RuleSetHelpers,
 } from "@/wab/shared/RuleSetHelpers";
-import { allImageAssets } from "@/wab/sites";
-import { expandRuleSets } from "@/wab/styles";
+import { allImageAssets } from "@/wab/shared/core/sites";
+import { expandRuleSets } from "@/wab/shared/core/styles";
 import {
   flattenTpls,
   isTplComponent,
   isTplIcon,
   isTplPicture,
   pushExprs,
-} from "@/wab/tpls";
+} from "@/wab/shared/core/tpls";
 import L, { last } from "lodash";
 import mime from "mime/lite";
-import possibleStandardNames from "./react-attrs";
-import { getReactWebPackageName, ImportAliasesMap } from "./react-p";
-import { makeAssetIdFileName, makeImportedPictureRef } from "./react-p/utils";
-import { ExportOpts } from "./types";
-import {
-  jsLiteral,
-  jsString,
-  stripExtension,
-  toClassName,
-  toVarName,
-} from "./util";
 
 export function extractUsedIconAssetsForComponents(
   site: Site,
@@ -520,7 +526,9 @@ export function makeIconImports(
     const name = makeAssetClassName(asset);
     if (usedNames.has(name)) {
       let count = 2;
-      while (usedNames.has(name + count)) count++;
+      while (usedNames.has(name + count)) {
+        count++;
+      }
       aliases.set(asset, name + count);
       usedNames.add(name + count);
     } else {
@@ -583,7 +591,9 @@ export function getImageFilename(asset: ImageAsset) {
   }
   let { contentType } = parseDataUrl(asset.dataUri);
 
-  if (contentType === "image/jpg") contentType = "image/jpeg";
+  if (contentType === "image/jpg") {
+    contentType = "image/jpeg";
+  }
 
   const extension = mime.getExtension(contentType);
   return `${asset.name}.${extension}`;

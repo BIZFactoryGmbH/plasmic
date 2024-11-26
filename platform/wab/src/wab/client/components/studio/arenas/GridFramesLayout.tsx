@@ -1,18 +1,18 @@
+import { CanvasFrame } from "@/wab/client/components/canvas/CanvasFrame";
+import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
+import sty from "@/wab/client/components/studio/arenas/GridFramesLayout.module.sass";
+import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
+import { AnyArena, getFrameHeight } from "@/wab/shared/Arenas";
+import { maybe, switchType } from "@/wab/shared/common";
 import {
   ArenaFrame,
   ArenaFrameGrid,
   ArenaFrameRow,
   ComponentArena,
   PageArena,
-} from "@/wab/classes";
-import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
-import { CanvasFrame } from "@/wab/client/components/canvas/CanvasFrame";
-import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { maybe, switchType } from "@/wab/common";
-import { AnyArena, getFrameHeight } from "@/wab/shared/Arenas";
-import { observer } from "mobx-react-lite";
+} from "@/wab/shared/model/classes";
+import { observer } from "mobx-react";
 import React from "react";
-import sty from "./GridFramesLayout.module.sass";
 
 export const GridFramesLayout = observer(GridFramesLayout_);
 function GridFramesLayout_(props: {
@@ -39,7 +39,10 @@ function GridFramesLayout_(props: {
   return (
     <div className={sty.root}>
       {grid.rows.map((row, rowIndex) => (
-        <div key={row.rowKey?.uuid ?? rowIndex}>
+        // It's necessary to encode the rowKey and rowIndex in the key here, so that
+        // upon reordering rows, the CanvasFrame components are unmounted and mounted
+        // again. The full reason is explained in the comment above the CanvasFrame key.
+        <div key={`${row.rowKey?.uuid ?? "rowKey"}-${rowIndex}`}>
           <ArenaGridRowLabel
             studioCtx={studioCtx}
             arena={arena}

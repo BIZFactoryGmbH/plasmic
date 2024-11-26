@@ -1,12 +1,25 @@
 import { UU } from "@/wab/client/cli-routes";
+import {
+  useCmsDatabase,
+  useCmsRow,
+  useCmsTable,
+  useMutateRow,
+} from "@/wab/client/components/cms/cms-contexts";
+import { CmsEntryHistory } from "@/wab/client/components/cms/CmsEntryHistory";
+import {
+  ContentEntryFormContext,
+  deriveFormItemPropsFromField,
+  renderEntryField,
+  renderMaybeLocalizedInput,
+} from "@/wab/client/components/cms/CmsInputs";
 import { useApi, useAppCtx } from "@/wab/client/contexts/AppContexts";
 import {
   DefaultCmsEntryDetailsProps,
   PlasmicCmsEntryDetails,
 } from "@/wab/client/plasmic/plasmic_kit_cms/PlasmicCmsEntryDetails";
-import { Dict } from "@/wab/collections";
-import { spawn } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
+import { Dict } from "@/wab/shared/collections";
+import { spawn } from "@/wab/shared/common";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import {
   ApiCmsDatabase,
   ApiCmseRow,
@@ -15,6 +28,7 @@ import {
   CmsFieldMeta,
   CmsRowId,
   CmsTableId,
+  CmsMetaType,
 } from "@/wab/shared/ApiSchema";
 import { substituteUrlParams } from "@/wab/shared/utils/url-utils";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
@@ -24,19 +38,6 @@ import { isEqual, isNil, mapValues, pickBy } from "lodash";
 import * as React from "react";
 import { Prompt, Route, useHistory, useRouteMatch } from "react-router";
 import { useBeforeUnload, useInterval } from "react-use";
-import {
-  useCmsDatabase,
-  useCmsRow,
-  useCmsTable,
-  useMutateRow,
-} from "./cms-contexts";
-import { CmsEntryHistory } from "./CmsEntryHistory";
-import {
-  ContentEntryFormContext,
-  deriveFormItemPropsFromField,
-  renderEntryField,
-  renderMaybeLocalizedInput,
-} from "./CmsInputs";
 
 export type CmsEntryDetailsProps = DefaultCmsEntryDetailsProps;
 
@@ -50,7 +51,7 @@ export function getRowIdentifierText(
     return { identifier };
   }
   const firstTextField = table.schema.fields.find((field, _) =>
-    ["text", "long-text"].includes(field.type)
+    [CmsMetaType.TEXT, CmsMetaType.LONG_TEXT].includes(field.type)
   )?.identifier;
   let placeholder: string | undefined = undefined;
   if (firstTextField) {
@@ -137,7 +138,9 @@ export function renderContentEntryFormFields(
                 formItemProps: deriveFormItemPropsFromField(field),
                 typeName: field.type,
                 required: field.required,
-                ...(field.type === "text" || field.type === "long-text"
+                ...([CmsMetaType.TEXT, CmsMetaType.LONG_TEXT].includes(
+                  field.type
+                )
                   ? {
                       maxChars: field.maxChars,
                       minChars: field.minChars,

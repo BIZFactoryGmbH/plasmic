@@ -84,6 +84,8 @@
             "displayName": null,
             "importName": null,
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -97,6 +99,7 @@
             "styleSections": null,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "10466006": {
@@ -324,6 +327,8 @@
             "displayName": "Head",
             "importName": "PlasmicHead",
             "description": "Used to add page metadata to HTML <head />.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -337,6 +342,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650010": {
@@ -469,6 +475,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -482,6 +490,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650018": {
@@ -540,8 +549,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "18650040" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "18650033": {
             "name": "pageSize",
@@ -724,7 +733,6 @@
             "uuid": "t1z9RGuZ9i",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "43666020" },
             "lang": "English",
             "pinnedVariants": {},
@@ -742,7 +750,6 @@
             "uuid": "mdBtRoxBzh",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "43666021" },
             "lang": "English",
             "pinnedVariants": {},
@@ -891,9 +898,9 @@
               { "__ref": "54658154" }
             ],
             "layout": null,
+            "addItemPrefs": {},
             "active": true,
-            "__type": "Theme",
-            "addItemPrefs": {}
+            "__type": "Theme"
           },
           "54658009": {
             "name": "Default Typography",
@@ -1283,7 +1290,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       },
       "projectId": "cpkeUeeErCd6XAniAHq8xq",
       "version": "0.0.1",
@@ -1420,6 +1427,8 @@
             "displayName": null,
             "importName": null,
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -1433,6 +1442,7 @@
             "styleSections": null,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "10673006": {
@@ -1555,7 +1565,6 @@
             "uuid": "-bRkeNRR8r",
             "width": 340,
             "height": 340,
-            "viewportHeight": null,
             "container": { "__ref": "10673029" },
             "lang": "English",
             "pinnedVariants": {},
@@ -1846,6 +1855,8 @@
             "displayName": "Head",
             "importName": "PlasmicHead",
             "description": "Used to add page metadata to HTML <head />.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -1859,6 +1870,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650010": {
@@ -1991,6 +2003,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -2004,6 +2018,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650018": {
@@ -2062,8 +2077,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "18650040" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "18650033": {
             "name": "pageSize",
@@ -2241,7 +2256,6 @@
             "uuid": "t1z9RGuZ9i",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "43666020" },
             "lang": "English",
             "pinnedVariants": {},
@@ -2259,7 +2273,6 @@
             "uuid": "mdBtRoxBzh",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "43666021" },
             "lang": "English",
             "pinnedVariants": {},
@@ -2409,9 +2422,9 @@
               { "__ref": "54658154" }
             ],
             "layout": null,
+            "addItemPrefs": {},
             "active": true,
-            "__type": "Theme",
-            "addItemPrefs": {}
+            "__type": "Theme"
           },
           "54658009": {
             "name": "Default Typography",
@@ -2801,7 +2814,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     },
     {
@@ -2887,6 +2900,8 @@
             "displayName": null,
             "importName": null,
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -2900,6 +2915,7 @@
             "styleSections": null,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "10466006": {
@@ -3127,6 +3143,8 @@
             "displayName": "Head",
             "importName": "PlasmicHead",
             "description": "Used to add page metadata to HTML <head />.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -3140,6 +3158,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650010": {
@@ -3272,6 +3291,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -3285,6 +3306,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "18650018": {
@@ -3343,8 +3365,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "18650040" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "18650033": {
             "name": "pageSize",
@@ -3522,7 +3544,6 @@
             "uuid": "t1z9RGuZ9i",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "43666020" },
             "lang": "English",
             "pinnedVariants": {},
@@ -3540,7 +3561,6 @@
             "uuid": "mdBtRoxBzh",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "43666021" },
             "lang": "English",
             "pinnedVariants": {},
@@ -3690,9 +3710,9 @@
               { "__ref": "54658154" }
             ],
             "layout": null,
+            "addItemPrefs": {},
             "active": true,
-            "__type": "Theme",
-            "addItemPrefs": {}
+            "__type": "Theme"
           },
           "54658009": {
             "name": "Default Typography",
@@ -4178,7 +4198,6 @@
             "uuid": "6DA4tPCMzJ",
             "width": 340,
             "height": 340,
-            "viewportHeight": null,
             "container": { "__ref": "55543018" },
             "lang": "English",
             "pinnedVariants": {},
@@ -4303,7 +4322,7 @@
           "55543038": { "text": ["arg3"], "__type": "TemplatedString" }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     }
   ]

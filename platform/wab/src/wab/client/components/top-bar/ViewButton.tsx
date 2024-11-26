@@ -9,20 +9,20 @@ import { Icon } from "@/wab/client/components/widgets/Icon";
 import { useAppCtx } from "@/wab/client/contexts/AppContexts";
 import HidePlaceholderIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__HidePlaceholder";
 import ShowPlaceholderIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__ShowPlaceholder";
+import Refresh2SvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__Refresh2Svg";
 import {
   DefaultViewButtonProps,
   PlasmicViewButton,
 } from "@/wab/client/plasmic/plasmic_kit_top_bar/PlasmicViewButton";
-import Refresh2SvgIcon from "@/wab/client/plasmic/q_4_icons/icons/PlasmicIcon__Refresh2Svg";
 import { getComboForAction } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { DEVFLAGS } from "@/wab/devflags";
 import { isDedicatedArena } from "@/wab/shared/Arenas";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { Menu, Tooltip } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 
-interface ViewButtonProps extends DefaultViewButtonProps {}
+type ViewButtonProps = DefaultViewButtonProps;
 
 const contentCreatorModeHelp = (
   <>
@@ -159,6 +159,30 @@ const ViewButton = observer(function ViewButton(props: ViewButtonProps) {
                 >
                   {isFocusedMode ? "Turn on " : "Turn off "} design mode
                 </TextAndShortcut>
+              </Menu.Item>
+            );
+          }
+
+          if (appCtx.appConfig.autoOpen) {
+            const isAutoOpenMode = studioCtx.isAutoOpenMode;
+            push(
+              <Menu.Item
+                onClick={() => studioCtx.toggleAutoOpenMode()}
+                key="toggle-auto-open-mode"
+              >
+                {isAutoOpenMode ? "Turn off " : "Turn on "} auto-open mode
+              </Menu.Item>
+            );
+          }
+
+          if (appCtx.appConfig.comments) {
+            const showCommentsOverlay = studioCtx.showCommentsOverlay;
+            push(
+              <Menu.Item
+                onClick={() => studioCtx.toggleShowCommentsOverlay()}
+                key="toggle-show-comments-overlay"
+              >
+                {showCommentsOverlay ? "Hide " : "Show "} comments overlay
               </Menu.Item>
             );
           }

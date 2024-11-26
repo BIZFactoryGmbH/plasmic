@@ -1,27 +1,32 @@
-import { RuleSet, TplNode, TplTag, VariantSetting } from "@/wab/classes";
-import { unexpected } from "@/wab/common";
+import { unexpected } from "@/wab/shared/common";
 import { isMixinPropRef, isTokenRef } from "@/wab/commons/StyleToken";
 import { DeepReadonly } from "@/wab/commons/types";
-import { parseCssNumericNew } from "@/wab/css";
-import { getTplTagRoot, isTplComponent, isTplVariantable } from "@/wab/tpls";
-import {
-  contentLayoutProps,
-  CONTENT_LAYOUT,
-  FAKE_FLEX_CONTAINER_PROPS,
-  GAP_PROPS,
-  gridCssProps,
-} from "./core/style-props";
-import { CONTENT_LAYOUT_INITIALS } from "./default-styles";
-import { createGridSpec, showGridCss } from "./Grids";
-import { HORIZ_CONTAINER_CAP, VERT_CONTAINER_CAP } from "./Labels";
+import { parseCssNumericNew } from "@/wab/shared/css";
+import { createGridSpec, showGridCss } from "@/wab/shared/Grids";
+import { HORIZ_CONTAINER_CAP, VERT_CONTAINER_CAP } from "@/wab/shared/Labels";
 import {
   IRuleSetHelpers,
   IRuleSetHelpersX,
+  RSH,
   ReadonlyIRuleSetHelpers,
   ReadonlyIRuleSetHelpersX,
-  RSH,
-} from "./RuleSetHelpers";
-import { ensureBaseVariantSetting } from "./Variants";
+} from "@/wab/shared/RuleSetHelpers";
+import { ensureBaseVariantSetting } from "@/wab/shared/Variants";
+import {
+  CONTENT_LAYOUT,
+  FAKE_FLEX_CONTAINER_PROPS,
+  GAP_PROPS,
+  contentLayoutProps,
+  gridCssProps,
+} from "@/wab/shared/core/style-props";
+import { CONTENT_LAYOUT_INITIALS } from "@/wab/shared/default-styles";
+import {
+  RuleSet,
+  TplNode,
+  TplTag,
+  VariantSetting,
+} from "@/wab/shared/model/classes";
+import { getTplTagRoot, isTplComponent, isTplVariantable } from "@/wab/shared/core/tpls";
 
 export type ContainerType =
   | "free"

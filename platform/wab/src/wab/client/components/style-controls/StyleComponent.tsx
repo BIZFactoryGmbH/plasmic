@@ -1,15 +1,4 @@
 import {
-  ensureKnownTplTag,
-  isKnownTplTag,
-  Mixin,
-  RuleSet,
-  StyleToken,
-  TplComponent,
-  TplSlot,
-  TplTag,
-  Variant,
-} from "@/wab/classes";
-import {
   maybeShowContextMenu,
   WithContextMenu,
 } from "@/wab/client/components/ContextMenu";
@@ -21,19 +10,12 @@ import {
   SidebarSection,
   SidebarSectionHandle,
 } from "@/wab/client/components/sidebar/SidebarSection";
+import { ColorSwatch } from "@/wab/client/components/style-controls/ColorSwatch";
+import { DefinedIndicator } from "@/wab/client/components/style-controls/DefinedIndicator";
+import { UnloggedDragCatcher } from "@/wab/client/components/style-controls/UnloggedDragCatcher";
 import { Tab, Tabs } from "@/wab/client/components/widgets";
 import { StudioChangeOpts, StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import {
-  arrayEq,
-  assert,
-  cx,
-  ensure,
-  generate,
-  mapify,
-  tuple,
-  unexpected,
-} from "@/wab/common";
 import {
   withConsumer,
   withProvider,
@@ -48,7 +30,18 @@ import {
   tokenTypeLabel,
 } from "@/wab/commons/StyleToken";
 import { isEmptyReactNode } from "@/wab/commons/ViewUtil";
-import { isCodeComponent } from "@/wab/components";
+import {
+  arrayEq,
+  assert,
+  cx,
+  ensure,
+  generate,
+  mapify,
+  tuple,
+  unexpected,
+} from "@/wab/shared/common";
+import { isCodeComponent } from "@/wab/shared/core/components";
+import { allStyleTokens } from "@/wab/shared/core/sites";
 import {
   colorProps,
   filterExtractableStyles,
@@ -61,16 +54,24 @@ import {
   typographyCssProps,
 } from "@/wab/shared/core/style-props";
 import {
+  isComponentRoot,
+  isTplComponent,
+  isTplTagOrComponent,
+  isTplTextBlock,
+} from "@/wab/shared/core/tpls";
+import {
   computeDefinedIndicator,
   DefinedIndicatorType,
+  isIndicatorExplicitlySet,
+  getPropAndValueFromIndicator,
 } from "@/wab/shared/defined-indicator";
 import { makeExpProxy, makeMergedExpProxy } from "@/wab/shared/exprs";
 import {
-  MIXINS_CAP,
   MIXIN_CAP,
   MIXIN_LOWER,
-  TOKENS_CAP,
+  MIXINS_CAP,
   TOKEN_CAP,
+  TOKENS_CAP,
   VARIANTS_CAP,
 } from "@/wab/shared/Labels";
 import {
@@ -79,6 +80,17 @@ import {
   getRshContainerType,
   PositionLayoutType,
 } from "@/wab/shared/layoututils";
+import {
+  ensureKnownTplTag,
+  isKnownTplTag,
+  Mixin,
+  RuleSet,
+  StyleToken,
+  TplComponent,
+  TplSlot,
+  TplTag,
+  Variant,
+} from "@/wab/shared/model/classes";
 import {
   IRuleSetHelpers,
   IRuleSetHelpersX,
@@ -96,13 +108,6 @@ import {
   VariantCombo,
 } from "@/wab/shared/Variants";
 import { VariantTplMgr } from "@/wab/shared/VariantTplMgr";
-import { allStyleTokens } from "@/wab/sites";
-import {
-  isComponentRoot,
-  isTplComponent,
-  isTplTagOrComponent,
-  isTplTextBlock,
-} from "@/wab/tpls";
 import { Menu, Tooltip } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
 import classNames from "classnames";
@@ -111,9 +116,6 @@ import { observer } from "mobx-react";
 import { computedFn } from "mobx-utils";
 import * as React from "react";
 import { forwardRef, MouseEventHandler, ReactNode, useContext } from "react";
-import { ColorSwatch } from "./ColorSwatch";
-import { DefinedIndicator } from "./DefinedIndicator";
-import { UnloggedDragCatcher } from "./UnloggedDragCatcher";
 
 export interface StyleComponentProps {
   expsProvider: ExpsProvider;
@@ -706,18 +708,20 @@ interface StylePanelSectionProps extends StyleComponentProps {
     | ReactNode
     | ((renderMaybeCollapsibleRows: MaybeCollapsibleRowsRenderer) => ReactNode);
   styleProps: string[];
+  ignorableStyleProps?: string[]; // Style to be excluded for definedIndicator
+  defaultStyleProps?: Map<string, string>; // definedIndicator will be excluded for style properties that match these default values
+  collapsableIndicatorNames?: string[];
   defaultExpanded?: boolean;
   hasMore?: boolean;
   controls?: ReactNode;
   emptyBody?: boolean;
   fullyCollapsible?: boolean;
   oneLiner?: boolean;
-  headerClass?: string;
   unremovableStyleProps?: string[];
   extraMenuItems?: (builder: MenuBuilder) => void;
   defaultHeaderAction?: () => void;
   onHeaderClick?: MouseEventHandler<HTMLDivElement>;
-  onExpanded?: () => void;
+  onExtraContentExpanded?: () => void;
 }
 
 export const StylePanelSection = observer(forwardRef(StylePanelSection_));
@@ -733,22 +737,41 @@ function StylePanelSection_(
     oneLiner,
     controls,
     emptyBody,
-    headerClass,
     styleProps,
+    collapsableIndicatorNames = [],
+    ignorableStyleProps = [],
+    defaultStyleProps = new Map(),
     defaultHeaderAction,
     expsProvider,
     unremovableStyleProps,
-    onExpanded,
     onHeaderClick,
     extraMenuItems,
     ...otherProps
   } = props;
   const studioCtx = expsProvider.studioCtx;
+  const isEditingNonBaseVariant =
+    studioCtx.focusedViewCtx()?.isEditingNonBaseVariant;
   const isMixin = expsProvider instanceof SingleRsExpsProvider;
   const unremovableProps =
     unremovableStyleProps && !isMixin ? unremovableStyleProps : [];
 
   const definedIndicators = styleProps
+    .map((p) => expsProvider.definedIndicator(p))
+    .filter((x) => {
+      // Filter definedIndicator for properties that are included in ignorableStyleProps or match the default style props
+      if (!isEditingNonBaseVariant && isIndicatorExplicitlySet(x)) {
+        const { prop, value } = getPropAndValueFromIndicator(x);
+        return !(
+          prop &&
+          value &&
+          (ignorableStyleProps.includes(prop) ||
+            defaultStyleProps.get(prop) === value)
+        );
+      }
+      return x.source !== "none";
+    });
+
+  const collapsableDefinedIndicators = collapsableIndicatorNames
     .map((p) => expsProvider.definedIndicator(p))
     .filter((x) => x.source !== "none");
 
@@ -765,9 +788,13 @@ function StylePanelSection_(
             await studioCtx.changeUnsafe(() => {
               const exp = expsProvider.targetExp();
               for (const prop of L.without(styleProps, ...unremovableProps)) {
-                if (exp.has(prop)) {
+                if (exp.has(prop) && expsProvider.isPropRemovable(prop)) {
                   exp.clear(prop);
                 }
+              }
+              // apply the default styles props on unset
+              for (const [key, value] of defaultStyleProps) {
+                exp.set(key, value);
               }
             });
           }}
@@ -818,9 +845,11 @@ function StylePanelSection_(
       title={title}
       hasExtraContent={hasMore}
       oneLiner={oneLiner}
+      defaultExtraContentExpanded={
+        getValueSetState(...collapsableDefinedIndicators) === "isSet"
+      }
       makeHeaderMenu={headerOverlay}
       isHeaderActive={getValueSetState(...definedIndicators) === "isSet"}
-      onExpanded={onExpanded}
       onHeaderClick={onHeaderClick}
       definedIndicator={
         definedIndicators &&
@@ -834,7 +863,6 @@ function StylePanelSection_(
           />
         )
       }
-      headerClass={headerClass}
       controls={controls}
       emptyBody={emptyBody}
       {...otherProps}
@@ -882,11 +910,6 @@ export const TabbedStylePanelSection = observer(
           styleProps={styleProps}
           unremovableStyleProps={this.props.unremovableStyleProps}
           emptyBody={emptyBody}
-          headerClass={
-            isEmptyReactNode(children) || tabs.length === 0
-              ? ""
-              : "SidebarSection__Header--tabs"
-          }
           controls={
             <Tabs
               tabKey={activeKey}

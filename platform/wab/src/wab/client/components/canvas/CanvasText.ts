@@ -1,12 +1,23 @@
+import { withErrorDisplayFallback } from "@/wab/client/components/canvas/canvas-error";
+import { resolveNodesToMarkers } from "@/wab/client/components/canvas/canvas-fns-impl";
+import { mkUseCanvasObserver } from "@/wab/client/components/canvas/canvas-observer";
 import {
-  CustomCode,
-  ensureKnownRawText,
-  ensureKnownTplTag,
-  Marker,
-  ObjectPath,
-  TplNode,
-  TplTag,
-} from "@/wab/classes";
+  getSortedActiveVariantSettings,
+  hasLoadingBoundaryKey,
+  RenderingCtx,
+  renderTplNode,
+} from "@/wab/client/components/canvas/canvas-rendering";
+import { mkSlateString } from "@/wab/client/components/canvas/RichText/SlateString";
+import "@/wab/client/components/canvas/slate";
+import {
+  mkTplTagElement,
+  ParagraphElement,
+  TplTagElement,
+} from "@/wab/client/components/canvas/slate";
+import {
+  tags as htmlTags,
+  SubDeps,
+} from "@/wab/client/components/canvas/subdeps";
 import {
   reactPrompt,
   ReactPromptOpts,
@@ -15,10 +26,12 @@ import type {
   EditingTextContext,
   ViewCtx,
 } from "@/wab/client/studio-ctx/view-ctx";
-import { cx, ensure, ensureInstance, spawn } from "@/wab/common";
-import { getCssRulesFromRs } from "@/wab/css";
-import { ExprCtx, getCodeExpressionWithFallback } from "@/wab/exprs";
 import { makeWabFlexContainerClassName } from "@/wab/shared/codegen/react-p/utils";
+import { cx, ensure, ensureInstance, spawn } from "@/wab/shared/common";
+import {
+  ExprCtx,
+  getCodeExpressionWithFallback,
+} from "@/wab/shared/core/exprs";
 import {
   isTagInline,
   isTagListContainer,
@@ -26,34 +39,32 @@ import {
   normalizeMarkers,
   textInlineTags,
 } from "@/wab/shared/core/rich-text-util";
+import { hasGapStyle } from "@/wab/shared/core/styles";
+import { isExprText, walkTpls } from "@/wab/shared/core/tpls";
+import { getCssRulesFromRs } from "@/wab/shared/css";
 import { EffectiveVariantSetting } from "@/wab/shared/effective-variant-setting";
 import { CanvasEnv, evalCodeWithEnv } from "@/wab/shared/eval";
-import { hasGapStyle } from "@/wab/styles";
-import { isExprText, walkTpls } from "@/wab/tpls";
+import {
+  CustomCode,
+  ensureKnownRawText,
+  ensureKnownTplTag,
+  Marker,
+  ObjectPath,
+  TplNode,
+  TplTag,
+} from "@/wab/shared/model/classes";
 import isHotkey from "is-hotkey";
-import { camelCase, isEqual } from "lodash";
+import { camelCase, isEqual, kebabCase } from "lodash";
 import { computedFn } from "mobx-utils";
 import React, { CSSProperties } from "react";
 import type {
   Descendant,
+  Path,
   Editor as SlateEditor,
   Element as SlateElement,
   Node as SlateNode,
-  Path,
 } from "slate";
 import type { RenderElementProps } from "slate-react";
-import { withErrorDisplayFallback } from "./canvas-error";
-import { resolveNodesToMarkers } from "./canvas-fns-impl";
-import { mkUseCanvasObserver } from "./canvas-observer";
-import {
-  getSortedActiveVariantSettings,
-  hasLoadingBoundaryKey,
-  RenderingCtx,
-  renderTplNode,
-} from "./canvas-rendering";
-import "./slate";
-import { mkTplTagElement, ParagraphElement, TplTagElement } from "./slate";
-import { SubDeps, tags as htmlTags } from "./subdeps";
 
 export interface SlateRenderNodeOpts {
   attributes: RenderElementProps["attributes"];
@@ -108,7 +119,8 @@ function wrapInStyleMarker(
     // Slate uses "Marks" to keep track of all the formats.
     // We use it to store CSS properties.
     const marks = Editor.marks(editor)!;
-    Object.entries(props).forEach(([name, value]) => {
+    Object.entries(props).forEach(([key, value]) => {
+      const name = kebabCase(key);
       if ((toggle && value && marks[name] === value) || value === undefined) {
         Editor.removeMark(editor, name);
       } else {
@@ -335,6 +347,31 @@ const mkRichTextShortcuts: (sub: SubDeps) => Shortcut[] = computedFn(
       action: "SPAN",
       hotkey: isHotkey("mod+shift+s"),
       fn: wrapInInlineTag("span", sub),
+    },
+    {
+      action: "STRONG",
+      hotkey: isHotkey("mod+shift+b"),
+      fn: wrapInInlineTag("strong", sub),
+    },
+    {
+      action: "ITALIC_TAG",
+      hotkey: isHotkey("mod+shift+i"),
+      fn: wrapInInlineTag("i", sub),
+    },
+    {
+      action: "EMPHASIS",
+      hotkey: isHotkey("mod+shift+e"),
+      fn: wrapInInlineTag("em", sub),
+    },
+    {
+      action: "SUBSCRIPT",
+      hotkey: isHotkey("mod+shift+,"),
+      fn: wrapInInlineTag("sub", sub),
+    },
+    {
+      action: "SUPERSCRIPT",
+      hotkey: isHotkey("mod+shift+."),
+      fn: wrapInInlineTag("sup", sub),
     },
     {
       action: "WRAP_BLOCK",
@@ -673,6 +710,7 @@ const inlineCursorFix = (key: number, sub: SubDeps) =>
 
 const isModEnter = isHotkey("mod+enter");
 const isEscape = isHotkey("escape");
+const isSpace = isHotkey("space");
 
 type PlasmicRichTextOpts = {
   inline: boolean;
@@ -1025,7 +1063,25 @@ export const mkCanvasText = computedFn(
                 return react.createElement("span", attributes, children);
               }
 
-              let childrenNode: JSX.Element = children;
+              function getChildrenNode() {
+                if (React.isValidElement(children)) {
+                  const childrenProps = children.props as any;
+                  // If we are dealing with a leaf that is rendered with String
+                  // from Slate, we will render it ourselves.
+                  if ("leaf" in childrenProps) {
+                    return react.createElement(
+                      mkSlateString(react, ctx.sub.slateReact),
+                      childrenProps
+                    );
+                  } else {
+                    return children;
+                  }
+                } else {
+                  return children;
+                }
+              }
+
+              let childrenNode = getChildrenNode();
               Object.entries(leaf).forEach(([key, val]) => {
                 if (key === "text") {
                   return;
@@ -1054,6 +1110,12 @@ export const mkCanvasText = computedFn(
             readOnly,
             onKeyDown: (event) => {
               event.stopPropagation();
+              if (isSpace(event.nativeEvent)) {
+                editor.insertText(" ");
+                // some accessible code components like button may trigger press events when pressing space
+                // `stopPropagation` alone does not stop propagation of events to code components, and thus events may leak
+                event.preventDefault();
+              }
               if (
                 isModEnter(event.nativeEvent) ||
                 isEscape(event.nativeEvent)
@@ -1116,8 +1178,55 @@ export const mkCanvasText = computedFn(
                   spawn(fn(editor, shortcutOpts, sub));
                 });
             },
+
             // Shouldn't leak key events to code components.
             onKeyUp: (e) => e.stopPropagation(),
+            // Shouldn't leak click events in non-interactive mode only
+            onClick: (e) => {
+              if (readOnly) {
+                return;
+              }
+              // NOTE: we must not use e.preventDefault in any other event handler below, or the Slate cursor will stop moving on click events
+              // Meanwhile, preventDefault here in the onCLick event handler is required to make stopPropagation work in other click event handlers
+              e.stopPropagation();
+              e.preventDefault();
+            },
+            onMouseDown: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
+            onMouseUp: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
+            onPointerDown: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
+            onPointerUp: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
+            onDoubleClick: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
+            onDragStart: (e) => {
+              if (readOnly) {
+                return;
+              }
+              e.stopPropagation();
+            },
           }),
         });
       }, `mkCanvasText(${node.uuid})`);

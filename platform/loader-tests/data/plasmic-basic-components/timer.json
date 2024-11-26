@@ -23,9 +23,9 @@
           "defaultStyle": { "__ref": "vC7ZNDVPHgBS" },
           "styles": [],
           "layout": { "__ref": "COSiiltazPgR" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "cszq9QSLKRwZ": {
           "uuid": "Ef4k0RTOUSvo",
@@ -306,6 +306,8 @@
           "displayName": "Iframe",
           "importName": "Iframe",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "2JucG_Ld3Zdi" },
@@ -319,6 +321,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "WUDj0RM3vV48": {
@@ -510,6 +513,8 @@
           "displayName": "HTML Video",
           "importName": "Video",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "dvYZupE8h_8H" },
@@ -523,6 +528,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "CKBtARqpD7tj": {
@@ -594,6 +600,8 @@
           "displayName": "Embed HTML",
           "importName": "Embed",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "PJwtbpUt3gc7" },
@@ -607,6 +615,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "VDTDvYhGib6J": {
@@ -699,6 +708,8 @@
           "displayName": "Data Provider",
           "importName": "DataProvider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -712,6 +723,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "sNx5Qldg9Nab": {
@@ -824,6 +836,8 @@
           "displayName": "Condition Guard",
           "importName": "ConditionGuard",
           "description": "Ensure some condition, or else run an interaction. Examples: ensure all users have a database row, or require new users to setup a profile.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -837,6 +851,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "kkpcXDSfHMg7": {
@@ -928,6 +943,8 @@
           "displayName": "Side Effect",
           "importName": "SideEffect",
           "description": "Run actions on load, unload, and when data changes.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -941,6 +958,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Y8jIe067p742": { "name": "text", "__type": "Text" },
@@ -1111,8 +1129,8 @@
         "73rL38D_jMBO": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "XwkHUh50q0_3": {
           "name": "children",
@@ -1142,8 +1160,8 @@
         "g_UMhhObU_hY": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "yCxlvsxUw36s": {
           "name": "children",
@@ -1385,6 +1403,8 @@
           "displayName": "Timer",
           "importName": "Timer",
           "description": "Run something periodically",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1398,6 +1418,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "jEpoTKUq5x4p": {
@@ -1478,7 +1499,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1895,9 +1916,9 @@
             { "__ref": "JUPHVla_AGqM" }
           ],
           "layout": { "__ref": "xQeBO3UhLaTD" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "ahAn10eFjpYS": { "name": "text", "__type": "Text" },
         "mxv9WV8x0hcC": {
@@ -2165,6 +2186,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2178,6 +2201,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "uUDZiFhtjqZb": {
@@ -2310,6 +2334,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -2323,6 +2349,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "1vuvbD0cJ4Up": { "name": "text", "__type": "Text" },
@@ -2376,8 +2403,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "Hh3UX8UesF4o" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "TYsbvENlBFAb": {
           "name": "children",
@@ -2494,7 +2521,6 @@
           "uuid": "3pGtn2hssm6g",
           "width": 800,
           "height": 800,
-          "viewportHeight": null,
           "container": { "__ref": "QXLnouVnQIu5" },
           "lang": "English",
           "pinnedVariants": {},
@@ -2624,7 +2650,6 @@
           "uuid": "1uBSY4qmrkeT",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "UxFMQTjRZXag" },
           "lang": "English",
           "pinnedVariants": {},
@@ -2642,7 +2667,6 @@
           "uuid": "_fMTB25MSupi",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "jDc5ugSowmbR" },
           "lang": "English",
           "pinnedVariants": {},
@@ -3389,7 +3413,7 @@
         "Lm_Y4jYRxbu0": {
           "uuid": "bFZTfOcZ4Zwu",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -3399,7 +3423,7 @@
         "fLNraCYnhsPw": {
           "uuid": "zmjVSYv4gIDf",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -3409,7 +3433,7 @@
         "rXS3ClnNzXCb": {
           "uuid": "LZX7QRpWwuVe",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -3419,7 +3443,7 @@
         "QClRYrh3WRQd": {
           "uuid": "yYIg_CDIuTQT",
           "name": "",
-          "selectors": ["Pressed"],
+          "selectors": [":active"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -3536,8 +3560,8 @@
         "CZic9HAuZ6eO": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "fXFoV5D1A77W": {
           "name": "children",
@@ -3559,8 +3583,8 @@
         "Od8vjdBmlqnU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "rimoV9sUjLkz": {
           "name": "start icon",
@@ -3570,8 +3594,8 @@
         "tW4AKuMmIgCR": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "ppZZ0v_7c4mL": {
           "name": "end icon",
@@ -6447,7 +6471,6 @@
           "uuid": "wo__S6XTY_GH",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "pD2poQKwDiyN" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6465,7 +6488,6 @@
           "uuid": "gQ0v9sQ3o25F",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "yCf6c-GrASnc" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6483,7 +6505,6 @@
           "uuid": "h9sEzrezIIZY",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "GjfkYmTGLqat" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6501,7 +6522,6 @@
           "uuid": "-k3Q3XNLDFp2",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "3l1uyg5Xok3w" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6519,7 +6539,6 @@
           "uuid": "fehgL1VU3xWd",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "nMNExdS07lLe" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6537,7 +6556,6 @@
           "uuid": "IMjlowAXlSVA",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Kml1YuxavBXB" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6555,7 +6573,6 @@
           "uuid": "FyxHScXYdTrV",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "n1TDWCDooRSo" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6573,7 +6590,6 @@
           "uuid": "vaoTnJtG-oP-",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "vVBxyvSty16K" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6591,7 +6607,6 @@
           "uuid": "SHj_zig7rpuq",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "RqlUlzU-dXVX" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6609,7 +6624,6 @@
           "uuid": "iTh25F6JF4Oa",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "sGO1ld4kt7O2" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6627,7 +6641,6 @@
           "uuid": "XJm2cpgenXMJ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "PgRioGxpCpRC" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6645,7 +6658,6 @@
           "uuid": "XM74IJnZATDr",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "9qGv4Td6Q3LG" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6663,7 +6675,6 @@
           "uuid": "YpLBFupWijoC",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "2jKegzjPcpbw" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6681,7 +6692,6 @@
           "uuid": "0sZGOVqdGTTf",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "B1PGCfR-bVo7" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6699,7 +6709,6 @@
           "uuid": "1zDTcsJ7wRAt",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "O42HGJJ5ZwY3" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6717,7 +6726,6 @@
           "uuid": "iqwduN5tnkjx",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "3AsmLZwOy5L0" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6735,7 +6743,6 @@
           "uuid": "NQdy_zjYNQc-",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "2SG_W-Y94ZYS" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6753,7 +6760,6 @@
           "uuid": "yl2FZhkAh4Ey",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "DQ0AgzoLLCQB" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6771,7 +6777,6 @@
           "uuid": "vwg8La9YHYoo",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Wa4j_rtO0B8v" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6789,7 +6794,6 @@
           "uuid": "C0bBwFOD0a-Z",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "JxNRRwxFCk82" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6807,7 +6811,6 @@
           "uuid": "k9w_HqXIk-ir",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "SEWQSBAeLJUQ" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6825,7 +6828,6 @@
           "uuid": "pMMljK02FwV1",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "DFJRcTW5mJvn" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6843,7 +6845,6 @@
           "uuid": "K0yM29WSeiN1",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "LTZf2tFfahoA" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6861,7 +6862,6 @@
           "uuid": "-I3vpZEF6gMX",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "HhpTQF17TMUz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6879,7 +6879,6 @@
           "uuid": "eSAoZX2a0kUM",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "8b0VQAmXeLAR" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6897,7 +6896,6 @@
           "uuid": "hj_xxqIYn-Zb",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "vlP7CLC-_zsN" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6915,7 +6913,6 @@
           "uuid": "3Hyu7vLO-vZv",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "kfX-ww4IHzhs" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6936,7 +6933,6 @@
           "uuid": "-U7MRvKi9K64",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "CkD5NmdM3OCZ" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6957,7 +6953,6 @@
           "uuid": "eoyxp0OO54Bv",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "LN_kf8lYZsNs" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6978,7 +6973,6 @@
           "uuid": "Z9sZ_sG8M8zX",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "b_4kmgZSFDFt" },
           "lang": "English",
           "pinnedVariants": {},
@@ -6999,7 +6993,6 @@
           "uuid": "8tF_YJgR3Df3",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "CdcNu8EKxGdT" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7020,7 +7013,6 @@
           "uuid": "7T1NyDv4ze9n",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "Jhi4L6YOd5zX" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7041,7 +7033,6 @@
           "uuid": "QflycCU2VJx8",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "vqkkGjDLavJx" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7062,7 +7053,6 @@
           "uuid": "8YCu9soFKbJ5",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "MQ66qh2BWgts" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7083,7 +7073,6 @@
           "uuid": "v1f0DOrnD3c-",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "zoALi9Z6JKyV" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7104,7 +7093,6 @@
           "uuid": "VfyN7HeBQy-x",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "94ZUXjmsf-k2" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7125,7 +7113,6 @@
           "uuid": "Op835xtdd8GB",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "MjsUAeLQzHM5" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7146,7 +7133,6 @@
           "uuid": "QithXKyu0WxW",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "6CuKyE62f44F" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7167,7 +7153,6 @@
           "uuid": "fk7zZ8NrZQKS",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "qmuK6kDWgE7H" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7188,7 +7173,6 @@
           "uuid": "djnu0De0g83Z",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "HPcMXTcK1OoE" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7209,7 +7193,6 @@
           "uuid": "CE1mGtVgIil0",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "CJgNcbPn5y5c" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7230,7 +7213,6 @@
           "uuid": "sDJ3nV1njofK",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "OL_gJa72Dx9k" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7251,7 +7233,6 @@
           "uuid": "QwvuyN8b2EGg",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "MdMjsJ2S4mzz" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7272,7 +7253,6 @@
           "uuid": "9qgnS-qD6koC",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "-yGSZMLam63k" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7293,7 +7273,6 @@
           "uuid": "KH8mwFnZ4yee",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "kUUE6tJlhOng" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7314,7 +7293,6 @@
           "uuid": "NhH4mZ51LOOO",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "_6lZMITxCP4V" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7335,7 +7313,6 @@
           "uuid": "N4eNM1MDsmVM",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "HwjjD8NxJ0hl" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7356,7 +7333,6 @@
           "uuid": "QPIPc0v3MFHJ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "9po8muiSBww1" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7377,7 +7353,6 @@
           "uuid": "i1ZuSod397z6",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "BVYoTFzST1y6" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7398,7 +7373,6 @@
           "uuid": "iCiiZFsYS1tT",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "w9yYxu4cVYhg" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7419,7 +7393,6 @@
           "uuid": "1eUvacJbVS9P",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "QlWUNwDB5zIA" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7440,7 +7413,6 @@
           "uuid": "i9WYmz0RD48A",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "dMqCF4SKpORR" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7461,7 +7433,6 @@
           "uuid": "gflMHs5FVuZV",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "uXfSXhoz-uTr" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7482,7 +7453,6 @@
           "uuid": "hVbXZYJiFhxf",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "gb-Meo9Kcr0r" },
           "lang": "English",
           "pinnedVariants": {},
@@ -7503,7 +7473,6 @@
           "uuid": "A6dQBJ9y4Rmu",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "UQD2OlbHYLEI" },
           "lang": "English",
           "pinnedVariants": {},
@@ -10231,7 +10200,7 @@
         "nsqywtL8e_i2": {
           "uuid": "q1ue7rWcWKTd",
           "name": "",
-          "selectors": ["Focused"],
+          "selectors": [":focus"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -10241,7 +10210,7 @@
         "mZ61Fzq6V8wx": {
           "uuid": "WaD5GmZ_c_dC",
           "name": "",
-          "selectors": ["Hover"],
+          "selectors": [":hover"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -10251,7 +10220,7 @@
         "vE-s9RcGBOxA": {
           "uuid": "6-QDt-6pTxcN",
           "name": "",
-          "selectors": ["Focused Within"],
+          "selectors": [":focus-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -10261,7 +10230,7 @@
         "QjPLchsmNmoh": {
           "uuid": "p81OYgmXYh-5",
           "name": "",
-          "selectors": ["Focus Visible Within"],
+          "selectors": [":focus-visible-within"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -10271,7 +10240,7 @@
         "B0y4N0dBd-DZ": {
           "uuid": "Q6Rw8iIqk9-5",
           "name": "",
-          "selectors": ["Placeholder"],
+          "selectors": ["::placeholder"],
           "parent": null,
           "mediaQuery": null,
           "description": null,
@@ -10376,8 +10345,8 @@
         "1WnCdi80HFEr": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "zHhnyaK0-51-": {
           "name": "end icon",
@@ -10387,8 +10356,8 @@
         "VERpwvKqDlfv": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "1VljIh3nslKH": {
           "name": "start icon",
@@ -11470,7 +11439,6 @@
           "uuid": "AUDIGcx4WE22",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "yE6YKGNxDm11" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11488,7 +11456,6 @@
           "uuid": "IGeclPzyQ1vT",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "DaToKlJ_nHDK" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11506,7 +11473,6 @@
           "uuid": "viaQJ6nSTyNE",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "lNdoGTwNiuHF" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11524,7 +11490,6 @@
           "uuid": "8WzmPsmsHyNW",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "1kWWEYzXHW-_" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11542,7 +11507,6 @@
           "uuid": "7t3hHBwJLA3p",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "8-k8p17DVqOi" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11560,7 +11524,6 @@
           "uuid": "QBJRZ2HgHHvJ",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "s0l2x7T1sJEr" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11578,7 +11541,6 @@
           "uuid": "zkn1Dt62uYCK",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "ImmWwXnJ1P_3" },
           "lang": "English",
           "pinnedVariants": {},
@@ -11596,7 +11558,6 @@
           "uuid": "_090llks-MWV",
           "width": 1180,
           "height": 540,
-          "viewportHeight": null,
           "container": { "__ref": "R6xxUA5BocV8" },
           "lang": "English",
           "pinnedVariants": {},
@@ -12137,7 +12098,7 @@
         "ppmsVxHk1e_-": { "text": ["interval"], "__type": "TemplatedString" }
       },
       "deps": ["a3a6a4ab-6ef7-466e-8589-a26854d0253c"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

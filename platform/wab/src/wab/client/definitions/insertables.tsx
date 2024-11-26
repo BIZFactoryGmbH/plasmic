@@ -1,6 +1,5 @@
 /** @format */
 
-import { Component, TplNode, TplTag } from "@/wab/classes";
 import {
   ensureTplColumnsRs,
   getScreenVariant,
@@ -8,7 +7,6 @@ import {
 } from "@/wab/client/components/sidebar-tabs/ResponsiveColumns/tpl-columns-utils";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import {
-  CHEVRON_RIGHT_ICON,
   COMPONENT_ICON,
   FRAME_ICON,
   GRID_CONTAINER_ICON,
@@ -26,29 +24,37 @@ import TextBlockIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__TextBlo
 import VStackBlockIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__VStackBlock";
 import BlockIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__Block";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensureBaseRs, ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { spawn } from "@/wab/common";
-import { ComponentType } from "@/wab/components";
-import { HostLessComponentInfo, HostLessPackageInfo } from "@/wab/devflags";
-import { Rect } from "@/wab/geom";
-import { ImageAssetType } from "@/wab/image-asset-type";
-import { AddItemKey, WrapItemKey } from "@/wab/shared/add-item-keys";
-import {
-  adjustAllTplColumnsSizes,
-  hasMaxWidthVariant,
-} from "@/wab/shared/columns-utils";
-import { CONTENT_LAYOUT_FULL_BLEED } from "@/wab/shared/core/style-props";
-import {
-  CONTENT_LAYOUT_INITIALS,
-  getSimplifiedStyles,
-} from "@/wab/shared/default-styles";
+import { ViewCtx, ensureBaseRs } from "@/wab/client/studio-ctx/view-ctx";
 import {
   FREE_CONTAINER_CAP,
   HORIZ_CONTAINER_CAP,
   VERT_CONTAINER_CAP,
 } from "@/wab/shared/Labels";
 import { $$$ } from "@/wab/shared/TplQuery";
-import { reconnectChildren, TplColumnsTag, TplTagType } from "@/wab/tpls";
+import { AddItemKey, WrapItemKey } from "@/wab/shared/add-item-keys";
+import {
+  adjustAllTplColumnsSizes,
+  hasMaxWidthVariant,
+} from "@/wab/shared/columns-utils";
+import { spawn } from "@/wab/shared/common";
+import { ComponentType } from "@/wab/shared/core/components";
+import { ImageAssetType } from "@/wab/shared/core/image-asset-type";
+import { CONTENT_LAYOUT_FULL_BLEED } from "@/wab/shared/core/style-props";
+import {
+  TplColumnsTag,
+  TplTagType,
+  reconnectChildren,
+} from "@/wab/shared/core/tpls";
+import {
+  CONTENT_LAYOUT_INITIALS,
+  getSimplifiedStyles,
+} from "@/wab/shared/default-styles";
+import {
+  HostLessComponentInfo,
+  HostLessPackageInfo,
+} from "@/wab/shared/devflags";
+import { Rect } from "@/wab/shared/geom";
+import { Arena, Component, TplNode, TplTag } from "@/wab/shared/model/classes";
 import L from "lodash";
 import * as React from "react";
 import { FaListOl, FaListUl, FaPlus } from "react-icons/fa";
@@ -57,56 +63,78 @@ export enum AddItemType {
   frame = "frame",
   tpl = "tpl",
   plume = "plume",
+  installable = "installable",
   fake = "fake",
 }
 
-export interface AddFrameItem {
-  key: AddItemKey;
-  type: AddItemType.frame;
-  isCompact?: boolean;
+interface AddItemCommon {
   label: string;
+  /** Small icon shown when item is displayed in a single line. */
+  icon: React.ReactNode;
   displayLabel?: React.ReactNode;
   systemName?: string;
-  icon: React.ReactNode;
-  // Assumed to run inside sc.change()
-  onInsert: (studioCtx: StudioCtx) => void;
-  addDrawerPreviewImage?: string; // URL to a preview image
+  /** Show a NEW banner over the item. **/
+  isNew?: boolean;
+  /**
+   * Indicates the item can be displayed compactly to fit multiple items
+   * in the same row. Requires a preview image/video.
+   */
+  isCompact?: boolean;
+  previewImageUrl?: string;
+  previewVideoUrl?: string;
   description?: string;
+  /** Uses a monospace font for the label, usually for code libraries. */
   monospaced?: boolean;
 }
 
-export interface AddTplItem<T = any> {
+export type AddInstallableItem<T = any> = AddItemCommon & {
+  key: string;
+  type: AddItemType.installable;
+  isPackage: boolean;
+  // Assumed to run inside sc.change()
+  factory: (
+    studioCtx: StudioCtx,
+    extraInfo: T
+  ) => Arena | Component | undefined;
+  asyncExtraInfo?: (studioCtx: StudioCtx) => Promise<T>;
+};
+
+export type AddFrameItem = AddItemCommon & {
+  key: AddItemKey;
+  type: AddItemType.frame;
+  // Assumed to run inside sc.change()
+  onInsert: (studioCtx: StudioCtx) => void;
+  addDrawerPreviewImage?: string; // URL to a preview image
+};
+
+export type AddTplItem<T = any> = AddItemCommon & {
   key: AddItemKey | string;
   type: AddItemType.tpl | AddItemType.plume;
-  isCompact?: boolean;
-  label: string;
-  displayLabel?: React.ReactNode;
-  systemName?: string;
-  icon: React.ReactNode;
-  gray?: boolean;
   // Assumed to run inside sc.change()
   factory: (
     viewCtx: ViewCtx,
     extraInfo: T,
     drawnRect?: Rect
   ) => TplNode | undefined;
-  // Assumed to be run just outside sc.change()
-  // This needs to be called before factory, passing the results in
+  /**
+   * Assumed to be run just outside sc.change().
+   * This will get called twice when user is dragging an item:
+   * 1. First will get called with isDragging = true at the beginning of the drag
+   * 2. Second will get called with isDragging = false at the end of the drag
+   * This needs to be called before factory, passing the results in
+   */
   asyncExtraInfo?: (
     studioCtx: StudioCtx,
     opts?: { isDragging: boolean }
   ) => Promise<T | false>;
   canWrap?: boolean;
   component?: Component;
-  previewImage?: React.ReactNode;
-  description?: string;
-  monospaced?: boolean;
-}
+  previewImageUrl?: string;
+};
 
-export interface AddFakeItem<T = any> {
+export type AddFakeItem<T = any> = AddItemCommon & {
   key: AddItemKey | string;
   type: AddItemType.fake;
-  isCompact?: boolean;
   label: string;
   systemName?: string;
   isPackage?: boolean;
@@ -114,21 +142,22 @@ export interface AddFakeItem<T = any> {
   hostLessPackageInfo?: HostLessPackageInfo;
   displayLabel?: React.ReactNode;
   icon: React.ReactNode;
-  gray?: boolean;
   // Assumed to run inside sc.change()
   factory: (studioCtx: StudioCtx, extraInfo: T) => boolean;
   asyncExtraInfo?: (studioCtx: StudioCtx) => Promise<T>;
   component?: Component;
-  previewImage?: React.ReactNode;
-  description?: string;
-  monospaced?: boolean;
-}
+};
 
 export function isTplAddItem(item: AddItem): item is AddTplItem {
   return item.type === AddItemType.tpl || item.type === AddItemType.plume;
 }
 
-export type AddItem = AddFrameItem | AddTplItem | AddFakeItem;
+export type AddItem =
+  | AddFrameItem
+  | AddTplItem
+  | AddFakeItem
+  | AddInstallableItem;
+
 export const isAddItem = (i: { type: string }): i is AddItem =>
   L.values(AddItemType).includes(i.type as AddItemType);
 
@@ -161,6 +190,7 @@ export const INSERTABLES: readonly AddItem[] = [
     label: FREE_CONTAINER_CAP,
     canWrap: true,
     icon: <Icon icon={BlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/box.svg",
     factory: (vc: ViewCtx) => {
       const tag = vc.variantTplMgr().mkTplTagX("div");
       ensureBaseRs(vc, tag, {
@@ -177,6 +207,7 @@ export const INSERTABLES: readonly AddItem[] = [
     label: HORIZ_CONTAINER_CAP,
     canWrap: true,
     icon: <Icon icon={HStackBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/hstack.svg",
     factory: (vc: ViewCtx) => {
       const tag = vc.variantTplMgr().mkTplTagX("div");
       ensureBaseRs(vc, tag, {
@@ -199,6 +230,7 @@ export const INSERTABLES: readonly AddItem[] = [
     label: VERT_CONTAINER_CAP,
     canWrap: true,
     icon: <Icon icon={VStackBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/vstack.svg",
     factory: (vc: ViewCtx) => {
       const tag = vc.variantTplMgr().mkTplTagX("div");
       ensureBaseRs(vc, tag, {
@@ -244,6 +276,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.columns as const,
     label: "Responsive columns",
     icon: <Icon icon={HStackBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/columns.svg",
     factory: (vc: ViewCtx) => {
       const tag = vc
         .variantTplMgr()
@@ -281,6 +314,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.grid as const,
     label: "Grid",
     icon: GRID_CONTAINER_ICON,
+    previewImageUrl: "https://static1.plasmic.app/insertables/grid.svg",
     canWrap: true,
     factory(vc: ViewCtx) {
       const tag = vc.variantTplMgr().mkTplTagX("div");
@@ -308,6 +342,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.section as const,
     label: "Page section",
     icon: GRID_CONTAINER_ICON,
+    previewImageUrl: "https://static1.plasmic.app/insertables/section.svg",
     canWrap: true,
     factory(vc: ViewCtx) {
       const tag = vc.variantTplMgr().mkTplTagX("section");
@@ -352,6 +387,7 @@ export const INSERTABLES: readonly AddItem[] = [
     label: "Text",
     canWrap: false,
     icon: <Icon icon={TextBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/text.svg",
     factory: (vc: ViewCtx) => {
       const tag = vc.variantTplMgr().mkTplInlinedText("Enter some text", "div");
       ensureBaseRs(vc, tag, {
@@ -366,6 +402,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.image as const,
     label: "Image",
     icon: <Icon icon={ImageBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/image.svg",
     canWrap: false,
     factory(vc: ViewCtx) {
       const vtm = vc.variantTplMgr();
@@ -383,6 +420,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.icon as const,
     label: "Icon",
     icon: <Icon icon={ImageBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/icon.svg",
     canWrap: false,
     factory(vc: ViewCtx) {
       const vtm = vc.variantTplMgr();
@@ -398,9 +436,10 @@ export const INSERTABLES: readonly AddItem[] = [
   {
     type: AddItemType.tpl as const,
     key: AddItemKey.link as const,
-    canWrap: true,
     label: "Link",
     icon: <Icon icon={LinkIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/link.svg",
+    canWrap: true,
     factory(vc: ViewCtx) {
       const vtm = vc.variantTplMgr();
       const tag = vtm.mkTplInlinedText("Some link text", "a", {
@@ -422,6 +461,8 @@ export const INSERTABLES: readonly AddItem[] = [
     canWrap: true,
     label: "Link container",
     icon: <Icon icon={LinkIcon} />,
+    previewImageUrl:
+      "https://static1.plasmic.app/insertables/linkContainer.svg",
     factory(vc: ViewCtx) {
       const tag = vc.variantTplMgr().mkTplTagX("a");
       ensureBaseRs(vc, tag, {
@@ -449,6 +490,7 @@ export const INSERTABLES: readonly AddItem[] = [
     ),
     canWrap: true,
     icon: <Icon icon={ButtonInputIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/button.svg",
     factory(vc: ViewCtx) {
       const vtm = vc.variantTplMgr();
       const tag = vtm.mkTplInlinedText("Click Me", "button");
@@ -505,6 +547,7 @@ export const INSERTABLES: readonly AddItem[] = [
       </span>
     ),
     icon: TEXTAREA_ICON,
+    previewImageUrl: "https://static1.plasmic.app/insertables/textarea.svg",
     factory(vc: ViewCtx) {
       const tag = vc.variantTplMgr().mkTplTagX("textarea", {
         attrs: { value: "This is a text area." },
@@ -523,6 +566,7 @@ export const INSERTABLES: readonly AddItem[] = [
     key: AddItemKey.password as const,
     label: "Password input",
     icon: PASSWORD_INPUT_ICON,
+    previewImageUrl: "https://static1.plasmic.app/insertables/password.svg",
     factory(vc: ViewCtx) {
       const tag = vc.variantTplMgr().mkTplTagX("input", {
         attrs: { type: "password", size: 1, value: "Some password" },
@@ -540,9 +584,10 @@ export const INSERTABLES: readonly AddItem[] = [
   },
   {
     type: AddItemType.tpl as const,
-    label: "Heading",
     key: AddItemKey.heading as const,
+    label: "Heading",
     icon: HEADING_ICON,
+    previewImageUrl: "https://static1.plasmic.app/insertables/heading.svg",
     factory(vc: ViewCtx) {
       const vtm = vc.variantTplMgr();
       const tag = vtm.mkTplInlinedText(
@@ -585,125 +630,7 @@ export const INSERTABLES: readonly AddItem[] = [
       studioCtx.siteOps().createNewFrameForMixedArena(component);
     },
   },
-  {
-    type: AddItemType.frame as const,
-    key: AddItemKey.openInsertModal as const,
-    label: `Explore template blocks...`,
-    icon: CHEVRON_RIGHT_ICON,
-    onInsert: (studioCtx: StudioCtx) => {
-      studioCtx.showInsertModal();
-    },
-    addDrawerPreviewImage:
-      "https://www.plasmic.app/plasmic/plasmic_kit_website_components/images/montage.png",
-  },
-  {
-    type: AddItemType.frame as const,
-    key: AddItemKey.openHostLessModal as const,
-    label: `Add component packages`,
-    icon: CHEVRON_RIGHT_ICON,
-    onInsert: (studioCtx: StudioCtx) => {
-      studioCtx.showHostLessModal();
-    },
-    addDrawerPreviewImage: "https://static1.plasmic.app/store.png",
-  },
 ] as const;
-
-const builtinInsertableImages = `
-accordion.svg
-airtable.svg
-apple pay.svg
-blockquote.svg
-box.svg
-button icon.svg
-button old.svg
-centered columns.svg
-centered content.svg
-checkbox.svg
-checkbox old.svg
-cluster.svg
-code.svg
-columns.svg
-contact form.svg
-embed.svg
-flexible grid.svg
-footer.svg
-free box old.svg
-grid.svg
-grid old.svg
-heading.svg
-hstack.svg
-h stack old.svg
-html button.svg
-icon.svg
-icon old.svg
-image.svg
-image old.svg
-input.svg
-input old.svg
-link.svg
-linkContainer.svg
-list.svg
-logos.svg
-mega menu.svg
-nav menu.svg
-newsletter.svg
-pagination.svg
-paragraph.svg
-password.svg
-plasmic.svg
-progress bar.svg
-property51.svg
-rating stars.svg
-r stack old.svg
-search.svg
-section.svg
-select.svg
-select old.svg
-shapes.svg
-shopify.svg
-slider.svg
-social.svg
-strapi.svg
-stripe.svg
-switch.svg
-switch old.svg
-tabs.svg
-team.svg
-testimonial.svg
-text.svg
-textarea.svg
-text old.svg
-variant33.svg
-variant35.svg
-variant36.svg
-video.svg
-vstack.svg
-v stack 2.svg
-v stack old.svg
-`
-  .replace(/\.svg/g, "")
-  .trim()
-  .split(/\n/g);
-
-for (const i of INSERTABLES) {
-  if (!i["previewImage"] && builtinInsertableImages.includes(i.key)) {
-    i["previewImage"] = (
-      <img
-        src={`https://static1.plasmic.app/insertables/${i.key}.svg`}
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          objectPosition: "center center",
-          objectFit: "contain",
-          minWidth: 0,
-          minHeight: 0,
-          pointerEvents: "none",
-        }}
-      />
-    );
-  }
-}
 
 export const INSERTABLES_MAP: Record<string, AddItem> = L.keyBy(
   INSERTABLES,
@@ -716,6 +643,7 @@ export const WRAPPERS: AddTplItem[] = [
     key: WrapItemKey.hstack as const,
     label: HORIZ_CONTAINER_CAP,
     icon: <Icon icon={HStackBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/hstack.svg",
     factory: (vc: ViewCtx) => {
       const tag = (INSERTABLES_MAP[AddItemKey.hstack] as AddTplItem).factory(
         vc,
@@ -735,6 +663,7 @@ export const WRAPPERS: AddTplItem[] = [
     label: VERT_CONTAINER_CAP,
     canWrap: true,
     icon: <Icon icon={VStackBlockIcon} />,
+    previewImageUrl: "https://static1.plasmic.app/insertables/vstack.svg",
     factory: (vc: ViewCtx) => {
       const tag = (INSERTABLES_MAP[AddItemKey.vstack] as AddTplItem).factory(
         vc,

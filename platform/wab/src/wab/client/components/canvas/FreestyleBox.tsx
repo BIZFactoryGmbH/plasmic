@@ -1,24 +1,28 @@
-import { ensureKnownTplTag } from "@/wab/classes";
-import { clientToFramePt, clientToFrameRect } from "@/wab/client/coords";
 import { NodeTargeter } from "@/wab/client/Dnd";
 import { resizeRect } from "@/wab/client/FreestyleManipulator";
+import { clientToFramePt, clientToFrameRect } from "@/wab/client/coords";
 import { renderCantAddMsg } from "@/wab/client/messages/parenting-msgs";
 import {
   cssPropsForInvertTransform,
   useStudioCtx,
 } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure, ensureString } from "@/wab/common";
 import {
   XDraggable,
   XDraggableEvent,
 } from "@/wab/commons/components/XDraggable";
-import { Box, Pt, Rect, rectTopLeft } from "@/wab/geom";
 import { $$$ } from "@/wab/shared/TplQuery";
-import { isTplSlot, isTplTag, isTplTagOrComponent } from "@/wab/tpls";
+import { ensure, ensureString } from "@/wab/shared/common";
+import {
+  isTplSlot,
+  isTplTag,
+  isTplTagOrComponent,
+} from "@/wab/shared/core/tpls";
+import { Box, Pt, Rect, rectTopLeft } from "@/wab/shared/geom";
+import { ensureKnownTplTag } from "@/wab/shared/model/classes";
 import { notification } from "antd";
 import $ from "jquery";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 
 export function _FreestyleBox() {
@@ -139,13 +143,6 @@ export function _FreestyleBox() {
               studioCtx.freestyleState(),
               "freestyle state not found in studio ctx"
             ).spec;
-            const extraInfo =
-              targetVc && spec.asyncExtraInfo
-                ? await spec.asyncExtraInfo(studioCtx)
-                : undefined;
-            if (extraInfo === false) {
-              return;
-            }
             await studioCtx.changeUnsafe(
               () => {
                 if (!targetVc) {
@@ -155,7 +152,7 @@ export function _FreestyleBox() {
                 if (event.altKey) {
                   // With e.altKey held down, we intend to wrap the clicked tplnode with
                   // the new node
-                  insertFreestyleAsWrapper(targetVc, event, extraInfo);
+                  insertFreestyleAsWrapper(targetVc, event);
                 } else {
                   // Otherwise, with just a click, we will just create an auto-sized node
                   // at the clicked location
@@ -250,11 +247,7 @@ function insertDefaultFreestyle(viewCtx: ViewCtx, e: React.MouseEvent) {
 /**
  * Inserts a wrapping tag around the TplNode being clicked on
  */
-function insertFreestyleAsWrapper(
-  viewCtx: ViewCtx,
-  e: React.MouseEvent,
-  extraInfo: any
-): void {
+function insertFreestyleAsWrapper(viewCtx: ViewCtx, e: React.MouseEvent): void {
   const studioCtx = viewCtx.studioCtx;
   const freestyleState = ensure(
     studioCtx.freestyleState(),
@@ -277,7 +270,7 @@ function insertFreestyleAsWrapper(
       const newNode = freestyleState.spec.factory(
         viewOps.viewCtx(),
         undefined,
-        extraInfo
+        undefined
       );
       if (newNode && isTplTag(newNode)) {
         const wrapper = ensureKnownTplTag($$$(newNode).clear().one());

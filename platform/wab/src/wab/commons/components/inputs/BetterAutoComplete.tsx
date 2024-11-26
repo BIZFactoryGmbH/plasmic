@@ -1,7 +1,8 @@
 // TODO note that cursorPosition logic is broken / not correctly being
 //  tracked, since the use case hasn't come up.
 
-import { Cancelable, ensure, makeCancelable, spawn } from "@/wab/common";
+import { Cancelable, ensure, makeCancelable, spawn } from "@/wab/shared/common";
+import sty from "@/wab/commons/components/inputs/BetterAutoComplete.module.css";
 import {
   callEventHandlers,
   KeyModifiers,
@@ -18,7 +19,6 @@ import L, * as _ from "lodash";
 import * as React from "react";
 import { Component, createRef } from "react";
 import ReactDOM from "react-dom";
-import sty from "./BetterAutoComplete.module.css";
 
 export interface AutoCompleteSource<T> {
   query: (
@@ -412,7 +412,9 @@ export class BetterAutoComplete<P> extends React.Component<
       this.queryText(prevProps, prevState) !== this.queryText()
     ) {
       this.justSelected = false;
-      if (this.downshift.current!.state.isOpen) spawn(this.queryOptions());
+      if (this.downshift.current!.state.isOpen) {
+        spawn(this.queryOptions());
+      }
     }
   }
   private queryOptions = async () => {

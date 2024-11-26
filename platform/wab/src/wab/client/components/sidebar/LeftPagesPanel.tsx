@@ -1,5 +1,6 @@
 import ListItem from "@/wab/client/components/ListItem";
 import { MenuBuilder } from "@/wab/client/components/menu-builder";
+import promptDeleteComponent from "@/wab/client/components/modals/componentDeletionModal";
 import { reactPrompt } from "@/wab/client/components/quick-modals";
 import { Matcher } from "@/wab/client/components/view-common";
 import { Icon } from "@/wab/client/components/widgets/Icon";
@@ -11,20 +12,21 @@ import {
   PlasmicLeftPagesPanel,
 } from "@/wab/client/plasmic/plasmic_kit_left_pane/PlasmicLeftPagesPanel";
 import { StudioCtx, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { moveIndex } from "@/wab/common";
-import {
-  isCodeComponent,
-  isPageComponent,
-  PageComponent,
-} from "@/wab/components";
 import { isMixedArena } from "@/wab/shared/Arenas";
 import { FRAME_CAP } from "@/wab/shared/Labels";
+import { componentsReferecerToPageHref } from "@/wab/shared/cached-selectors";
+import { moveIndex } from "@/wab/shared/common";
+import {
+  PageComponent,
+  isCodeComponent,
+  isPageComponent,
+} from "@/wab/shared/core/components";
 import { Menu } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
 
-interface LeftPagesPanelProps extends DefaultLeftPagesPanelProps {}
+type LeftPagesPanelProps = DefaultLeftPagesPanelProps;
 
 const LeftPagesPanel = observer(function LeftPagesPanel(
   _props: LeftPagesPanelProps
@@ -187,11 +189,7 @@ const PageRow = observer(function PageRow(props: {
       push(
         <Menu.Item
           key="convert_to_component"
-          onClick={() =>
-            studioCtx.changeUnsafe(() =>
-              studioCtx.siteOps().convertPageToComponent(page)
-            )
-          }
+          onClick={() => studioCtx.siteOps().convertComponentToPage(page)}
         >
           <strong>Convert</strong> to reusable component
         </Menu.Item>
@@ -202,11 +200,23 @@ const PageRow = observer(function PageRow(props: {
       push(
         <Menu.Item
           key="delete"
-          onClick={async () =>
-            studioCtx.changeUnsafe(() =>
-              studioCtx.siteOps().tryRemoveComponent(page)
-            )
-          }
+          onClick={async () => {
+            const confirmation = await promptDeleteComponent("page", page.name);
+            if (!confirmation) {
+              return;
+            }
+            await studioCtx.changeObserved(
+              () => {
+                return Array.from(
+                  componentsReferecerToPageHref(studioCtx.site, page)
+                );
+              },
+              ({ success }) => {
+                studioCtx.siteOps().tryRemoveComponent(page);
+                return success();
+              }
+            );
+          }}
         >
           <strong>Delete</strong> page
         </Menu.Item>

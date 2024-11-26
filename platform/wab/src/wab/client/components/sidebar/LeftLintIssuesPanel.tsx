@@ -1,8 +1,12 @@
-import { Component, isKnownComponent } from "@/wab/classes";
 import { useAppRoles } from "@/wab/client/components/app-auth/app-auth-contexts";
+import {
+  ItemOrGroup,
+  VirtualGroupedList,
+} from "@/wab/client/components/sidebar/VirtualGroupedList";
 import { Matcher } from "@/wab/client/components/view-common";
 import Button from "@/wab/client/components/widgets/Button";
 import Checkbox from "@/wab/client/components/widgets/Checkbox";
+import { Icon } from "@/wab/client/components/widgets/Icon";
 import Textbox from "@/wab/client/components/widgets/Textbox";
 import { getInvalidDomNesting } from "@/wab/client/lint-invalid-nesting-dom";
 import {
@@ -10,28 +14,28 @@ import {
   getLintIssueTypeName,
   renderLintIssue,
 } from "@/wab/client/linting/lint-issue-row";
+import EmojiHappysvgIcon from "@/wab/client/plasmic/plasmic_kit_icons/icons/PlasmicIcon__EmojiHappySvg";
 import {
   DefaultLeftLintIssuesPanelProps,
   PlasmicLeftLintIssuesPanel,
 } from "@/wab/client/plasmic/plasmic_kit_left_pane/PlasmicLeftLintIssuesPanel";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { maybe, xGroupBy } from "@/wab/common";
+import { maybe, xGroupBy } from "@/wab/shared/common";
 import {
   getComponentDisplayName,
   getPageOrComponentLabel,
-} from "@/wab/components";
-import { DEVFLAGS } from "@/wab/devflags";
+} from "@/wab/shared/core/components";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { LintIssue, LintIssueType } from "@/wab/shared/linting/lint-types";
 import { lintSite as lintUnprotectedDataQueries } from "@/wab/shared/linting/lint-unprotected-data-queries";
 import { lintSite } from "@/wab/shared/linting/lint-utils";
-import { DownOutlined, SmileOutlined } from "@ant-design/icons";
+import { Component, isKnownComponent } from "@/wab/shared/model/classes";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
-import { Empty, notification, Popover, Space } from "antd";
+import { Empty, Popover, Space, notification } from "antd";
 import { groupBy } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { useState } from "react";
-import { ItemOrGroup, VirtualGroupedList } from "./VirtualGroupedList";
 
 export type LeftLintIssuesPanelProps = DefaultLeftLintIssuesPanelProps;
 
@@ -205,10 +209,7 @@ const SiteIssuesList = observer(function SiteIssuesList() {
                 className={"flex-no-shrink"}
                 onClick={(e) => e.preventDefault()}
               >
-                <Space>
-                  Types
-                  <DownOutlined />
-                </Space>
+                <Space>Types</Space>
               </a>
             </Popover>
           </div>
@@ -237,8 +238,8 @@ const SiteIssuesList = observer(function SiteIssuesList() {
       ) : (
         <Empty
           className={"mt-xxlg"}
-          image={<SmileOutlined style={{ fontSize: 20 }} />}
-          imageStyle={{ height: "20px" }}
+          image={<Icon icon={EmojiHappysvgIcon} size={24} />}
+          imageStyle={{ height: "24px" }}
           description={"No issues!"}
         ></Empty>
       )}

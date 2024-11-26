@@ -1,4 +1,9 @@
 import { LabeledToggleButtonGroup } from "@/wab/client/components/sidebar/sidebar-helpers";
+import {
+  StyleComponent,
+  StyleComponentProps,
+} from "@/wab/client/components/style-controls/StyleComponent";
+import StyleToggleButton from "@/wab/client/components/style-controls/StyleToggleButton";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import ColumnWrapCenterIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__ColumnWrapCenter";
 import ColumnWrapEndIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__ColumnWrapEnd";
@@ -24,12 +29,10 @@ import RowWrapSpaceBetweenIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIco
 import RowWrapSpaceEvenlyIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__RowWrapSpaceEvenly";
 import RowWrapStartIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__RowWrapStart";
 import RowWrapStretchIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__RowWrapStretch";
-import { cx } from "@/wab/common";
+import { cx } from "@/wab/shared/common";
 import { flexDirToArrangement, isFlexReverse } from "@/wab/shared/layoututils";
 import { observer } from "mobx-react";
 import React from "react";
-import { StyleComponent, StyleComponentProps } from "./StyleComponent";
-import StyleToggleButton from "./StyleToggleButton";
 
 class AlignContentControls_ extends StyleComponent<StyleComponentProps> {
   render() {

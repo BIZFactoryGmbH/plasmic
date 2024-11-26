@@ -1,11 +1,11 @@
-import { Param, TplComponent } from "@/wab/classes";
-import { assert } from "@/wab/common";
+import { assert } from "@/wab/shared/common";
+import { getTplSlotByName } from "@/wab/shared/SlotUtils";
 import { internalCanvasElementProps } from "@/wab/shared/canvas-constants";
 import {
+  SerializerBaseContext,
   getExternalParams,
   getPlumePackageName,
   serializeParamType,
-  SerializerBaseContext,
 } from "@/wab/shared/codegen/react-p";
 import {
   getExportedComponentName,
@@ -17,18 +17,18 @@ import {
   paramToVarName,
   toVarName,
 } from "@/wab/shared/codegen/util";
-import { getTplSlotByName } from "@/wab/shared/SlotUtils";
-import type { CheckboxRef } from "@plasmicapp/react-web";
-import { omit, pick } from "lodash";
-import type React from "react";
-import { PlumePlugin } from "./plume-registry";
+import { Param, TplComponent } from "@/wab/shared/model/classes";
+import { PlumePlugin } from "@/wab/shared/plume/plume-registry";
 import {
   createDefaultSlotContentsStub,
   ensureValidPlumeCodeMeta,
   makeComponentImportPath,
   maybeIncludeSerializedDefaultSlotContent,
   serializeComponentSubstitutionCallsForDefaultContents,
-} from "./plume-utils";
+} from "@/wab/shared/plume/plume-utils";
+import type { CheckboxRef } from "@plasmicapp/react-web";
+import { omit, pick } from "lodash";
+import type React from "react";
 
 const RESERVED_PROPS = [
   "noLabel",

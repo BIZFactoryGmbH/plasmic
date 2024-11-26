@@ -1,3 +1,4 @@
+import sty from "@/wab/client/components/sidebar-tabs/ListStyleSection.module.scss";
 import {
   FullRow,
   LabeledStyleSelectItem,
@@ -7,9 +8,8 @@ import {
   StylePanelSection,
 } from "@/wab/client/components/style-controls/StyleComponent";
 import { listStyleCssProps } from "@/wab/shared/core/style-props";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import sty from "./ListStyleSection.module.scss";
 
 export const ListStyleSection = observer(ListStyleSection_);
 

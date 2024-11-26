@@ -61,9 +61,9 @@
           "defaultStyle": { "__ref": "3935062" },
           "styles": [],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "3935062": {
           "name": "Default Typography",
@@ -215,6 +215,8 @@
           "displayName": "Data Provider",
           "importName": "DataProvider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -228,6 +230,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4418516": { "name": "name", "uuid": "s3uqiUNM3l", "__type": "Var" },
@@ -252,8 +255,8 @@
         "4418523": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "4418524": {
           "param": { "__ref": "4418509" },
@@ -385,6 +388,8 @@
           "displayName": "Embed HTML",
           "importName": "Embed",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "7682015" },
@@ -398,6 +403,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "7682008": { "name": "code", "uuid": "ARXptWIBzB", "__type": "Var" },
@@ -554,6 +560,8 @@
           "displayName": "Iframe",
           "importName": "Iframe",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "34442167" },
@@ -567,6 +575,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "34442070": {
@@ -758,6 +767,8 @@
           "displayName": "HTML Video",
           "importName": "Video",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "4418502" },
@@ -771,6 +782,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "34442160": { "name": "src", "uuid": "6-acOUSDbVf", "__type": "Var" },
@@ -877,6 +889,8 @@
           "displayName": "Condition Guard",
           "importName": "ConditionGuard",
           "description": "Ensure some condition, or else run an interaction. Examples: ensure all users have a database row, or require new users to setup a profile.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -890,6 +904,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "SWtwhJYgQ-3A": {
@@ -966,6 +981,8 @@
           "displayName": "Side Effect",
           "importName": "SideEffect",
           "description": "Run actions on load, unload, and when data changes.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -979,6 +996,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "9TiqKe8jPBG_": {
@@ -1051,8 +1069,8 @@
         "EMxbYSDVX3qb": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "dbc5rHbuF1Xa": {
           "name": "children",
@@ -1280,6 +1298,8 @@
           "displayName": "Timer",
           "importName": "Timer",
           "description": "Run something periodically",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1293,6 +1313,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "6aTkH4AuJH5j": {
@@ -1446,7 +1467,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -1622,6 +1643,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1635,6 +1658,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "476910": {
@@ -1767,6 +1791,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1780,6 +1806,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "476918": { "name": "title", "uuid": "JuRqn_7eHM", "__type": "Var" },
@@ -1822,8 +1849,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "476940" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "476933": {
           "name": "pageSize",
@@ -2176,7 +2203,6 @@
           "uuid": "gieq5oIYbdeAY",
           "width": 1440,
           "height": 768,
-          "viewportHeight": 1024,
           "container": { "__ref": "14792054" },
           "lang": "English",
           "pinnedVariants": {},
@@ -2239,9 +2265,9 @@
             { "__ref": "14792216" }
           ],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "14792065": {
           "name": "Default Typography",
@@ -2876,7 +2902,7 @@
         }
       },
       "deps": ["46daef11-1a70-4f74-b471-12e71963588c"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

@@ -1,4 +1,6 @@
-import { TplNode } from "@/wab/classes";
+import { RenderingCtx } from "@/wab/client/components/canvas/canvas-rendering";
+import { DeepMap } from "@/wab/commons/deep-map";
+import { ReactHookSpec } from "@/wab/shared/codegen/react-p/react-hook-spec";
 import {
   arrayEq,
   assert,
@@ -6,19 +8,17 @@ import {
   isLiteralObjectByName,
   objsEq,
   removeWhere,
-} from "@/wab/common";
-import { DeepMap } from "@/wab/commons/deep-map";
-import { ReactHookSpec } from "@/wab/shared/codegen/react-p/react-hook-spec";
+} from "@/wab/shared/common";
+import { CanvasEnv } from "@/wab/shared/eval";
+import { TplNode } from "@/wab/shared/model/classes";
 import { isEqual, uniq } from "lodash";
 import {
+  _isComputingDerivation,
   computed,
   IComputedValue,
   IComputedValueOptions,
   onBecomeUnobserved,
-  _isComputingDerivation,
 } from "mobx";
-import { CanvasEnv } from "src/wab/shared/eval";
-import { RenderingCtx } from "./canvas-rendering";
 
 export type IComputedFnOptions<F extends (...args: any[]) => any> = {
   onCleanup?: (
@@ -58,6 +58,8 @@ function computeHashFromStableFields(node: TplNode, ctx: RenderingCtx) {
     reactHookSpecsToKey(ctx.reactHookSpecs),
     // ctx.triggers, // `triggers` keys can't change if `reactHookSpecs` hasn't changed
     JSON.stringify(ctx.triggerProps),
+    JSON.stringify(ctx.$ccVariants),
+    ctx.updateVariant,
   ];
 }
 
@@ -81,7 +83,9 @@ type HandledCtxFields =
   | "setDollarQueries"
   | "reactHookSpecs"
   | "triggers"
-  | "triggerProps";
+  | "triggerProps"
+  | "$ccVariants"
+  | "updateVariant";
 
 type NonStableFieldsFromCtx = Omit<Full<RenderingCtx>, HandledCtxFields> & {
   $stateSnapshot: Record<string, any>;

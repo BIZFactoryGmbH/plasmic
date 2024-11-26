@@ -1,9 +1,7 @@
 import {
-  Component,
-  ComponentDataQuery,
-  isKnownObjectPath,
-  isKnownTemplatedString,
-} from "@/wab/classes";
+  useDataSourceOpExprBottomModal,
+  useSource,
+} from "@/wab/client/components/sidebar-tabs/DataSource/DataSourceOpPicker";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
 import {
   IconLinkButton,
@@ -12,30 +10,32 @@ import {
 import Button from "@/wab/client/components/widgets/Button";
 import { PageQueryParamsTooltip } from "@/wab/client/components/widgets/DetailedTooltips";
 import { Icon } from "@/wab/client/components/widgets/Icon";
-import { LabeledListItem } from "@/wab/client/components/widgets/LabeledListItem";
 import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelWithDetailedTooltip";
+import { LabeledListItem } from "@/wab/client/components/widgets/LabeledListItem";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensure, maybe, maybeFirst, swallow, unexpected } from "@/wab/common";
+import { ensure, maybe, maybeFirst, swallow, unexpected } from "@/wab/shared/common";
 import { valueAsString } from "@/wab/commons/values";
-import { extractParamsFromPagePath } from "@/wab/components";
+import { extractParamsFromPagePath } from "@/wab/shared/core/components";
 import {
   getSingleDynExprFromTemplatedString,
   tryCoerceString,
-} from "@/wab/exprs";
+} from "@/wab/shared/core/exprs";
 import { getDataSourceMeta } from "@/wab/shared/data-sources-meta/data-source-registry";
 import {
   ensureDataSourceStandardQuery,
   extractFiltersFromDefaultDataSourceQueries,
 } from "@/wab/shared/data-sources-meta/data-sources";
+import {
+  Component,
+  ComponentDataQuery,
+  isKnownObjectPath,
+  isKnownTemplatedString,
+} from "@/wab/shared/model/classes";
 import { Input, InputRef, Menu, Popover, Tooltip } from "antd";
 import { isEqual, size } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { useMemo, useState } from "react";
-import {
-  useDataSourceOpExprBottomModal,
-  useSource,
-} from "./DataSource/DataSourceOpPicker";
 
 const URLParameterRow = observer(
   (props: {

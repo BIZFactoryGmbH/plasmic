@@ -3,8 +3,20 @@ import { isPlasmicPath, U, UU } from "@/wab/client/cli-routes";
 import { AppAuthSettingsModal } from "@/wab/client/components/app-auth/AppAuthSettings";
 import { HostConfig } from "@/wab/client/components/HostConfig";
 import { MergeModalWrapper } from "@/wab/client/components/merge/MergeFlow";
+import { ContentEditorConfigModal } from "@/wab/client/components/modals/ContentEditorConfigModal";
 import { EnableLocalizationModal } from "@/wab/client/components/modals/EnableLocalizationModal";
-import { TopBarPromptBillingArgs } from "@/wab/client/components/modals/PricingModal";
+import {
+  getTiersAndPromptBilling,
+  TopBarPromptBillingArgs,
+} from "@/wab/client/components/modals/PricingModal";
+import { DataSourcePicker } from "@/wab/client/components/TopFrame/DataSourcePicker";
+import CloneProjectModal from "@/wab/client/components/TopFrame/TopBar/CloneProjectModal";
+import CodeModal from "@/wab/client/components/TopFrame/TopBar/CodeModal";
+import ProjectNameModal from "@/wab/client/components/TopFrame/TopBar/ProjectNameModal";
+import PublishFlowDialogWrapper from "@/wab/client/components/TopFrame/TopBar/PublishFlowDialogWrapper";
+import { showRegenerateSecretTokenModal } from "@/wab/client/components/TopFrame/TopBar/RegenerateSecretTokenModal";
+import ShareModal from "@/wab/client/components/TopFrame/TopBar/ShareModal";
+import UpsellModal from "@/wab/client/components/TopFrame/TopBar/UpsellModal";
 import { IconButton } from "@/wab/client/components/widgets/IconButton";
 import {
   TopFrameApi,
@@ -17,37 +29,30 @@ import CloseIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Close";
 import { Shortcut } from "@/wab/client/shortcuts/shortcut";
 import { useBindShortcutHandlers } from "@/wab/client/shortcuts/shortcut-handler";
 import {
-  StudioShortcutAction,
   STUDIO_SHORTCUTS,
+  StudioShortcutAction,
 } from "@/wab/client/shortcuts/studio/studio-shortcuts";
 import {
   TopFrameTours,
   TopFrameTourState,
 } from "@/wab/client/tours/tutorials/TutorialTours";
-import { assert, asyncWrapper, mkUuid, spawn } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
 import {
   ApiBranch,
   ApiPermission,
   ApiProject,
   MergeSrcDst,
 } from "@/wab/shared/ApiSchema";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
+import { assert, asyncWrapper, mkUuid, spawn } from "@/wab/shared/common";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
+import { DEVFLAGS } from "@/wab/shared/devflags";
 import { getAccessLevelToResource } from "@/wab/shared/perms";
+import { canEditUiConfig } from "@/wab/shared/ui-config-utils";
 import { message, notification } from "antd";
 import { Action, Location } from "history";
 import { ExtendedKeyboardEvent } from "mousetrap";
 import React from "react";
 import { useHistory, useLocation } from "react-router";
 import * as Signals from "signals";
-import { DataSourcePicker } from "./DataSourcePicker";
-import CloneProjectModal from "./TopBar/CloneProjectModal";
-import CodeModal from "./TopBar/CodeModal";
-import ProjectNameModal from "./TopBar/ProjectNameModal";
-import PublishFlowDialogWrapper from "./TopBar/PublishFlowDialogWrapper";
-import { showRegenerateSecretTokenModal } from "./TopBar/RegenerateSecretTokenModal";
-import ShareModal from "./TopBar/ShareModal";
-import UpsellModal from "./TopBar/UpsellModal";
 
 export interface MergeModalContext {
   subject: MergeSrcDst;
@@ -79,6 +84,7 @@ export interface TopFrameChromeProps {
   showCloneProjectModal: boolean;
   showHostModal: boolean;
   showLocalizationModal: boolean;
+  showUiConfigModal: boolean;
   showUpsellForm: TopBarPromptBillingArgs | undefined;
   setShowUpsellForm: (_: undefined) => void;
   showAppAuthModal: boolean;
@@ -161,7 +167,7 @@ export function TopFrameChrome({
         perms.every(
           (perm) =>
             perm.accessLevel !== "owner" ||
-            !isCoreTeamEmail(perm.email, appCtx.appConfig)
+            !isAdminTeamEmail(perm.email, appCtx.appConfig)
         )
       ) {
         spawn(
@@ -267,6 +273,7 @@ export function TopFrameChrome({
               mergeModalContext={rest.mergeModalContext}
               setMergeModalContext={topFrameApi.setMergeModalContext}
               setShowCodeModal={topFrameApi.setShowCodeModal}
+              currentBranch={rest.activatedBranch}
             />
             <ShareModal
               refreshProjectAndPerms={refreshProjectAndPerms}
@@ -303,6 +310,28 @@ export function TopFrameChrome({
                   }
                 }}
                 project={project}
+              />
+            )}
+            {rest.showUiConfigModal && (
+              <ContentEditorConfigModal
+                title={`Studio UI for ${project.name}`}
+                appCtx={appCtx}
+                level={"project"}
+                onSubmit={async (newConfig) => {
+                  if (newConfig) {
+                    await appCtx.api.updateProjectMeta(project.id, {
+                      uiConfig: newConfig,
+                    });
+                  }
+                  await topFrameApi.setShowUiConfigModal(false);
+                  notification.info({
+                    message:
+                      "Changes in the configuration UI will only take place after refreshing the page",
+                    duration: 5,
+                  });
+                }}
+                onCancel={() => topFrameApi.setShowUiConfigModal(false)}
+                config={project.uiConfig ?? {}}
               />
             )}
             {rest.showLocalizationModal && (
@@ -376,9 +405,13 @@ function ForwardShortcuts() {
 }
 
 export function useTopFrameState({
+  appCtx,
+  project,
   forceUpdate,
   toggleAdminMode,
 }: {
+  appCtx: AppCtx;
+  project: ApiProject | undefined;
   forceUpdate: () => void;
   toggleAdminMode: (val: boolean) => Promise<void>;
 }) {
@@ -398,6 +431,7 @@ export function useTopFrameState({
     React.useState(false);
   const [showProjectNameModal, setShowProjectNameModal] = React.useState(false);
   const [showHostModal, setShowHostModal] = React.useState(false);
+  const [showUiConfigModal, setShowUiConfigModal] = React.useState(false);
   const [showLocalizationModal, setShowLocalizationModal] =
     React.useState(false);
   const [
@@ -500,6 +534,7 @@ export function useTopFrameState({
       setShowCloneProjectModal: asyncWrapper(setShowCloneProjectModal),
       setShowHostModal: asyncWrapper(setShowHostModal),
       setShowLocalizationModal: asyncWrapper(setShowLocalizationModal),
+      setShowUiConfigModal: asyncWrapper(setShowUiConfigModal),
       showRegenerateSecretTokenModal: async () =>
         setShouldShowRegenerateSecretTokenModal(true),
       setShowUpsellForm: asyncWrapper(setShowUpsellForm),
@@ -513,8 +548,33 @@ export function useTopFrameState({
         ) as TopFrameApiReturnType<"pickDataSource">;
       },
       toggleAdminMode,
+      getCurrentTeam: async () => {
+        if (!project) {
+          return undefined;
+        }
+        return appCtx.getAllTeams().find((team) => team.id === project.teamId);
+      },
+      canEditProjectUiConfig: async () => {
+        const team = appCtx.getAllTeams().find((t) => t.id === project?.teamId);
+        if (!team || !project) {
+          return false;
+        }
+        return canEditUiConfig(
+          team,
+          { type: "project", resource: project },
+          appCtx.selfInfo,
+          appCtx.perms
+        );
+      },
+      promptBilling: async () => {
+        const team = appCtx.getAllTeams().find((t) => t.id === project?.teamId);
+        if (!team || !project) {
+          return;
+        }
+        await getTiersAndPromptBilling(appCtx, team);
+      },
     }),
-    []
+    [appCtx, project]
   );
 
   return {
@@ -535,6 +595,7 @@ export function useTopFrameState({
     showCloneProjectModal,
     showHostModal,
     showLocalizationModal,
+    showUiConfigModal,
     showUpsellForm,
     setShowUpsellForm,
     showAppAuthModal,
@@ -560,12 +621,12 @@ function validateNewLocation(
   if (UU.projectFullPreview.parse(previousLocation.pathname, false)) {
     assert(
       UU.projectFullPreview.parse(path, false),
-      "Cannot navigate from full preview mode to outside of it"
+      `Cannot navigate from full preview mode to outside of it, from ${previousLocation.pathname} to ${path}`
     );
   } else {
     assert(
       !UU.projectFullPreview.parse(path, false),
-      "Cannot navigate from studio to full preview mode"
+      `Cannot navigate from studio to full preview mode, from ${previousLocation.pathname} to ${path}`
     );
   }
 }

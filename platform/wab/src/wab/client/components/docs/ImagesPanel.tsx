@@ -1,16 +1,16 @@
+import { useDocsPortalCtx } from "@/wab/client/components/docs/DocsPortalCtx";
+import ImageListItem from "@/wab/client/components/docs/ImageListItem";
 import { Matcher } from "@/wab/client/components/view-common";
 import {
   DefaultImagesPanelProps,
   PlasmicImagesPanel,
 } from "@/wab/client/plasmic/plasmic_kit_docs_portal/PlasmicImagesPanel";
-import { ImageAssetType } from "@/wab/image-asset-type";
+import { ImageAssetType } from "@/wab/shared/core/image-asset-type";
 import { Alert } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import { useDocsPortalCtx } from "./DocsPortalCtx";
-import ImageListItem from "./ImageListItem";
 
-interface ImagesPanelProps extends DefaultImagesPanelProps {}
+type ImagesPanelProps = DefaultImagesPanelProps;
 
 const ImagesPanel = observer(function ImagesPanel(props: ImagesPanelProps) {
   const docsCtx = useDocsPortalCtx();

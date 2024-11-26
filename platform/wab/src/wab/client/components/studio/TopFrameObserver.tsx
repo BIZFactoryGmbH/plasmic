@@ -1,22 +1,22 @@
-import { Component } from "@/wab/classes";
 import { usePreviewCtx } from "@/wab/client/components/live/PreviewCtx";
 import { HostFrameApi } from "@/wab/client/frame-ctx/host-frame-api";
 import { useHostFrameCtx } from "@/wab/client/frame-ctx/host-frame-ctx";
 import { StudioAppUser, useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { filterFalsy, jsonClone, spawn } from "@/wab/common";
-import {
-  isFrameComponent,
-  isPageComponent,
-  isReusableComponent,
-} from "@/wab/components";
 import { ApiBranch } from "@/wab/shared/ApiSchema";
 import { isComponentArena, isPageArena } from "@/wab/shared/Arenas";
 import { findAllDataSourceOpExprForComponent } from "@/wab/shared/cached-selectors";
 import { getNormalizedComponentName } from "@/wab/shared/codegen/react-p/utils";
+import { filterFalsy, jsonClone, spawn } from "@/wab/shared/common";
+import {
+  isFrameComponent,
+  isPageComponent,
+  isReusableComponent,
+} from "@/wab/shared/core/components";
+import { Component } from "@/wab/shared/model/classes";
 import { notification } from "antd";
 import { sortBy } from "lodash";
 import { autorun, computed } from "mobx";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
 import { mutate as swrMutate } from "swr";
 
@@ -142,6 +142,9 @@ export const TopFrameObserver = observer(function _TopFrameObserver({
       async logAsAppUser(appUser: StudioAppUser): Promise<void> {
         await studioCtx.logAsAppUser(appUser);
         await studioCtx.refreshAppUserProperties();
+      },
+      async handleBranchMerged(): Promise<void> {
+        await studioCtx.handleBranchMerged();
       },
     }),
     [studioCtx]

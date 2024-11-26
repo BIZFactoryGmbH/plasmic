@@ -1,16 +1,23 @@
-import { Component, ComponentVariantGroup, ObjectPath } from "@/wab/classes";
 import { VariantLabel } from "@/wab/client/components/VariantControls";
+import VariantRow from "@/wab/client/components/variants/VariantRow";
+import {
+  VariantDataPicker,
+  makeVariantMenu,
+} from "@/wab/client/components/variants/variant-menu";
 import { EditableLabelHandles } from "@/wab/client/components/widgets/EditableLabel";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure, spawn } from "@/wab/common";
+import { ensure, spawn } from "@/wab/shared/common";
 import { VariantPinState } from "@/wab/shared/PinManager";
+import {
+  Component,
+  ComponentVariantGroup,
+  ObjectPath,
+} from "@/wab/shared/model/classes";
 import { getPlumeVariantDef } from "@/wab/shared/plume/plume-registry";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
-import { makeVariantMenu, VariantDataPicker } from "./variant-menu";
-import VariantRow from "./VariantRow";
 
 interface StandaloneVariantProps {
   studioCtx: StudioCtx;

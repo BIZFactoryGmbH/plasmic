@@ -1,8 +1,8 @@
-import { ensureType } from "@/wab/common";
+import { ensureType } from "@/wab/shared/common";
+import { userDbMgr } from "@/wab/server/routes/util";
 import { TrustedHostsListResponse } from "@/wab/shared/ApiSchema";
 import { Request, Response } from "express-serve-static-core";
 import { pick } from "lodash";
-import { userDbMgr } from "./util";
 
 export async function getTrustedHostsForSelf(req: Request, res: Response) {
   const mgr = userDbMgr(req);

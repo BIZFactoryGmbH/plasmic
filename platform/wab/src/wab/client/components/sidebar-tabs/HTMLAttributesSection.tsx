@@ -1,12 +1,8 @@
 import {
-  Component,
-  Expr,
-  isKnownEventHandler,
-  isKnownParam,
-  isKnownVarRef,
-  TplComponent,
-  TplTag,
-} from "@/wab/classes";
+  inferPropTypeFromAttr,
+  PropEditorRow,
+} from "@/wab/client/components/sidebar-tabs/PropEditorRow";
+import HandlerSection from "@/wab/client/components/sidebar-tabs/StateManagement/HandlerSection";
 import { SidebarModal } from "@/wab/client/components/sidebar/SidebarModal";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
 import { TplExpsProvider } from "@/wab/client/components/style-controls/StyleComponent";
@@ -20,30 +16,23 @@ import { LabelWithDetailedTooltip } from "@/wab/client/components/widgets/LabelW
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
 import TriangleBottomIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__TriangleBottom";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure, spawn, withoutNils } from "@/wab/common";
 import { removeFromArray } from "@/wab/commons/collections";
+import { isAllowedDefaultExprForPropType } from "@/wab/shared/code-components/code-components";
+import { ensure, spawn, withoutNils } from "@/wab/shared/common";
 import {
   clone,
   codeLit,
   extractReferencedParam,
   isAllowedDefaultExpr,
   tryExtractLit,
-} from "@/wab/exprs";
-import { ComponentPropOrigin } from "@/wab/lang";
-import { alwaysVisibleHTMLAttributes, metaSvc } from "@/wab/metas";
-import { isAllowedDefaultExprForPropType } from "@/wab/shared/code-components/code-components";
+} from "@/wab/shared/core/exprs";
+import { ComponentPropOrigin } from "@/wab/shared/core/lang";
+import { alwaysVisibleHTMLAttributes, metaSvc } from "@/wab/shared/core/metas";
 import {
   isTagInline,
   textBlockTags,
   textInlineTags,
 } from "@/wab/shared/core/rich-text-util";
-import {
-  computeDefinedIndicator,
-  DefinedIndicatorType,
-} from "@/wab/shared/defined-indicator";
-import { getInputTypeOptions } from "@/wab/shared/html-utils";
-import { unsetTplVariantableAttr } from "@/wab/shared/TplMgr";
-import { tryGetBaseVariantSetting } from "@/wab/shared/Variants";
 import {
   EventHandlerKeyType,
   getDisplayNameOfEventHandlerKey,
@@ -52,14 +41,28 @@ import {
   isTplTag,
   isTplTextBlock,
   setEventHandlerByEventKey,
-} from "@/wab/tpls";
+} from "@/wab/shared/core/tpls";
+import {
+  computeDefinedIndicator,
+  DefinedIndicatorType,
+} from "@/wab/shared/defined-indicator";
+import { getInputTypeOptions } from "@/wab/shared/html-utils";
+import {
+  Component,
+  Expr,
+  isKnownEventHandler,
+  isKnownParam,
+  isKnownVarRef,
+  TplComponent,
+  TplTag,
+} from "@/wab/shared/model/classes";
+import { unsetTplVariantableAttr } from "@/wab/shared/TplMgr";
+import { tryGetBaseVariantSetting } from "@/wab/shared/Variants";
 import { notification, Popover, Select } from "antd";
 import { RefSelectProps } from "antd/lib/select";
 import L, { keyBy, orderBy, uniq, without } from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React from "react";
-import { inferPropTypeFromAttr, PropEditorRow } from "./PropEditorRow";
-import HandlerSection from "./StateManagement/HandlerSection";
 
 // Note: these should be JSX attributes, not HTML attributes.
 const COMMON_GLOBAL_ATTRS = [
@@ -202,6 +205,11 @@ export const TAG_TO_DISPLAY_NAME = {
   span: "Span",
   input: "Input",
   textarea: "Text area",
+  strong: "Strong",
+  i: "Italic",
+  em: "Emphasis",
+  sub: "Subscript",
+  sup: "Superscript",
 };
 const nonContainerTags = ["ul", "ol", "li"];
 export const ALL_CONTAINER_TAGS = L.without(

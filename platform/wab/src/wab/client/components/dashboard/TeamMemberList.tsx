@@ -1,3 +1,4 @@
+import TeamMemberListItem from "@/wab/client/components/dashboard/TeamMemberListItem";
 import { Matcher } from "@/wab/client/components/view-common";
 import ShareDialogContent from "@/wab/client/components/widgets/plasmic/ShareDialogContent";
 import Select from "@/wab/client/components/widgets/Select";
@@ -17,8 +18,7 @@ import { accessLevelRank, GrantableAccessLevel } from "@/wab/shared/EntUtil";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import { sortBy } from "lodash";
 import * as React from "react";
-import { Modal } from "src/wab/client/components/widgets/Modal";
-import TeamMemberListItem from "./TeamMemberListItem";
+import { Modal } from "@/wab/client/components/widgets/Modal";
 
 interface TeamMemberListProps extends DefaultTeamMemberListProps {
   team?: ApiTeam;

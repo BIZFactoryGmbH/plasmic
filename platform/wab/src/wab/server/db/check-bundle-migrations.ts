@@ -1,8 +1,10 @@
-import { arrayEq, ensure, spawn, spawnWrapper } from "@/wab/common";
 import fs from "fs";
 import { last } from "lodash";
 import path from "path";
 import yargs from "yargs";
+// pre-commit cannot understand "@/path" imports
+// eslint-disable-next-line
+import { arrayEq, ensure, spawn, spawnWrapper } from "../../shared/common";
 
 interface CheckArgs {
   files: string[];
@@ -44,6 +46,7 @@ async function checkBundleFiles({ files }: CheckArgs) {
     const maybeUnbundling =
       content.includes("upgradeHostlessProject(") ||
       content.includes("new Bundler") ||
+      content.includes("new FastBundler") ||
       content.includes("db.");
     if (content.includes(`= "bundled"`) && maybeUnbundling) {
       throw new Error(

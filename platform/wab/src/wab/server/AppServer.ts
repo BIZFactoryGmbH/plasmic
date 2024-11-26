@@ -1,23 +1,7 @@
-// const origLog = console.error;
-// console.error = (...args: any[]) => {
-//   origLog(...args);
-//   origLog(new Error().stack);
-// };
-
-// const origOn = (process as any).on;
-// (process as any).on = function (...args) {
-//   if (args[0].toLowerCase() === "unhandledrejection") {
-//     debugger;
-//   }
-//   return origOn.apply(this, args);
-// };
-import { mkShortId, safeCast, spawn } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
+import { methodForwarder } from "@/wab/commons/methodForwarder";
 import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
-import Analytics from "analytics-node";
 import * as bodyParser from "body-parser";
-import connectDatadog from "connect-datadog";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "errorhandler";
@@ -35,42 +19,37 @@ import * as path from "path";
 import { getConnection } from "typeorm";
 import v8 from "v8";
 // API keys and Passport configuration
-import { discourseConnect } from "@/wab/server/routes/discourse";
+import { initAmplitudeNode } from "@/wab/server/analytics/amplitude-node";
+import { setupPassport } from "@/wab/server/auth/passport-cfg";
+import * as authRoutes from "@/wab/server/auth/routes";
 import {
-  AuthError,
-  isApiError,
-  NotFoundError,
-  transformErrors,
-} from "@/wab/shared/ApiErrors/errors";
-import { Bundler } from "@/wab/shared/bundler";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
-import fileUpload from "express-fileupload";
-import { Config } from "./config";
-import { getDevFlagsMergedWithOverrides } from "./db/appconfig";
-import { DbMgr, SUPER_USER } from "./db/DbMgr";
-import { createMailer } from "./emails/Mailer";
-import { ExpressSession } from "./entities/Entities";
-import "./extensions";
-import { setupPassport } from "./passport-cfg";
-import { trackPostgresPool, WabPromStats } from "./promstats";
-import * as adminRoutes from "./routes/admin";
+  apiAuth,
+  shopifyAuthStart,
+  shopifyCallback,
+} from "@/wab/server/auth/routes";
+import { doLogout } from "@/wab/server/auth/util";
+import { Config } from "@/wab/server/config";
+import { DbMgr, SUPER_USER } from "@/wab/server/db/DbMgr";
+import { getDevFlagsMergedWithOverrides } from "@/wab/server/db/appconfig";
+import { createMailer } from "@/wab/server/emails/Mailer";
+import { ExpressSession } from "@/wab/server/entities/Entities";
+import "@/wab/server/extensions";
+import { WabPromStats, trackPostgresPool } from "@/wab/server/promstats";
+import * as adminRoutes from "@/wab/server/routes/admin";
 import {
   getAnalyticsBillingInfoForTeam,
   getAnalyticsForProject,
   getAnalyticsForTeam,
   getAnalyticsProjectMeta,
-} from "./routes/analytics";
-import * as apiTokenRoutes from "./routes/apitokens";
+} from "@/wab/server/routes/analytics";
+import * as apiTokenRoutes from "@/wab/server/routes/apitokens";
 import {
   getEndUserByToken,
   grantOauthToken,
   issueOauthCode,
   upsertEndUser,
-} from "./routes/app-oauth";
-import { getAppCtx } from "./routes/appctx";
-import * as authRoutes from "./routes/auth";
-import { apiAuth, shopifyAuthStart, shopifyCallback } from "./routes/auth";
-import { bigCommerceGraphql } from "./routes/bigcommerce";
+} from "@/wab/server/routes/app-oauth";
+import { getAppCtx } from "@/wab/server/routes/appctx";
 import {
   cachePublicCmsRead,
   countTable,
@@ -81,8 +60,9 @@ import {
   publicUpdateRow,
   queryTable,
   upsertDatabaseTables,
-} from "./routes/cms";
+} from "@/wab/server/routes/cms";
 import {
+  cloneDatabase,
   cmsFileUpload,
   createDatabase,
   createRows,
@@ -91,8 +71,8 @@ import {
   deleteRow,
   deleteTable,
   getCmsDatabaseAndSecretTokenById,
-  getDatabaseMeta,
   getRow as getCmseRow,
+  getDatabaseMeta,
   getRowRevision,
   listDatabases,
   listDatabasesMeta,
@@ -102,8 +82,12 @@ import {
   updateDatabase,
   updateRow,
   updateTable,
-} from "./routes/cmse";
-import { addInternalRoutes, ROUTES_WITH_TIMING } from "./routes/custom-routes";
+} from "@/wab/server/routes/cmse";
+import { addCommentsRoutes } from "@/wab/server/routes/comments";
+import {
+  ROUTES_WITH_TIMING,
+  addInternalRoutes,
+} from "@/wab/server/routes/custom-routes";
 import {
   allowProjectToDataSource,
   createDataSource,
@@ -115,7 +99,7 @@ import {
   listDataSources,
   testDataSourceConnection,
   updateDataSource,
-} from "./routes/data-source";
+} from "@/wab/server/routes/data-source";
 import {
   getFakeBlurbs,
   getFakePlans,
@@ -123,7 +107,8 @@ import {
   getFakeTasks,
   getFakeTestimonials,
   getFakeTweets,
-} from "./routes/demodata";
+} from "@/wab/server/routes/demodata";
+import { discourseConnect } from "@/wab/server/routes/discourse";
 import {
   addDirectoryEndUsers,
   changeAppRolesOrder,
@@ -161,7 +146,7 @@ import {
   updateEndUserGroups,
   upsertAppAuthConfig,
   upsertCurrentUserOpConfig,
-} from "./routes/end-user";
+} from "@/wab/server/routes/end-user";
 import {
   addProjectRepository,
   connectGithubInstallations,
@@ -175,13 +160,13 @@ import {
   githubData,
   setupExistingGithubRepo,
   setupNewGithubRepo,
-} from "./routes/git";
+} from "@/wab/server/routes/git";
 import {
   addTrustedHost,
   deleteTrustedHost,
   getTrustedHostsForSelf,
-} from "./routes/hosts";
-import { uploadImage } from "./routes/image";
+} from "@/wab/server/routes/hosts";
+import { uploadImage } from "@/wab/server/routes/image";
 import {
   buildLatestLoaderAssets,
   buildLatestLoaderHtml,
@@ -199,10 +184,10 @@ import {
   getHydrationScriptVersioned,
   getLoaderChunk,
   prefillPublishedLoader,
-} from "./routes/loader";
-import { genTranslatableStrings } from "./routes/localization";
-import * as mailingListRoutes from "./routes/mailinglist";
-import { getAppConfig, getClip, putClip } from "./routes/misc";
+} from "@/wab/server/routes/loader";
+import { genTranslatableStrings } from "@/wab/server/routes/localization";
+import * as mailingListRoutes from "@/wab/server/routes/mailinglist";
+import { getAppConfig, getClip, putClip } from "@/wab/server/routes/misc";
 import {
   createProjectWebhook,
   deleteProjectWebhook,
@@ -210,34 +195,30 @@ import {
   getProjectWebhooks,
   triggerProjectWebhook,
   updateProjectWebhook,
-} from "./routes/project-webhooks";
+} from "@/wab/server/routes/project-webhooks";
 import {
-  addReactionToComment,
-  changeProjectPermissions,
   checkAndNofityHostlessVersion,
   cloneProject,
   clonePublishedTemplate,
+  computeNextProjectVersion,
   createBranch,
   createPkgByProjectId,
   createProject,
   createProjectWithHostlessPackages,
   deleteBranch,
-  deleteCommentInProject,
   deleteProject,
-  deleteThreadInProject,
-  detachCodeSandbox,
   fmtCode,
   genCode,
   genIcons,
   genStyleConfig,
   genStyleTokens,
-  getCommentsForProject,
   getFullProjectData,
   getLatestBundleVersion,
   getLatestPlumePkg,
   getModelUpdates,
   getPkgByProjectId,
   getPkgVersion,
+  getPkgVersionByProjectId,
   getPkgVersionPublishStatus,
   getPlumePkg,
   getPlumePkgVersionStrings,
@@ -249,33 +230,28 @@ import {
   latestCodegenVersion,
   listBranchesForProject,
   listPkgVersionsWithoutData,
-  listProjects,
   listProjectVersionsWithoutData,
-  postCommentInProject,
-  publishCodeSandbox,
+  listProjects,
   publishProject,
-  removeReactionFromComment,
   removeSelfPerm,
   requiredPackages,
   resolveSync,
   revertToVersion,
   saveProjectRev,
   setMainBranchProtection,
-  shareCodeSandbox,
   tryMergeBranch,
   updateBranch,
   updateHostUrl,
-  updateNotificationSettings,
   updatePkgVersion,
   updateProject,
   updateProjectData,
   updateProjectMeta,
-} from "./routes/projects";
-import { getPromotionCodeById } from "./routes/promo-code";
+} from "@/wab/server/routes/projects";
+import { getPromotionCodeById } from "@/wab/server/routes/promo-code";
 import {
   executeDataSourceOperationHandler,
   executeDataSourceOperationHandlerInStudio,
-} from "./routes/server-data";
+} from "@/wab/server/routes/server-data";
 import {
   emailWebhook,
   getProducts,
@@ -283,22 +259,22 @@ import {
   proxyToShopify,
   publishShopifyPages,
   updateShopifyStorePassword,
-} from "./routes/shopify";
-import { processSvgRoute } from "./routes/svg";
-import * as teamRoutes from "./routes/teams";
-import { getUsersById } from "./routes/users";
+} from "@/wab/server/routes/shopify";
+import { processSvgRoute } from "@/wab/server/routes/svg";
+import * as teamRoutes from "@/wab/server/routes/teams";
+import { getUsersById } from "@/wab/server/routes/users";
 import {
   adminOnly,
   adminOrDevelopmentEnvOnly,
   superDbMgr,
   withNext,
-} from "./routes/util";
+} from "@/wab/server/routes/util";
 import {
   createWhiteLabelUser,
   deleteWhiteLabelUser,
   getWhiteLabelUser,
   openJwt,
-} from "./routes/whitelabel";
+} from "@/wab/server/routes/whitelabel";
 import {
   createWorkspace,
   deleteWorkspace,
@@ -306,58 +282,58 @@ import {
   getWorkspace,
   getWorkspaces,
   updateWorkspace,
-} from "./routes/workspaces";
-import { getSegmentWriteKey } from "./secrets";
-import { logError } from "./server-util";
-import { ASYNC_TIMING } from "./timing-util";
-import { doLogout } from "./util/auth-util";
+} from "@/wab/server/routes/workspaces";
+import { logError } from "@/wab/server/server-util";
+import { ASYNC_TIMING } from "@/wab/server/timing-util";
+import { TypeormStore } from "@/wab/server/util/TypeormSessionStore";
 import {
   pruneOldBundleBackupsCache,
   prunePartialRevCache,
-} from "./util/pruneCache";
-import { TypeormStore } from "./util/TypeormSessionStore";
-import { createWorkerPool } from "./workers/pool";
-import { ensureDevFlags } from "./workers/worker-utils";
+} from "@/wab/server/util/pruneCache";
+import { createWorkerPool } from "@/wab/server/workers/pool";
+import { ensureDevFlags } from "@/wab/server/workers/worker-utils";
+import {
+  AuthError,
+  NotFoundError,
+  isApiError,
+  transformErrors,
+} from "@/wab/shared/ApiErrors/errors";
+import { ConsoleLogAnalytics } from "@/wab/shared/analytics/ConsoleLogAnalytics";
+import { Bundler } from "@/wab/shared/bundler";
+import { mkShortId, safeCast, spawn } from "@/wab/shared/common";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { isStampedIgnoreError } from "@/wab/shared/error-handling";
+import fileUpload from "express-fileupload";
 
-const hotShots = require("hot-shots");
-
-const datadogMiddleware = connectDatadog({
-  response_code: true,
-  tags: ["app:my_app"],
-  dogstatsd: new hotShots.StatsD("localhost", 8126),
-});
-
-const csrfFreeStaticRoutes = {
-  "/api/v1/admin/user": true,
-  "/api/v1/admin/resetPassword": true,
-  "/api/v1/admin/delete-project": true,
-  "/api/v1/admin/restore-project": true,
-  "/api/v1/admin/login-as": true,
-  "/api/v1/admin/invite": true,
-  "/api/v1/admin/devflags": true,
-  "/api/v1/admin/clone": true,
-  "/api/v1/admin/deactivate-user": true,
-  "/api/v1/admin/revert-project-revision": true,
-  "/api/v1/bigcommerce/graphql": true,
-  "/api/v1/mail/subscribe": true,
-  "/api/v1/plume-pkg/versions": true,
-  "/api/v1/localization/gen-texts": true,
-  "/api/v1/hosting-hit": true,
-  "/api/v1/socket/": true,
-  "/api/v1/init-token/": true,
-  "/api/v1/promo-code/": true,
-  "/api/v1/projects/import": process.env.NODE_ENV !== "production",
+const csrfFreeStaticRoutes = [
+  "/api/v1/admin/user",
+  "/api/v1/admin/resetPassword",
+  "/api/v1/admin/delete-project",
+  "/api/v1/admin/restore-project",
+  "/api/v1/admin/login-as",
+  "/api/v1/admin/devflags",
+  "/api/v1/admin/clone",
+  "/api/v1/admin/deactivate-user",
+  "/api/v1/admin/revert-project-revision",
+  "/api/v1/mail/subscribe",
+  "/api/v1/plume-pkg/versions",
+  "/api/v1/localization/gen-texts",
+  "/api/v1/hosting-hit",
+  "/api/v1/socket/",
+  "/api/v1/init-token/",
+  "/api/v1/promo-code/",
 
   // csrf-free routes to the socket server routes, if socket server
   // is not running and the routes are mounted on this server
-  "/api/v1/disconnect": true,
-  "/api/v1/projects/broadcast": true,
-  "/api/v1/cli/emit-token": true,
-};
+  "/api/v1/disconnect",
+  "/api/v1/projects/broadcast",
+  "/api/v1/cli/emit-token",
+];
 
-const isCsrfFreeRoute = (pathname: string) => {
+const isCsrfFreeRoute = (pathname: string, config: Config) => {
   return (
-    csrfFreeStaticRoutes[pathname] ||
+    csrfFreeStaticRoutes.includes(pathname) ||
     pathname.includes("/api/v1/clip/") ||
     pathname.includes("/code/") ||
     pathname.includes("/api/v1/loader/code") ||
@@ -370,13 +346,13 @@ const isCsrfFreeRoute = (pathname: string) => {
     pathname.includes("/api/v1/wl/") ||
     pathname.includes("/api/v1/cms/") ||
     pathname.match("/api/v1/projects/[^/]+$") ||
-    pathname.match("/api/v1/auth/saml/.*/consume") ||
     pathname.match("/api/v1/auth/sso/.*/consume") ||
-    (pathname.includes("/api/v1/cmse/") &&
-      process.env.NODE_ENV !== "production") ||
     pathname.includes("/api/v1/app-auth/user") ||
     pathname.includes("/api/v1/app-auth/userinfo") ||
-    pathname.includes("/api/v1/app-auth/token")
+    pathname.includes("/api/v1/app-auth/token") ||
+    (!config.production &&
+      (pathname === "/api/v1/projects/import" ||
+        pathname.includes("/api/v1/cmse/")))
   );
 };
 
@@ -388,27 +364,6 @@ const ignoredErrorMessages = [
   // a typeorm query. Nothing we can do about that.
   "Query runner already released",
 ];
-
-// Rate limit for forgetPassword and signUp routes.
-// Currently using in-memory storage, can be improved to use
-// redis/postgres.
-const sensitiveRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 15,
-  message: "Too many requests, please try again later.",
-  handler: (req, res, next, options) => {
-    req
-      .resolveTransaction()
-      .catch(() => {})
-      .finally(() => res.status(options.statusCode).send(options.message));
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: {
-    xForwardedForHeader: false,
-    trustProxy: false,
-  },
-});
 
 function shouldIgnoreErrorByMessage(message: string) {
   return ignoredErrorMessages.some((pattern) => message.includes(pattern));
@@ -432,7 +387,7 @@ function addSentry(app: express.Application, config: Config) {
     ],
     // We recommend adjusting this value in production, or using tracesSampler
     // for finer control
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 0,
     // We need beforeSend because errors don't necessarily make their way through the Express pipeline - they can be
     // thrown from anywhere, in Express or outside (or from random async event loop iterations).
     async beforeSend(event: Sentry.Event): Promise<Sentry.Event | null> {
@@ -445,18 +400,24 @@ function addSentry(app: express.Application, config: Config) {
       return event;
     },
   });
+
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+
+  // This anonymous handler uses Sentry.setTag() to modify the current scope.
+  // To ensure the global scope is not modified, the handler must be after
+  // Sentry.Handlers.requestHandler(), which creates a new scope per-request.
   app.use((req, _res, next) => {
     // Some routes get project ID as a path param (e.g.
     // /projects/:projectId/code/components) while others get it as query
     // (e.g. /loader/code/versioned?projectId=<>).
-    const projectId = req.params.projectId ?? req.query.projectId;
+    const projectId =
+      req.params.projectId ?? req.query.projectId ?? req.params.projectBranchId;
     if (projectId) {
       Sentry.setTag("projectId", String(projectId));
     }
     next();
   });
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
 }
 
 // Copied from @sentry: https://github.com/getsentry/sentry-javascript/blob/master/packages/node/src/handlers.ts
@@ -484,6 +445,9 @@ function addSentryError(app: express.Application, config: Config) {
     if (shouldIgnoreErrorByMessage(error.message || "")) {
       return false;
     }
+    if (isStampedIgnoreError(error)) {
+      return false;
+    }
     if (error["request"]?.headers?.["user-agent"]?.startsWith("octokit")) {
       // Errors from Octokit (GitHub client) should always be logged,
       // even if status code < 500.
@@ -505,17 +469,6 @@ export function addLoggingMiddleware(app: express.Application) {
   morgan.token("request-id", (req: Request) => req.id);
   morgan.token("user-email", (req: Request) => req.user?.email);
   // Remove metrics url to avoid spam
-  app.use(
-    morgan(
-      `START [:request-id] :remote-addr - :user-email [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" (:total-time[0]ms)`,
-      {
-        skip: (req, _) => {
-          return req.originalUrl === "/metrics" || req.url === "/metrics";
-        },
-        immediate: true,
-      }
-    )
-  );
   app.use(
     morgan(
       `[:request-id] :remote-addr - :user-email [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" (:total-time[0]ms)`,
@@ -550,10 +503,28 @@ function addMiddlewares(
     console.log("Skipping session store setup...");
   }
 
+  const newRequestScopedAnalytics = initAmplitudeNode();
+  app.use(
+    safeCast<RequestHandler>(async (req, res, next) => {
+      const analytics = newRequestScopedAnalytics();
+      req.analytics = config.production
+        ? analytics
+        : methodForwarder(new ConsoleLogAnalytics(), analytics);
+      req.analytics.appendBaseEventProperties({
+        host: config.host,
+        production: config.production,
+      });
+      if (req.user) {
+        req.analytics.setUser(req.user.id);
+      }
+      next();
+    })
+  );
+
   app.use((req, res, next) => {
     // This is before we've loaded req.devflags - just use the hard-coded default for the core team email domain.
     if (
-      isCoreTeamEmail(req.user?.email, DEVFLAGS) ||
+      isAdminTeamEmail(req.user?.email, DEVFLAGS) ||
       req.path.includes("/server-data") ||
       ROUTES_WITH_TIMING.some((route) => req.path.includes(route))
     ) {
@@ -748,7 +719,10 @@ function addMiddlewares(
   if (!opts?.skipSession) {
     const csrf = lusca.csrf();
     app.use((req, res, next) => {
-      if (isCsrfFreeRoute(req.path) || authRoutes.isPublicApiRequest(req)) {
+      if (
+        isCsrfFreeRoute(req.path, config) ||
+        authRoutes.isPublicApiRequest(req)
+      ) {
         // API requests also don't need csrf
         return next();
       } else {
@@ -758,7 +732,6 @@ function addMiddlewares(
   } else {
     console.log("Skipping CSRF setup...");
   }
-  app.analytics = new Analytics(getSegmentWriteKey());
 
   // Parse body further down to prevent unauthorized users from incurring large parses.
   app.use(bodyParser.json({ limit: "400mb" }));
@@ -859,6 +832,7 @@ export function addCmsEditorRoutes(app: express.Application) {
   // CMS API for use by studio to crud; access by usual browser login
   app.get("/api/v1/cmse/databases", withNext(listDatabases));
   app.post("/api/v1/cmse/databases", withNext(createDatabase));
+  app.post("/api/v1/cmse/databases/:dbId/clone", withNext(cloneDatabase));
   app.get(
     "/api/v1/cmse/databases/:dbId",
     withNext(getCmsDatabaseAndSecretTokenById)
@@ -1169,10 +1143,6 @@ export function addEndUserManagementRoutes(app: express.Application) {
   );
 }
 
-export function addDataServerRoutes(app: express.Application) {
-  addCmsPublicRoutes(app);
-}
-
 export function addCodegenRoutes(app: express.Application) {
   app.post("/api/v1/code/resolve-sync", apiAuth, withNext(resolveSync));
   app.post("/api/v1/code/style-config", apiAuth, withNext(genStyleConfig));
@@ -1295,7 +1265,36 @@ export function addCodegenRoutes(app: express.Application) {
   );
 }
 
-export function addMainAppServerRoutes(app: express.Application) {
+export function addMainAppServerRoutes(
+  app: express.Application,
+  config: Config
+) {
+  // Rate limit for forgetPassword and signUp routes.
+  // Currently using in-memory storage, can be improved to use
+  // redis/postgres.
+  const sensitiveRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 15,
+    message: "Too many requests, please try again later.",
+    handler: (req, res, next, options) => {
+      req
+        .resolveTransaction()
+        .catch(() => {})
+        .finally(() => res.status(options.statusCode).send(options.message));
+    },
+    skip: (req) => {
+      const shouldRateLimit =
+        config.production || req.get("x-plasmic-test-rate-limit") === "true";
+      return !shouldRateLimit;
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    validate: {
+      xForwardedForHeader: false,
+      trustProxy: false,
+    },
+  });
+
   app.use((req, res, next) => {
     console.log(req.ip);
     next();
@@ -1315,7 +1314,11 @@ export function addMainAppServerRoutes(app: express.Application) {
    * Auth Routes
    */
   app.get("/api/v1/auth/csrf", withNext(authRoutes.csrf));
-  app.post("/api/v1/auth/login", withNext(authRoutes.login));
+  app.post(
+    "/api/v1/auth/login",
+    sensitiveRateLimiter,
+    withNext(authRoutes.login)
+  );
   app.post(
     "/api/v1/auth/sign-up",
     sensitiveRateLimiter,
@@ -1325,6 +1328,7 @@ export function addMainAppServerRoutes(app: express.Application) {
   app.post("/api/v1/auth/self", withNext(authRoutes.updateSelf));
   app.post(
     "/api/v1/auth/self/password",
+    sensitiveRateLimiter,
     withNext(authRoutes.updateSelfPassword)
   );
   app.post("/api/v1/auth/logout", withNext(authRoutes.logout));
@@ -1333,10 +1337,19 @@ export function addMainAppServerRoutes(app: express.Application) {
     sensitiveRateLimiter,
     withNext(authRoutes.forgotPassword)
   );
-  app.post("/api/v1/auth/resetPassword", withNext(authRoutes.resetPassword));
-  app.post("/api/v1/auth/confirmEmail", withNext(authRoutes.confirmEmail));
+  app.post(
+    "/api/v1/auth/resetPassword",
+    sensitiveRateLimiter,
+    withNext(authRoutes.resetPassword)
+  );
+  app.post(
+    "/api/v1/auth/confirmEmail",
+    sensitiveRateLimiter,
+    withNext(authRoutes.confirmEmail)
+  );
   app.post(
     "/api/v1/auth/sendEmailVerification",
+    sensitiveRateLimiter,
     withNext(authRoutes.sendEmailVerification)
   );
   app.get(
@@ -1347,12 +1360,6 @@ export function addMainAppServerRoutes(app: express.Application) {
   app.get(
     "/api/v1/oauth2/google/callback",
     withNext(authRoutes.googleCallback)
-  );
-  app.get("/api/v1/auth/saml/login", withNext(authRoutes.samlLogin));
-  app.get("/api/v1/auth/saml/test", withNext(authRoutes.isValidSamlEmail));
-  app.post(
-    "/api/v1/auth/saml/:tenantId/consume",
-    withNext(authRoutes.samlCallback)
   );
   app.get("/api/v1/auth/sso/test", withNext(authRoutes.isValidSsoEmail));
   app.get("/api/v1/auth/sso/:tenantId/login", withNext(authRoutes.ssoLogin));
@@ -1437,11 +1444,6 @@ export function addMainAppServerRoutes(app: express.Application) {
     adminOnly,
     withNext(adminRoutes.listProjects)
   );
-  app.get(
-    "/api/v1/admin/invite-requests",
-    adminOnly,
-    withNext(adminRoutes.listInviteRequests)
-  );
   app.post(
     "/api/v1/admin/delete-project",
     adminOnly,
@@ -1462,27 +1464,11 @@ export function addMainAppServerRoutes(app: express.Application) {
     adminOnly,
     withNext(adminRoutes.updateProjectOwner)
   );
-  app.get(
-    "/api/v1/admin/whitelist",
-    adminOnly,
-    withNext(adminRoutes.getWhitelist)
-  );
-  app.post(
-    "/api/v1/admin/whitelist",
-    adminOnly,
-    withNext(adminRoutes.addToWhitelist)
-  );
-  app.delete(
-    "/api/v1/admin/whitelist",
-    adminOnly,
-    withNext(adminRoutes.removeWhitelist)
-  );
   app.post(
     "/api/v1/admin/login-as",
     adminOnly,
     withNext(adminRoutes.adminLoginAs)
   );
-  app.post("/api/v1/admin/invite", adminOnly, withNext(adminRoutes.invite));
   app.post(
     "/api/v1/admin/deactivate-user",
     adminOnly,
@@ -1509,11 +1495,6 @@ export function addMainAppServerRoutes(app: express.Application) {
     withNext(adminRoutes.setDevFlagOverrides)
   );
   app.post(
-    "/api/v1/admin/upsert-saml",
-    adminOnly,
-    withNext(adminRoutes.upsertSamlConfig)
-  );
-  app.post(
     "/api/v1/admin/upsert-sso",
     adminOnly,
     withNext(adminRoutes.upsertSsoConfig)
@@ -1522,11 +1503,6 @@ export function addMainAppServerRoutes(app: express.Application) {
     "/api/v1/admin/get-sso",
     adminOnly,
     withNext(adminRoutes.getSsoByTeam)
-  );
-  app.post(
-    "/api/v1/admin/codesandbox-token",
-    adminOnly,
-    withNext(adminRoutes.updateCodeSandboxToken)
   );
   app.post(
     "/api/v1/admin/create-tutorial-db",
@@ -1599,6 +1575,16 @@ export function addMainAppServerRoutes(app: express.Application) {
     adminOnly,
     withNext(adminRoutes.syncTeamDiscourseInfo)
   );
+  app.post(
+    "/api/v1/admin/teams/:teamId/send-support-welcome-email",
+    adminOnly,
+    withNext(adminRoutes.sendTeamSupportWelcomeEmail)
+  );
+  app.get(
+    "/api/v1/admin/project-branches-metadata/:projectId",
+    adminOnly,
+    withNext(adminRoutes.getProjectBranchesMetadata)
+  );
 
   /**
    * Self routes
@@ -1614,6 +1600,10 @@ export function addMainAppServerRoutes(app: express.Application) {
   app.get("/api/v1/plume-pkg/versions", withNext(getPlumePkgVersionStrings));
   app.get("/api/v1/plume-pkg/latest", withNext(getLatestPlumePkg));
   app.get("/api/v1/pkgs/:pkgId", withNext(getPkgVersion));
+  app.get(
+    "/api/v1/pkgs/projectId/:projectId",
+    withNext(getPkgVersionByProjectId)
+  );
   app.get(
     "/api/v1/pkgs/:pkgId/versions-without-data",
     withNext(listPkgVersionsWithoutData)
@@ -1646,18 +1636,6 @@ export function addMainAppServerRoutes(app: express.Application) {
     adminOrDevelopmentEnvOnly,
     withNext(importProject)
   );
-  app.post(
-    "/api/v1/projects/:projectId/publish-codesandbox",
-    withNext(publishCodeSandbox)
-  );
-  app.post(
-    "/api/v1/projects/:projectId/share-codesandbox",
-    withNext(shareCodeSandbox)
-  );
-  app.post(
-    "/api/v1/projects/:projectId/detach-codesandbox",
-    withNext(detachCodeSandbox)
-  );
   app.get(
     "/api/v1/projects/:projectId/meta",
     safeCast<RequestHandler>(authRoutes.teamApiUserAuth),
@@ -1684,6 +1662,7 @@ export function addMainAppServerRoutes(app: express.Application) {
   );
   app.delete(
     "/api/v1/projects/:projectId/branches/:branchId",
+    safeCast<RequestHandler>(authRoutes.teamApiUserAuth),
     withNext(deleteBranch)
   );
   app.post(
@@ -1718,20 +1697,24 @@ export function addMainAppServerRoutes(app: express.Application) {
     withNext(createPkgByProjectId)
   );
   app.get("/api/v1/projects/:projectId/pkg", withNext(getPkgByProjectId));
-  app.post("/api/v1/projects/:projectId/publish", withNext(publishProject));
+  app.post(
+    "/api/v1/projects/:projectId/publish",
+    safeCast<RequestHandler>(authRoutes.teamApiUserAuth),
+    withNext(publishProject)
+  );
+  app.post(
+    "/api/v1/projects/:projectId/next-publish-version",
+    withNext(computeNextProjectVersion)
+  );
   app.get(
     "/api/v1/projects/:projectId/pkgs/:pkgVersionId/status",
     withNext(getPkgVersionPublishStatus)
   );
   app.post(
-    "/api/v1/projects/:projectId/grant-revoke",
-    withNext(changeProjectPermissions)
-  );
-  app.post(
     "/api/v1/projects/:projectBranchId/revisions/:revision",
     withNext(saveProjectRev)
   );
-  app.post("/api/v1/merge", withNext(tryMergeBranch));
+  app.post("/api/v1/projects/:projectId/merge", withNext(tryMergeBranch));
   app.post(
     "/api/v1/projects/:projectId/code/project-sync-metadata",
     apiAuth,
@@ -1752,37 +1735,7 @@ export function addMainAppServerRoutes(app: express.Application) {
 
   addInternalRoutes(app);
 
-  /**
-   * Comment routes
-   */
-  app.get(
-    "/api/v1/projects/:projectBranchId/comments",
-    withNext(getCommentsForProject)
-  );
-  app.post(
-    "/api/v1/projects/:projectBranchId/comments",
-    withNext(postCommentInProject)
-  );
-  app.delete(
-    "/api/v1/projects/:projectBranchId/comment/:commentId",
-    withNext(deleteCommentInProject)
-  );
-  app.delete(
-    "/api/v1/projects/:projectBranchId/thread/:threadId",
-    withNext(deleteThreadInProject)
-  );
-  app.post(
-    "/api/v1/comments/:commentId/reactions",
-    withNext(addReactionToComment)
-  );
-  app.delete(
-    "/api/v1/reactions/:reactionId",
-    withNext(removeReactionFromComment)
-  );
-  app.put(
-    "/api/v1/projects/:projectBranchId/notification-settings",
-    withNext(updateNotificationSettings)
-  );
+  addCommentsRoutes(app);
 
   /**
    * Teams / Users routes
@@ -1932,14 +1885,6 @@ export function addMainAppServerRoutes(app: express.Application) {
   app.get("/api/v1/demodata/blurbs", withNext(getFakeBlurbs));
   app.get("/api/v1/demodata/posts", withNext(getFakePosts));
   app.get("/api/v1/demodata/testimonials", withNext(getFakeTestimonials));
-
-  /**
-   * BigCommerce proxy for demos
-   */
-  // allow pre-flight request for CORS
-  // https://stackoverflow.com/questions/33483675/getting-express-server-to-accept-cors-request
-  app.options("/api/v1/bigcommerce/graphql", cors() as any);
-  app.post("/api/v1/bigcommerce/graphql", cors(), withNext(bigCommerceGraphql));
 
   /**
    * Discourse SSO
@@ -2176,9 +2121,6 @@ export async function createApp(
 
   // Sentry setup needs to be first
   addSentry(app, config);
-
-  // Datadog docs say it needs to come before any routing.
-  app.use(datadogMiddleware);
 
   if (config.production) {
     app.enable("trust proxy");

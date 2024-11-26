@@ -1,17 +1,17 @@
+import CodePreviewSnippet from "@/wab/client/components/docs/CodePreviewSnippet";
+import { DocsPortalCtx } from "@/wab/client/components/docs/DocsPortalCtx";
+import DocsPropsTableRow from "@/wab/client/components/docs/DocsPropsTableRow";
+import { typeString } from "@/wab/client/components/docs/VariantProp";
 import { PlasmicPlumeComponentView } from "@/wab/client/plasmic/plasmic_kit_docs_portal/PlasmicPlumeComponentView";
 import { toVarName } from "@/wab/shared/codegen/util";
-import { wabToTsType } from "@/wab/shared/core/model-util";
+import { wabToTsType } from "@/wab/shared/model/model-util";
 import {
   getPlumeDocsPlugin,
   PlumeDocsProp,
 } from "@/wab/shared/plume/plume-registry";
 import { getTplSlots } from "@/wab/shared/SlotUtils";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
-import CodePreviewSnippet from "./CodePreviewSnippet";
-import { DocsPortalCtx } from "./DocsPortalCtx";
-import DocsPropsTableRow from "./DocsPropsTableRow";
-import { typeString } from "./VariantProp";
 
 const PlumeComponentView = observer(function PlumeComponentView(props: {
   docsCtx: DocsPortalCtx;
@@ -57,7 +57,7 @@ const PlumeComponentView = observer(function PlumeComponentView(props: {
     })),
   ];
 
-  const allPropNames = new Set(
+  const allPropNames = new Set<string>(
     component.params.map((p) => toVarName(p.variable.name))
   );
 

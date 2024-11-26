@@ -1,9 +1,6 @@
-/** @format */
-
 // TODO Debug why explicit type strings are nec for Column() / why reflect-metadata doesn't work
 // TODO Use real UUID type, both in PG and in Typescript.
 
-import { Dict } from "@/wab/collections";
 import { getEncryptionKey } from "@/wab/server/secrets";
 import type { TutorialDbInfo } from "@/wab/server/tutorialdb/tutorialdb-utils";
 import { makeStableEncryptor } from "@/wab/server/util/crypt";
@@ -18,9 +15,10 @@ import type {
   CmsTableId,
   CmsTableSchema,
   CmsTableSettings,
-  CommentData,
   CommentId,
+  CommentLocation,
   CommentReactionData,
+  CommentThreadId,
   DataSourceId,
   FeatureTierId,
   GitSyncLanguage,
@@ -38,6 +36,7 @@ import type {
   UserWhiteLabelInfo,
   WorkspaceId,
 } from "@/wab/shared/ApiSchema";
+import { Dict } from "@/wab/shared/collections";
 import type { DataSourceType } from "@/wab/shared/data-sources-meta/data-source-registry";
 import type { OperationTemplate } from "@/wab/shared/data-sources-meta/data-sources";
 import { CodeSandboxInfo, WebhookHeader } from "@/wab/shared/db-json-blobs";
@@ -48,6 +47,7 @@ import { IsEmail, IsJSON, IsOptional, validateOrReject } from "class-validator";
 import { ISession } from "connect-typeorm";
 import Cryptr from "cryptr";
 import _ from "lodash";
+import type { Opaque } from "type-fest";
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -55,13 +55,13 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryColumn,
   Unique,
 } from "typeorm";
-import type { Brand } from "utility-types";
 
 function normalizeJson(x, mapping = { model: "json" }) {
   return _(x)
@@ -95,7 +95,7 @@ export class ExpressSession implements ISession {
 
 export abstract class Base<IdTag> {
   @PrimaryColumn({ type: "text" })
-  id: Brand<string, IdTag>;
+  id: Opaque<string, IdTag>;
 
   @Column("timestamptz") createdAt: Date;
   @Column("timestamptz") updatedAt: Date;
@@ -153,6 +153,7 @@ export class Team extends Base<"TeamId"> {
   personalTeamOwnerId: UserId | null;
 
   @OneToOne((_type) => User)
+  @JoinColumn()
   personalTeamOwner: User | null;
 
   @OneToMany((type) => Permission, (perm) => perm.team)
@@ -200,6 +201,7 @@ export class Team extends Base<"TeamId"> {
   @Column("jsonb", { nullable: true })
   uiConfig: UiConfig | null;
 
+  @Index()
   @Column("text", { nullable: true })
   parentTeamId: TeamId | null;
 
@@ -247,7 +249,7 @@ export class User extends OrgChild<"UserId"> {
   @Column("text", { unique: true })
   @IsEmail({ ignore_max_length: true })
   email: string;
-  @Column("text", { select: false }) bcrypt: string;
+  @Column("text", { select: false }) bcrypt: string | undefined;
   @Column("timestamptz", { nullable: true })
   permanentlyDeletedAt: Date | null;
 
@@ -279,15 +281,12 @@ export class User extends OrgChild<"UserId"> {
   @Column("jsonb", { nullable: true })
   whiteLabelInfo: UserWhiteLabelInfo | null;
 
+  @ManyToOne(() => PromotionCode, { nullable: true })
+  signUpPromotionCode: PromotionCode | null;
+
   toJSON() {
     return normalizeJson(_.omit(this, "bcrypt"));
   }
-}
-
-export function createShopifySyncState() {
-  return {
-    pages: {},
-  };
 }
 
 @Entity()
@@ -305,6 +304,9 @@ export class Project extends OrgChild<"ProjectId"> {
     | CodeSandboxInfo[]
     | null;
   @Column("boolean") readableByPublic: boolean;
+
+  @Column("jsonb", { nullable: true })
+  uiConfig: UiConfig | null;
 
   @ManyToOne((type) => Workspace)
   workspace: Workspace | null;
@@ -381,6 +383,10 @@ export class ProjectRevision extends Base<"ProjectRevisionId"> {
   data: string;
 
   @Column("integer") revision: number;
+
+  @Column("integer", { nullable: true })
+  @Index()
+  dataLength?: number | null;
 }
 
 @Entity()
@@ -414,6 +420,9 @@ export class PartialRevisionCache extends Base<"PartialRevisionCacheId"> {
 
   @ManyToOne((type) => ProjectRevision, { onDelete: "CASCADE" })
   projectRevision: ProjectRevision | null;
+
+  @Column("text", { array: true, nullable: true })
+  modifiedComponentIids: string[] | null;
 
   @Index()
   @Column("text")
@@ -597,6 +606,10 @@ export class PkgVersion extends Base<"PkgVersionId"> {
   @IsJSON()
   model: string;
 
+  @Column("integer", { nullable: true })
+  @Index()
+  modelLength?: number | null;
+
   @Column("text", { nullable: true })
   hostUrl: string | null;
 
@@ -618,6 +631,13 @@ export class PkgVersion extends Base<"PkgVersionId"> {
 
   @Column("boolean", { nullable: true })
   isPrefilled: boolean;
+
+  // In case this version is the result of a branch merge with conflicts, we store how the user chose
+  // to resolve conflicts in the conflictPickMap.
+  @Column("text", { nullable: true })
+  @IsJSON()
+  @IsOptional()
+  conflictPickMap?: string | null;
 }
 
 @Entity()
@@ -695,16 +715,6 @@ export class OauthToken extends OauthTokenBase {
   userId: UserId;
 }
 
-/**
- * This really serves as just a log of collected oauth token data from users who
- * try to access us but were not whitelisted.
- */
-@Entity()
-export class UserlessOauthToken extends OauthTokenBase {
-  @Column("text")
-  email: string;
-}
-
 @Entity()
 export class PersonalApiToken extends Base<"PersonalApiTokenId"> {
   @ManyToOne((type) => User, { nullable: false })
@@ -754,7 +764,7 @@ export class TemporaryTeamApiToken extends Base<"TemporaryTeamApiTokenId"> {
   token: string;
 }
 
-export type PermissionId = Brand<string, "PermissionId">;
+export type PermissionId = Opaque<string, "PermissionId">;
 
 @Entity()
 @Check(`("userId" is not null) <> ("email" is not null)`)
@@ -810,33 +820,6 @@ export class SignUpAttempt extends Base<"SignUpAttempt"> {
   email: string;
 }
 
-/**
- * This is just a log of sign-up attempts.
- */
-@Entity()
-export class InviteRequest extends Base<"InviteRequestId"> {
-  @Column("text")
-  inviteeEmail: string;
-
-  @ManyToOne((type) => Project, { nullable: false })
-  project: Project;
-
-  @Index()
-  @Column("text")
-  projectId: ProjectId;
-}
-
-@Entity()
-export class WhitelistedIdentities extends Base<"WhitelistedIdentitiesId"> {
-  @Index({ unique: true })
-  @Column("text", { nullable: true })
-  email: string | null;
-
-  @Index({ unique: true })
-  @Column("text", { nullable: true })
-  domain: string | null;
-}
-
 @Entity()
 @Unique(["projectId", "revision"])
 export class ProjectSyncMetadata extends Base<"ProjectSyncMetadataId"> {
@@ -859,30 +842,6 @@ export class ProjectSyncMetadata extends Base<"ProjectSyncMetadataId"> {
 export class DevFlagOverrides extends Base<"DevFlagOverridesId"> {
   @Column("text")
   data: string;
-}
-
-@Entity()
-export class SeqIdAssignment extends Base<"SeqIdAssignmentId"> {
-  @Index({ unique: true })
-  @Column("text")
-  projectId: ProjectId;
-
-  // This is a JSON contains a list of id assignment and nextSeqId, i.e.
-  /*
-    {
-      "comp1": {
-        "nextSeqId": 5,
-        "seqIdMap": { "uuid1": 1, "uuid2": 2, "uuid3": 3, "uuid4": 4 },
-      },
-      "comp2": {
-        "nextSeqId": 4,
-        "seqIdMap": { "uuid1": 1, "uuid2": 2, "uuid3": 3 },
-      },
-    }
-  */
-  @Column("text", { nullable: false })
-  @IsJSON()
-  assign: string;
 }
 
 @Entity()
@@ -1023,39 +982,13 @@ export class DataSourceOperation extends Base<"DataSourceOperationId"> {
 }
 
 @Entity()
-export class SamlConfig extends Base<"SamlConfigId"> {
-  @Index()
-  @Column("text")
-  teamId: TeamId;
-
-  @OneToOne(() => Team)
-  team: Team;
-
-  @Index()
-  @Column("text", { array: true })
-  domains: string[];
-
-  @Column("text")
-  entrypoint: string;
-
-  @Column("text")
-  issuer: string;
-
-  @Column("text")
-  cert: string;
-
-  @Index({ unique: true })
-  @Column("text")
-  tenantId: string;
-}
-
-@Entity()
 export class SsoConfig extends Base<"SsoConfigId"> {
   @Index()
   @Column("text")
   teamId: TeamId;
 
   @OneToOne(() => Team)
+  @JoinColumn()
   team: Team;
 
   @Index()
@@ -1063,7 +996,7 @@ export class SsoConfig extends Base<"SsoConfigId"> {
   domains: string[];
 
   @Column("text")
-  ssoType: "oidc" | "saml";
+  ssoType: "oidc";
 
   @Column("text")
   provider: "okta";
@@ -1074,6 +1007,9 @@ export class SsoConfig extends Base<"SsoConfigId"> {
 
   @Column("jsonb")
   config: Record<string, any>;
+
+  @Column("jsonb", { nullable: true })
+  whitelabelConfig: Record<string, any> | null;
 }
 
 export type KeyValueNamespace =
@@ -1087,7 +1023,7 @@ export interface HostingHit {
   hit: boolean;
 }
 
-export type GenericKeyValueId = Brand<string, "GenericKeyValueId">;
+export type GenericKeyValueId = Opaque<string, "GenericKeyValueId">;
 
 @Entity()
 @Index(["namespace", "key"])
@@ -1330,8 +1266,18 @@ export class Comment extends Base<"CommentId"> {
   @Column("text", { nullable: true })
   branchId: BranchId | null;
 
+  @Column("boolean", { default: false })
+  resolved: boolean;
+
   @Column("jsonb")
-  data: CommentData;
+  location: CommentLocation;
+
+  @Column("text")
+  body: string;
+
+  @Index()
+  @Column("text")
+  threadId: CommentThreadId;
 }
 
 @Entity()
@@ -1647,6 +1593,7 @@ export class TeamDiscourseInfo extends Base<"TeamDiscourseInfo"> {
   teamId: TeamId;
 
   @OneToOne(() => Team)
+  @JoinColumn()
   team: Team;
 
   /**

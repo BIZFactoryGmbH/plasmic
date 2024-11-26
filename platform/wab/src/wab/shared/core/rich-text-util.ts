@@ -1,4 +1,8 @@
-import type { Marker, NodeMarker, StyleMarker } from "@/wab/classes";
+import type {
+  Marker,
+  NodeMarker,
+  StyleMarker,
+} from "@/wab/shared/model/classes";
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import "@/wab/client/components/canvas/slate";
 import type { MakeADT } from "ts-adt/MakeADT";
@@ -70,7 +74,16 @@ export function normalizeMarkers(
   return newMarkers;
 }
 
-export const textInlineTags = ["a", "code", "span"];
+export const textInlineTags = [
+  "a",
+  "code",
+  "span",
+  "strong",
+  "i",
+  "em",
+  "sub",
+  "sup",
+];
 export const textBlockTags = [
   "blockquote",
   "h1",

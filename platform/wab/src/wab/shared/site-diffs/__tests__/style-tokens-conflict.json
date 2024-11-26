@@ -661,6 +661,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -674,6 +676,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "Fvmfvud2xzlF": {
@@ -806,6 +809,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -819,6 +824,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "JqBHMKZ47aPh": { "name": "text", "__type": "Text" },
@@ -872,8 +878,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "gDig8cIM4xsM" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "kA6vOLVW_QZX": {
             "name": "children",
@@ -1064,7 +1070,6 @@
             "uuid": "b4-h862E_9aR",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "tWs-LyxsPG4i" },
             "lang": "English",
             "pinnedVariants": {},
@@ -1082,7 +1087,6 @@
             "uuid": "0ynsxQDC1VN5",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "RXEeg_VdeOJ_" },
             "lang": "English",
             "pinnedVariants": {},
@@ -1159,7 +1163,7 @@
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       },
       "projectId": "jktPeioPm3Q1RvAsGWDSCe",
       "version": "3.0.0",
@@ -1866,6 +1870,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -1879,6 +1885,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "Fvmfvud2xzlF": {
@@ -2011,6 +2018,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -2024,6 +2033,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "JqBHMKZ47aPh": { "name": "text", "__type": "Text" },
@@ -2077,8 +2087,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "gDig8cIM4xsM" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "kA6vOLVW_QZX": {
             "name": "children",
@@ -2269,7 +2279,6 @@
             "uuid": "b4-h862E_9aR",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "tWs-LyxsPG4i" },
             "lang": "English",
             "pinnedVariants": {},
@@ -2287,7 +2296,6 @@
             "uuid": "0ynsxQDC1VN5",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "RXEeg_VdeOJ_" },
             "lang": "English",
             "pinnedVariants": {},
@@ -2344,18 +2352,18 @@
           "deAjS-6PrZ1f": { "values": {}, "mixins": [], "__type": "RuleSet" },
           "dGDakIDK8E_u": { "values": {}, "mixins": [], "__type": "RuleSet" },
           "MjmV18_PN72S": {
-            "__type": "StyleToken",
             "name": "style-token-registered",
             "type": "Color",
             "uuid": "TluYLP4jDc8J",
             "value": "white",
             "variantedValues": [],
             "isRegistered": true,
-            "regKey": "style-token-registered"
+            "regKey": "style-token-registered",
+            "__type": "StyleToken"
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     },
     {
@@ -3018,6 +3026,8 @@
             "displayName": "Page Metadata Override",
             "importName": "PlasmicHead",
             "description": "Set page metadata (HTML <head />) to dynamic values.",
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -3031,6 +3041,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "Fvmfvud2xzlF": {
@@ -3163,6 +3174,8 @@
             "displayName": "Data Fetcher",
             "importName": "Fetcher",
             "description": null,
+            "section": null,
+            "thumbnailUrl": null,
             "classNameProp": null,
             "refProp": null,
             "defaultStyles": null,
@@ -3176,6 +3189,7 @@
             "styleSections": false,
             "helpers": null,
             "defaultSlotContents": {},
+            "variants": {},
             "__type": "CodeComponentMeta"
           },
           "JqBHMKZ47aPh": { "name": "text", "__type": "Text" },
@@ -3229,8 +3243,8 @@
             "name": "renderFunc",
             "params": [{ "__ref": "gDig8cIM4xsM" }],
             "allowed": [],
-            "__type": "RenderFuncType",
-            "allowRootWrapper": null
+            "allowRootWrapper": null,
+            "__type": "RenderFuncType"
           },
           "kA6vOLVW_QZX": {
             "name": "children",
@@ -3421,7 +3435,6 @@
             "uuid": "b4-h862E_9aR",
             "width": 1366,
             "height": 768,
-            "viewportHeight": 768,
             "container": { "__ref": "tWs-LyxsPG4i" },
             "lang": "English",
             "pinnedVariants": {},
@@ -3439,7 +3452,6 @@
             "uuid": "0ynsxQDC1VN5",
             "width": 414,
             "height": 736,
-            "viewportHeight": 736,
             "container": { "__ref": "RXEeg_VdeOJ_" },
             "lang": "English",
             "pinnedVariants": {},
@@ -3496,18 +3508,18 @@
           "deAjS-6PrZ1f": { "values": {}, "mixins": [], "__type": "RuleSet" },
           "dGDakIDK8E_u": { "values": {}, "mixins": [], "__type": "RuleSet" },
           "2tEyg1FMcCWM": {
-            "__type": "StyleToken",
             "name": "style-token-registered",
             "type": "Color",
             "uuid": "pYGNpg_j4GgZ",
             "value": "white",
             "variantedValues": [],
             "isRegistered": true,
-            "regKey": "style-token-registered"
+            "regKey": "style-token-registered",
+            "__type": "StyleToken"
           }
         },
         "deps": [],
-        "version": "228-add-allow-root-wrapper"
+        "version": "236-rename-duplicated-components"
       }
     }
   ]

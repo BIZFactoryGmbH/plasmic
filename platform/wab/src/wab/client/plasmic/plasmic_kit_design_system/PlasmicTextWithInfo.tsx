@@ -13,25 +13,19 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
+  Stack as Stack__,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
@@ -39,7 +33,7 @@ import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_token
 import projectcss from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import sty from "./PlasmicTextWithInfo.module.css"; // plasmic-import: -EsDm7v023/css
 
-import InformationsvgIcon from "../q_4_icons/icons/PlasmicIcon__Informationsvg"; // plasmic-import: hqBNVBJWB/icon
+import InformationSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__InformationSvg"; // plasmic-import: hqBNVBJWB/icon
 
 createPlasmicElementProxy;
 
@@ -61,8 +55,8 @@ type ArgPropType = keyof PlasmicTextWithInfo__ArgsType;
 export const PlasmicTextWithInfo__ArgProps = new Array<ArgPropType>("children");
 
 export type PlasmicTextWithInfo__OverridesType = {
-  root?: p.Flex<"div">;
-  icon?: p.Flex<"svg">;
+  root?: Flex__<"div">;
+  icon?: Flex__<"svg">;
 };
 
 export interface DefaultTextWithInfoProps {
@@ -81,20 +75,27 @@ function PlasmicTextWithInfo__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "medium",
@@ -103,9 +104,10 @@ function PlasmicTextWithInfo__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.medium,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -113,7 +115,7 @@ function PlasmicTextWithInfo__RenderFunc(props: {
   });
 
   return (
-    <p.Stack
+    <Stack__
       as={"div"}
       data-plasmic-name={"root"}
       data-plasmic-override={overrides.root}
@@ -131,11 +133,11 @@ function PlasmicTextWithInfo__RenderFunc(props: {
         { [sty.rootmedium]: hasVariant($state, "medium", "medium") }
       )}
     >
-      {p.renderPlasmicSlot({
+      {renderPlasmicSlot({
         defaultContents: "Enter some text",
         value: args.children,
       })}
-      <InformationsvgIcon
+      <InformationSvgIcon
         data-plasmic-name={"icon"}
         data-plasmic-override={overrides.icon}
         className={classNames(projectcss.all, sty.icon, {
@@ -143,7 +145,7 @@ function PlasmicTextWithInfo__RenderFunc(props: {
         })}
         role={"img"}
       />
-    </p.Stack>
+    </Stack__>
   ) as React.ReactElement | null;
 }
 
@@ -164,6 +166,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicTextWithInfo__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

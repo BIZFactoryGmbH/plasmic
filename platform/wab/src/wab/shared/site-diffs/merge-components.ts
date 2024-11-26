@@ -1,51 +1,4 @@
 import {
-  Arg,
-  Component,
-  ensureKnownRenderExpr,
-  ensureKnownTplComponent,
-  ensureKnownTplSlot,
-  ensureKnownTplTag,
-  isKnownRenderExpr,
-  isKnownTplComponent,
-  isKnownTplTag,
-  isKnownVirtualRenderExpr,
-  ObjInst,
-  Param,
-  RenderExpr,
-  Site,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-  Variant,
-  VariantSetting,
-  VirtualRenderExpr,
-} from "@/wab/classes";
-import { meta } from "@/wab/classes-metas";
-import {
-  arrayEq,
-  arrayEqIgnoreOrder,
-  assert,
-  ensure,
-  maybe,
-  remove,
-  removeWhere,
-  switchType,
-  tuple,
-  withoutNils,
-  xIntersect,
-} from "@/wab/common";
-import { CodeComponent, isCodeComponent } from "@/wab/components";
-import { Field } from "@/wab/model/model-meta";
-import { Bundler } from "@/wab/shared/bundler";
-import { flattenComponent } from "@/wab/shared/cached-selectors";
-import {
-  attachRenderableTplSlots,
-  mkCodeComponent,
-} from "@/wab/shared/code-components/code-components";
-import { instUtil } from "@/wab/shared/core/InstUtil";
-import { assertSameInstType } from "@/wab/shared/core/model-tree-util";
-import {
   fillVirtualSlotContents,
   getSlotArgs,
   getSlotParams,
@@ -60,14 +13,79 @@ import {
   mkVariantSetting,
   tryGetBaseVariantSetting,
 } from "@/wab/shared/Variants";
-import { visitComponentRefs } from "@/wab/sites";
+import { Bundler } from "@/wab/shared/bundler";
+import { flattenComponent } from "@/wab/shared/cached-selectors";
+import {
+  attachRenderableTplSlots,
+  mkCodeComponent,
+} from "@/wab/shared/code-components/code-components";
+import {
+  arrayEq,
+  arrayEqIgnoreOrder,
+  assert,
+  ensure,
+  maybe,
+  remove,
+  removeWhere,
+  switchType,
+  tuple,
+  withoutNils,
+  xIntersect,
+  xSetDefault,
+} from "@/wab/shared/common";
+import { CodeComponent, isCodeComponent } from "@/wab/shared/core/components";
+import { ChangeRecorder } from "@/wab/shared/core/observable-model";
+import { visitComponentRefs } from "@/wab/shared/core/sites";
 import {
   fixParentPointers,
   mkTplComponentX,
   tplChildren,
   trackComponentRoot,
   trackComponentSite,
-} from "@/wab/tpls";
+} from "@/wab/shared/core/tpls";
+import { instUtil } from "@/wab/shared/model/InstUtil";
+import {
+  Arg,
+  Component,
+  ObjInst,
+  Param,
+  RenderExpr,
+  Site,
+  TplComponent,
+  TplNode,
+  TplSlot,
+  TplTag,
+  Variant,
+  VariantSetting,
+  VirtualRenderExpr,
+  ensureKnownRenderExpr,
+  ensureKnownTplComponent,
+  ensureKnownTplSlot,
+  ensureKnownTplTag,
+  isKnownRenderExpr,
+  isKnownTplComponent,
+  isKnownTplTag,
+  isKnownVirtualRenderExpr,
+} from "@/wab/shared/model/classes";
+import { meta } from "@/wab/shared/model/classes-metas";
+import { Field } from "@/wab/shared/model/model-meta";
+import { assertSameInstType } from "@/wab/shared/model/model-tree-util";
+import {
+  AutoReconciliation,
+  DirectConflict,
+  SpecialDirectConflict,
+  cloneFieldValueToMergedSite,
+  cloneObjInstToMergedSite,
+  deriveKeyFunc,
+  getArrayKey,
+  getDirectConflicts,
+} from "@/wab/shared/site-diffs/merge-core";
+import {
+  FieldConflictDescriptorMeta,
+  MergeSpecialFieldHandler,
+  ModelConflictsMeta,
+  modelConflictsMeta,
+} from "@/wab/shared/site-diffs/model-conflicts-meta";
 import {
   findLastIndex,
   groupBy,
@@ -78,22 +96,6 @@ import {
   uniq,
   uniqBy,
 } from "lodash";
-import {
-  AutoReconciliation,
-  cloneFieldValueToMergedSite,
-  cloneObjInstToMergedSite,
-  deriveKeyFunc,
-  DirectConflict,
-  getArrayKey,
-  getDirectConflicts,
-  SpecialDirectConflict,
-} from "./merge-core";
-import {
-  FieldConflictDescriptorMeta,
-  MergeSpecialFieldHandler,
-  modelConflictsMeta,
-  ModelConflictsMeta,
-} from "./model-conflicts-meta";
 
 function getCompPath(comp: Component, bundler: Bundler) {
   return [
@@ -256,10 +258,12 @@ function deriveKeyFuncFromClassNameAndField<
 function calcRootToNodesPaths(
   node: TplNode,
   bundler: Bundler,
+  processNode: (node: TplNode, path: string[]) => void = () => null,
   currPath = ["tplTree"] as string[],
   nodeToPath = new Map<TplNode, string[]>()
 ) {
   nodeToPath.set(node, currPath);
+  processNode(node, currPath);
 
   switchType(node)
     .when(TplTag, (_node) =>
@@ -267,6 +271,7 @@ function calcRootToNodesPaths(
         calcRootToNodesPaths(
           child,
           bundler,
+          processNode,
           [
             ...currPath,
             "children",
@@ -285,6 +290,7 @@ function calcRootToNodesPaths(
         calcRootToNodesPaths(
           child,
           bundler,
+          processNode,
           [
             ...currPath,
             "defaultContents",
@@ -319,6 +325,7 @@ function calcRootToNodesPaths(
             calcRootToNodesPaths(
               child,
               bundler,
+              processNode,
               [
                 ...currPath,
                 "vsettings",
@@ -516,64 +523,98 @@ export const tryMergeComponents: MergeSpecialFieldHandler<Site> = (
 
       // Check for cycles of disconnected nodes after updating the parents
       const checkAndFixCycle = () => {
-        const reachableTplUuids = new Set(
-          flattenComponent(mergedComp).map((tpl) => tpl.uuid)
-        );
-        const tplInDisconnectedCycle = (tplAnc: TplNode) => {
-          if (
-            reachableTplUuids.has(tplAnc.uuid) ||
-            !tplInAByUuid.has(tplAnc.uuid) ||
-            !tplInBByUuid.has(tplAnc.uuid)
-          ) {
-            return false;
-          }
-          let tpl: TplNode | null | undefined = cloneInst(tplAnc, siteAncestor);
-          const seenUuids = new Set<string>();
-          while (tpl) {
-            if (seenUuids.has(tpl.uuid)) {
-              return true;
-            }
-            seenUuids.add(tpl.uuid);
-            tpl = tpl.parent;
-          }
-          return false;
-        };
-        let maybeDisconnectedTplInAnc = flattenComponent(ancestorComp).find(
-          tplInDisconnectedCycle
-        );
-        // `cloneInst` will just get the matching object in the merged site as
-        // it already existed
-        let maybeDisconnectedTpl =
-          maybeDisconnectedTplInAnc &&
-          cloneInst(maybeDisconnectedTplInAnc, siteAncestor);
-
-        // We need to find the first node in the cycle that has moved
-        while (
-          maybeDisconnectedTpl &&
-          maybeDisconnectedTplInAnc &&
-          maybeDisconnectedTpl.parent?.uuid ===
-            maybeDisconnectedTplInAnc.parent?.uuid
-        ) {
-          maybeDisconnectedTpl = maybeDisconnectedTpl.parent ?? undefined;
-          maybeDisconnectedTplInAnc =
-            maybeDisconnectedTplInAnc.parent ?? undefined;
-          continue;
-        }
-
-        if (
-          maybeDisconnectedTpl &&
-          maybeDisconnectedTplInAnc &&
-          tplInDisconnectedCycle(maybeDisconnectedTplInAnc)
-        ) {
-          // Undo the change so the node is no longer disconnected
-          updateParent(maybeDisconnectedTpl, maybeDisconnectedTplInAnc, (tpl) =>
-            cloneInst(tpl, siteAncestor)
+        while (true) {
+          const reachableTplUuids = new Set(
+            flattenComponent(mergedComp).map((tpl) => tpl.uuid)
           );
-          // Repeat the cycle check to see if there are more nodes to fix
+          const tplInDisconnectedCycle = (tplAnc: TplNode) => {
+            if (
+              reachableTplUuids.has(tplAnc.uuid) ||
+              !tplInAByUuid.has(tplAnc.uuid) ||
+              !tplInBByUuid.has(tplAnc.uuid)
+            ) {
+              return false;
+            }
+            let tpl: TplNode | null | undefined = cloneInst(
+              tplAnc,
+              siteAncestor
+            );
+            const seenUuids = new Set<string>();
+            while (tpl) {
+              if (seenUuids.has(tpl.uuid)) {
+                return true;
+              }
+              seenUuids.add(tpl.uuid);
+              tpl = tpl.parent;
+            }
+            return false;
+          };
+          let maybeDisconnectedTplInAnc = flattenComponent(ancestorComp).find(
+            tplInDisconnectedCycle
+          );
+          // `cloneInst` will just get the matching object in the merged site as
+          // it already existed
+          let maybeDisconnectedTpl =
+            maybeDisconnectedTplInAnc &&
+            cloneInst(maybeDisconnectedTplInAnc, siteAncestor);
+
+          // We need to find the first node in the cycle that has moved
+          while (
+            maybeDisconnectedTpl &&
+            maybeDisconnectedTplInAnc &&
+            maybeDisconnectedTpl.parent?.uuid ===
+              maybeDisconnectedTplInAnc.parent?.uuid
+          ) {
+            maybeDisconnectedTpl = maybeDisconnectedTpl.parent ?? undefined;
+            maybeDisconnectedTplInAnc =
+              maybeDisconnectedTplInAnc.parent ?? undefined;
+          }
+
+          if (
+            maybeDisconnectedTpl &&
+            maybeDisconnectedTplInAnc &&
+            tplInDisconnectedCycle(maybeDisconnectedTplInAnc)
+          ) {
+            // Undo the change so the node is no longer disconnected
+            updateParent(
+              maybeDisconnectedTpl,
+              maybeDisconnectedTplInAnc,
+              (tpl) => cloneInst(tpl, siteAncestor)
+            );
+            // Repeat the cycle check to see if there are more nodes to fix
+            continue;
+          }
+
+          break;
+        }
+      };
+
+      // In the context of the merge, we need to handle ancestors in a special way
+      // instead of only looking at the parent, we need to handle the case where
+      // the parent is a component and the tpl has moved between the slots that
+      // component has.
+      const isSameParent = (tplA: TplNode, tplB: TplNode) => {
+        // If the parent is different, the ancestor definitely changed
+        if (tplA.parent?.uuid !== tplB.parent?.uuid) {
+          return false;
+        }
+        // If we are dealing with elements without parent and they match in the previous
+        // condition, we can assume equality
+        if (!tplA.parent || !tplB.parent) {
           return true;
         }
-
-        return false;
+        // If neither of the parents are components, we can assume equality
+        if (
+          !isKnownTplComponent(tplA.parent) ||
+          !isKnownTplComponent(tplB.parent)
+        ) {
+          return true;
+        }
+        // If we are dealing with the same parent component, we will check the param
+        // that contains each of them to determine equality
+        const argContainingA = $$$(tplA.parent).getArgContainingTpl(tplA);
+        const argContainingB = $$$(tplB.parent).getArgContainingTpl(tplB);
+        return argContainingA.param.uuid === argContainingB.param.uuid;
       };
 
       for (const tplMerged of flattenComponent(mergedComp)) {
@@ -583,9 +624,9 @@ export const tryMergeComponents: MergeSpecialFieldHandler<Site> = (
         if (tplA && tplB && tplAnc) {
           if (
             !!tplAnc.parent &&
-            tplAnc.parent?.uuid !== tplA.parent?.uuid &&
-            tplAnc.parent?.uuid !== tplB.parent?.uuid &&
-            tplA.parent?.uuid !== tplB.parent?.uuid
+            !isSameParent(tplAnc, tplA) &&
+            !isSameParent(tplAnc, tplB) &&
+            !isSameParent(tplA, tplB)
           ) {
             // Both branches moved the same element to different locations
             const pathStr = JSON.stringify(mergedSiteCtx.path);
@@ -605,7 +646,7 @@ export const tryMergeComponents: MergeSpecialFieldHandler<Site> = (
                     cloneObjInstToMergedSite(tpl, siteB, mergedSite, bundler)
                   );
                 }
-                while (checkAndFixCycle());
+                checkAndFixCycle();
               },
             };
 
@@ -620,79 +661,80 @@ export const tryMergeComponents: MergeSpecialFieldHandler<Site> = (
             } else {
               directConflicts.push(conf);
             }
-          } else if (
-            !!tplAnc.parent &&
-            tplA.parent?.uuid !== tplMerged.parent?.uuid
-          ) {
+          } else if (!!tplAnc.parent && !isSameParent(tplA, tplAnc)) {
             updateParent(tplMerged, tplA, (tpl) => cloneInst(tpl, siteA));
-          } else if (
-            !!tplAnc.parent &&
-            tplB.parent?.uuid !== tplMerged.parent?.uuid
-          ) {
+          } else if (!!tplAnc.parent && !isSameParent(tplB, tplAnc)) {
             updateParent(tplMerged, tplB, (tpl) => cloneInst(tpl, siteB));
           }
         }
       }
 
-      while (checkAndFixCycle());
+      checkAndFixCycle();
 
       const nodeToPathAnc = calcRootToNodesPaths(ancestorComp.tplTree, bundler);
       const nodeToPathA = calcRootToNodesPaths(compA.tplTree, bundler);
       const nodeToPathB = calcRootToNodesPaths(compB.tplTree, bundler);
-      const nodeToPathMerged = calcRootToNodesPaths(
-        mergedComp.tplTree,
-        bundler
-      );
 
-      for (const tplMerged of flattenComponent(mergedComp)) {
-        const tplA = tplInAByUuid.get(tplMerged.uuid);
-        const tplB = tplInBByUuid.get(tplMerged.uuid);
-        const tplAnc = tplInAncestorByUuid.get(tplMerged.uuid);
-        if (tplA && tplB && tplAnc) {
-          const nodePathAnc = ensure(
-            nodeToPathAnc.get(tplAnc),
-            "Path to tplNode must exist."
-          );
-          const nodePathA = ensure(
-            nodeToPathA.get(tplA),
-            "Path to tplNode must exist."
-          );
-          const nodePathB = ensure(
-            nodeToPathB.get(tplB),
-            "Path to tplNode must exist."
-          );
-          const nodePathMerged = ensure(
-            nodeToPathMerged.get(tplMerged),
-            "Path to tplNode must exist."
-          );
-          directConflicts.push(
-            ...getDirectConflicts(
-              {
-                node: tplAnc,
-                site: siteAncestorCtx.site,
-                path: [...getCompPath(ancestorComp, bundler), ...nodePathAnc],
-              },
-              {
-                node: tplA,
-                site: siteACtx.site,
-                path: [...getCompPath(compA, bundler), ...nodePathA],
-              },
-              {
-                node: tplB,
-                site: siteBCtx.site,
-                path: [...getCompPath(compB, bundler), ...nodePathB],
-              },
-              {
-                node: tplMerged,
-                site: mergedSiteCtx.site,
-                path: [...getCompPath(mergedComp, bundler), ...nodePathMerged],
-              },
-              bundler,
-              picks
-            )
-          );
+      // At the current moment of execution, we have changed instances of tplNodes present
+      // in mergedComp.tplTree to detach themselves from their parent and updated their parent
+      // to point to the correct parent. But we haven't attached new nodes to their parent in
+      // the mergedComp.tplTree. This will be done by `mergeTplNodeChildren` which is called through
+      // `getDirectConflicts`. Since it's possible that old components have moved to be children
+      // of new components we need to traverse the children of the new components and execute
+      // `getDirectConflicts`. We do it during the calculation of the rootToNodesPaths so that
+      // we update the tree and descend into the correct children
+      calcRootToNodesPaths(
+        mergedComp.tplTree,
+        bundler,
+        (tplMerged, nodePathMerged) => {
+          const tplA = tplInAByUuid.get(tplMerged.uuid);
+          const tplB = tplInBByUuid.get(tplMerged.uuid);
+          const tplAnc = tplInAncestorByUuid.get(tplMerged.uuid);
+          if (tplA && tplB && tplAnc) {
+            const nodePathAnc = ensure(
+              nodeToPathAnc.get(tplAnc),
+              "Path to tplNode must exist."
+            );
+            const nodePathA = ensure(
+              nodeToPathA.get(tplA),
+              "Path to tplNode must exist."
+            );
+            const nodePathB = ensure(
+              nodeToPathB.get(tplB),
+              "Path to tplNode must exist."
+            );
+            directConflicts.push(
+              ...getDirectConflicts(
+                {
+                  node: tplAnc,
+                  site: siteAncestorCtx.site,
+                  path: [...getCompPath(ancestorComp, bundler), ...nodePathAnc],
+                },
+                {
+                  node: tplA,
+                  site: siteACtx.site,
+                  path: [...getCompPath(compA, bundler), ...nodePathA],
+                },
+                {
+                  node: tplB,
+                  site: siteBCtx.site,
+                  path: [...getCompPath(compB, bundler), ...nodePathB],
+                },
+                {
+                  node: tplMerged,
+                  site: mergedSiteCtx.site,
+                  path: [
+                    ...getCompPath(mergedComp, bundler),
+                    ...nodePathMerged,
+                  ],
+                },
+                bundler,
+                picks
+              )
+            );
+          }
         }
-      }
+      );
 
       for (const tplMerged of flattenComponent(mergedComp)) {
         const tplA = tplInAByUuid.get(tplMerged.uuid);
@@ -1025,8 +1067,12 @@ export const mergeTplNodeChildren: MergeSpecialFieldHandler<TplNode> = (
       const previousOrder = computeOrderOfCommonNodes(ancArgs);
       const leftOrder = computeOrderOfCommonNodes(leftArgs);
       const rightOrder = computeOrderOfCommonNodes(rightArgs);
+
+      // Even tough merged is initialized with the ancestor state, at this point reparenting
+      // from `updateParent` was already done, so it's not recommended to assume any similarity
+      // with the previousOrder
       let finalOrder: typeof previousOrder | "conflict" =
-        computeOrderOfCommonNodes(getSlotArgs(merged));
+        computeOrderOfCommonNodes(getFilteredSlotArgs(merged));
 
       // Detect conflict if the relative order of the same elements changed in
       // more than one branch
@@ -1036,9 +1082,9 @@ export const mergeTplNodeChildren: MergeSpecialFieldHandler<TplNode> = (
         !isEqual(leftOrder, rightOrder)
       ) {
         finalOrder = "conflict";
-      } else if (!isEqual(finalOrder, leftOrder)) {
+      } else if (!isEqual(previousOrder, leftOrder)) {
         finalOrder = leftOrder;
-      } else if (!isEqual(finalOrder, rightOrder)) {
+      } else if (!isEqual(previousOrder, rightOrder)) {
         finalOrder = rightOrder;
       }
 
@@ -1465,12 +1511,36 @@ export function fixDuplicatedCodeComponents(mergedSite: Site) {
     const paramsByName = groupBy(component.params, (p) => p.variable.name);
     visitComponentRefs(mergedSite, component, (tplComponent) => {
       tplComponent.vsettings.forEach((vs) => {
+        // Since code components can be reinstantied and new instance of params can appear
+        // in the site, we can arrive at situations where a param is duplicated in the same
+        // variant setting. For the values where there is an already valid param, we keep it
+        // and remove the others. But if there is no valid param, we try to convert the old
+        // params to the new ones.
+        const validArgsVarNameSet = new Set(
+          vs.args
+            .filter(
+              (arg) => paramsByName[arg.param.variable.name]?.[0] === arg.param
+            )
+            .map((arg) => arg.param.variable.name)
+        );
+
+        removeWhere(vs.args, (arg) => {
+          const name = arg.param.variable.name;
+          const finalParam = paramsByName[name]?.[0];
+          return validArgsVarNameSet.has(name) && arg.param !== finalParam;
+        });
+
         vs.args.forEach((arg) => {
           const name = arg.param.variable.name;
           const finalParam = paramsByName[name]?.[0];
           if (finalParam && finalParam !== arg.param) {
             arg.param = finalParam;
           }
+        });
+
+        removeWhere(vs.args, (arg) => {
+          const name = arg.param.variable.name;
+          return !paramsByName[name]?.[0];
         });
       });
     });
@@ -1644,10 +1714,48 @@ export const mergeComponentVariants: MergeSpecialFieldHandler<Component> = (
   return [];
 };
 
-export function fixVirtualSlotArgs(mergedSite: Site) {
+export function fixVirtualSlotArgs(mergedSite: Site, recorder: ChangeRecorder) {
   const tplMgr = new TplMgr({ site: mergedSite });
   const fixedComponents = new Set<Component>();
   const allLocalComponents = new Set(mergedSite.components);
+  let lastProcessedChange = 0;
+  const componentToUpdatedTplSlots = new Map<Component, Set<TplSlot>>();
+  const newComponents = new Set<Component>();
+  const processNewChanges = () => {
+    const allChanges = recorder.getChangesSoFarImmutable();
+    for (
+      let changeIdx = lastProcessedChange;
+      changeIdx < allChanges.length;
+      changeIdx++
+    ) {
+      const change = allChanges[changeIdx];
+      const component =
+        change.path &&
+        (change.path.find(
+          (node) => node.inst instanceof Component && node.field === "tplTree"
+        )?.inst as Component | undefined);
+      const tplSlot =
+        change.path &&
+        (change.path.find(
+          (node) =>
+            node.inst instanceof TplSlot && node.field === "defaultContents"
+        )?.inst as TplSlot | undefined);
+      if (component && tplSlot) {
+        xSetDefault(componentToUpdatedTplSlots, component, () => new Set()).add(
+          tplSlot
+        );
+      }
+      if (
+        change.type == "array-splice" &&
+        change.changeNode.inst === mergedSite &&
+        change.changeNode.field === "components"
+      ) {
+        change.added.forEach((c) => newComponents.add(c));
+      }
+    }
+    lastProcessedChange = allChanges.length;
+  };
+  processNewChanges();
   const fixComponent = (c: Component) => {
     if (fixedComponents.has(c) || !allLocalComponents.has(c)) {
       return;
@@ -1658,10 +1766,35 @@ export function fixVirtualSlotArgs(mergedSite: Site) {
         // Make sure to fix the virtual slots of the instantiated component
         // before updating the referencing `TplComponent`
         fixComponent(tpl.component);
-        fillVirtualSlotContents(tplMgr, tpl);
+        // Only fill the virtual slot args for `TplSlot`s that were changed somehow
+        // (and TplSlots for new components).
+        processNewChanges();
+        const updatedTplSlots = xSetDefault(
+          componentToUpdatedTplSlots,
+          tpl.component,
+          () => new Set()
+        );
+        if (newComponents.has(tpl.component)) {
+          fillVirtualSlotContents(tplMgr, tpl);
+        } else if (updatedTplSlots.size > 0) {
+          fillVirtualSlotContents(
+            tplMgr,
+            tpl,
+            Array.from(updatedTplSlots.keys())
+          );
+        }
         const slots = getTplSlots(tpl.component);
         for (const slot of slots) {
           const arg = $$$(tpl).getSlotArgForParam(slot.param);
+          if (arg && isKnownRenderExpr(arg.expr)) {
+            // Since we try to fill only the tplSlots that were changed, it's possible that some slot expr
+            // was detached while processing the merge of the different sites. So we will ensure that the child
+            // nodes are properly parented to the tpl.
+            arg.expr.tpl.forEach((child) => {
+              child.parent = tpl;
+            });
+          }
+
           if (
             arg &&
             isKnownRenderExpr(arg.expr) &&

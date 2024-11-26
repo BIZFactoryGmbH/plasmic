@@ -1,11 +1,12 @@
 import { useApi } from "@/wab/client/contexts/AppContexts";
-import { spawn } from "@/wab/common";
+import { spawn } from "@/wab/shared/common";
 import {
   ApiCmseRow,
   CmsDatabaseId,
   CmsRowId,
   CmsRowRevisionId,
   CmsTableId,
+  CmsMetaType,
 } from "@/wab/shared/ApiSchema";
 import useSWR, { useSWRConfig } from "swr";
 
@@ -43,7 +44,7 @@ export function useCmsRows(databaseId: CmsDatabaseId, tableId?: CmsTableId) {
         return [];
       }
       const firstTextField = table.schema.fields.find((field, _) =>
-        ["text", "long-text"].includes(field.type)
+        [CmsMetaType.TEXT, CmsMetaType.LONG_TEXT].includes(field.type)
       )?.identifier;
       return await api.listCmsRows(
         table.id,

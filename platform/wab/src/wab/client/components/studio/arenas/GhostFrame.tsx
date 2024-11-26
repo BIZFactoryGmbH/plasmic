@@ -1,3 +1,4 @@
+import sty from "@/wab/client/components/studio/arenas/GhostFrame.module.sass";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import { plasmicIFrameMouseDownEvent } from "@/wab/client/definitions/events";
 import {
@@ -5,7 +6,7 @@ import {
   useZoomStyledRef,
 } from "@/wab/client/hooks/useScaledElementRef";
 import PlusIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Plus";
-import { cx, mkShortId } from "@/wab/common";
+import { cx, mkShortId } from "@/wab/shared/common";
 import { Dropdown, Popover, Tooltip } from "antd";
 import { isString } from "lodash";
 import React, {
@@ -17,7 +18,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import sty from "./GhostFrame.module.sass";
 
 const GHOST_FRAME_MIN_DIM = 80;
 const GHOST_FRAME_MAX_DIM = 1200;

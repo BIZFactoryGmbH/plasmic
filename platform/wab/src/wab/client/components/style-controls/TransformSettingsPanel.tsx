@@ -1,15 +1,15 @@
 import { LabeledItemRow } from "@/wab/client/components/sidebar/sidebar-helpers";
 import { SidebarSection } from "@/wab/client/components/sidebar/SidebarSection";
+import StyleToggleButton from "@/wab/client/components/style-controls/StyleToggleButton";
+import StyleToggleButtonGroup from "@/wab/client/components/style-controls/StyleToggleButtonGroup";
 import DimTokenSpinner from "@/wab/client/components/widgets/DimTokenSelector";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { ensure } from "@/wab/common";
-import { parseCssNumericNew } from "@/wab/css";
-import { getSliderConfig } from "@/wab/transform-utils";
+import { ensure } from "@/wab/shared/common";
+import { parseCssNumericNew } from "@/wab/shared/css";
+import { getSliderConfig } from "@/wab/shared/core/transform-utils";
 import { Menu, Slider } from "antd";
 import { observer } from "mobx-react";
 import React, { useEffect } from "react";
-import StyleToggleButton from "./StyleToggleButton";
-import StyleToggleButtonGroup from "./StyleToggleButtonGroup";
 
 interface TransformSettingsPanelProps {
   selfPerspective?: string;

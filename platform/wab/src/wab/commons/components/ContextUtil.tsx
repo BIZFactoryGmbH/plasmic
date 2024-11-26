@@ -1,11 +1,10 @@
-import { capitalizeFirst } from "@/wab/strs";
-import * as React from "react";
 import {
   buildWrapperName,
   getComponentName,
   UnwrappableComponent,
-} from "./HocUtil";
-//import {Omit} from "utility-types";
+} from "@/wab/commons/components/HocUtil";
+import { capitalizeFirst } from "@/wab/shared/strs";
+import * as React from "react";
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 

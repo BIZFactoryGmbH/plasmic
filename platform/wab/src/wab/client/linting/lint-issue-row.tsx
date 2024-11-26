@@ -1,14 +1,15 @@
-import { Component, TplNode } from "@/wab/classes";
 import ListItem from "@/wab/client/components/ListItem";
 import { DataSourceOpExprSummary } from "@/wab/client/components/sidebar-tabs/DataSource/DataSourceOpPicker";
 import { Icon } from "@/wab/client/components/widgets/Icon";
 import { NOT_RENDERED_ICON } from "@/wab/client/icons";
 import TreeIcon from "@/wab/client/plasmic/plasmic_kit/PlasmicIcon__Tree";
-import ResponsivenessIcon from "@/wab/client/plasmic/plasmic_kit_design_system/icons/PlasmicIcon__Responsiveness";
 import UnlockIcon from "@/wab/client/plasmic/plasmic_kit_design_system/PlasmicIcon__Unlock";
+import ResponsivenessIcon from "@/wab/client/plasmic/plasmic_kit_design_system/icons/PlasmicIcon__Responsiveness";
 import { useStudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
-import { spawn } from "@/wab/common";
-import { isPageComponent } from "@/wab/components";
+import { makeVariantName } from "@/wab/shared/Variants";
+import { spawn } from "@/wab/shared/common";
+import { isPageComponent } from "@/wab/shared/core/components";
+import { isTplNamable, isTplSlot, summarizeTpl } from "@/wab/shared/core/tpls";
 import {
   InvalidDomNestingLintIssue,
   InvalidTplNestingLintIssue,
@@ -18,12 +19,11 @@ import {
   NonCssScreenVariantOverrideLintIssue,
   UnprotectedDataQueryLintIssue,
 } from "@/wab/shared/linting/lint-types";
+import { Component, TplNode } from "@/wab/shared/model/classes";
+import { capitalizeFirst } from "@/wab/shared/strs";
 import { Popover } from "antd";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, { ReactNode } from "react";
-import { makeVariantName } from "src/wab/shared/Variants";
-import { capitalizeFirst } from "src/wab/strs";
-import { isTplNamable, isTplSlot, summarizeTpl } from "src/wab/tpls";
 
 export function renderLintIssue(issue: LintIssue) {
   if (issue.type === "non-css-screen-variant-override") {
@@ -75,7 +75,7 @@ function renderIssueListItem(
   elaboration: ReactNode = "hello"
 ) {
   return (
-    <ListItem hideIcon style={{ paddingTop: 8, paddingBottom: 8 }}>
+    <ListItem hideIcon style={{ paddingTop: 8, paddingBottom: 8, height: 48 }}>
       <Popover
         trigger={"click"}
         content={<div style={{ maxWidth: 300 }}>{elaboration}</div>}
@@ -178,6 +178,7 @@ const ScreenVariantOverrideLintIssueRow = observer(
     issue: NonCssScreenVariantOverrideLintIssue;
   }) {
     const { issue } = props;
+    const studioCtx = useStudioCtx();
     const content = (
       <>
         <TplLink component={issue.component} tpl={issue.tpl} /> overrides{" "}
@@ -188,10 +189,19 @@ const ScreenVariantOverrideLintIssueRow = observer(
           : "text content"}{" "}
         in responsive variant{" "}
         {issue.vs.variants.length === 1 ? (
-          <strong>{makeVariantName({ variant: issue.vs.variants[0] })}</strong>
+          <strong>
+            {makeVariantName({
+              variant: issue.vs.variants[0],
+              site: studioCtx.site,
+            })}
+          </strong>
         ) : (
           `combination ${issue.vs.variants
-            .map((v) => <strong>{makeVariantName({ variant: v })}</strong>)
+            .map((v) => (
+              <strong>
+                {makeVariantName({ variant: v, site: studioCtx.site })}
+              </strong>
+            ))
             .join(", ")}`
         )}
         .

@@ -82,6 +82,8 @@
           "displayName": null,
           "importName": null,
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -95,6 +97,7 @@
           "styleSections": true,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "30184006": { "name": "name", "uuid": "iy-0P5ktJM", "__type": "Var" },
@@ -357,7 +360,6 @@
           "uuid": "uNBGiQklqHWjy",
           "width": 1440,
           "height": 768,
-          "viewportHeight": 1024,
           "container": { "__ref": "34512054" },
           "lang": "English",
           "pinnedVariants": {},
@@ -420,9 +422,9 @@
             { "__ref": "34512216" }
           ],
           "layout": null,
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "34512065": {
           "name": "Default Typography",
@@ -955,6 +957,8 @@
           "displayName": null,
           "importName": null,
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -968,6 +972,7 @@
           "styleSections": true,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35978008": {
@@ -1040,6 +1045,8 @@
           "displayName": null,
           "importName": null,
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -1053,6 +1060,7 @@
           "styleSections": true,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "35978013": {
@@ -1074,8 +1082,8 @@
         "35978015": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35978016": {
           "param": { "__ref": "35978004" },
@@ -1107,8 +1115,8 @@
         "35978022": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "35978023": {
           "param": { "__ref": "35978009" },
@@ -1249,7 +1257,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

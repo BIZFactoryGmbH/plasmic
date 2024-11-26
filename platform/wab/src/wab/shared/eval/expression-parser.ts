@@ -1,3 +1,7 @@
+import { arrayEq, unexpected, xUnion } from "@/wab/shared/common";
+import { asCode, isRealCodeExpr } from "@/wab/shared/core/exprs";
+import { DEVFLAGS } from "@/wab/shared/devflags";
+import { ENABLED_GLOBALS } from "@/wab/shared/eval";
 import {
   Expr,
   isKnownCustomCode,
@@ -7,11 +11,7 @@ import {
   isKnownTemplatedString,
   ObjectPath,
   TemplatedString,
-} from "@/wab/classes";
-import { arrayEq, unexpected, xUnion } from "@/wab/common";
-import { DEVFLAGS } from "@/wab/devflags";
-import { asCode, isRealCodeExpr } from "@/wab/exprs";
-import { ENABLED_GLOBALS } from "@/wab/shared/eval";
+} from "@/wab/shared/model/classes";
 import {
   isBlockScope,
   isScope,
@@ -19,7 +19,7 @@ import {
   parseJsCode,
   writeJs,
 } from "@/wab/shared/parser-utils";
-import { validJsIdentifierRegex } from "@/wab/shared/utils/regex-valid-js-identifier";
+import { isValidJsIdentifier } from "@/wab/shared/utils/regex-js-identifier";
 import { ancestor as traverse } from "acorn-walk";
 import type * as ast from "estree";
 
@@ -176,7 +176,9 @@ export function parseCodeExpression(code: string): ParsedExprInfo {
         break;
       case "ArrayPattern":
         node.elements.forEach((elt) => {
-          if (elt) declarePattern(elt, parent);
+          if (elt) {
+            declarePattern(elt, parent);
+          }
         });
         break;
       case "RestElement":
@@ -249,7 +251,9 @@ export function parseCodeExpression(code: string): ParsedExprInfo {
     },
     Class: declareClass,
     TryStatement: (node) => {
-      if (node.handler == null || node.handler.param === null) return;
+      if (node.handler == null || node.handler.param === null) {
+        return;
+      }
       const handler: WithLocals<ast.CatchClause> = node.handler;
       handler.locals = handler.locals || {};
       declarePattern(node.handler.param, node.handler);
@@ -262,8 +266,10 @@ export function parseCodeExpression(code: string): ParsedExprInfo {
     node: ast.Identifier,
     parents: WithLocals<ast.Node>[]
   ) => {
-    let name = node.name;
-    if (name === "undefined") return;
+    const name = node.name;
+    if (name === "undefined") {
+      return;
+    }
     for (const parent of parents) {
       if (name === "arguments" && declaresArguments(parent)) {
         return;
@@ -316,7 +322,7 @@ export function parseCodeExpression(code: string): ParsedExprInfo {
     Identifier: identifier,
     ThisExpression: function (_node, parents) {
       for (let i = 0; i < parents.length; i++) {
-        let parent = parents[i];
+        const parent = parents[i];
         if (
           parent.type === "FunctionExpression" ||
           parent.type === "FunctionDeclaration"
@@ -463,7 +469,7 @@ export function pathToString(path: (string | number)[]) {
         if (idx == 0) {
           return s;
         }
-        if (typeof s === "number" || !s.match(validJsIdentifierRegex)) {
+        if (typeof s === "number" || !isValidJsIdentifier(s)) {
           return `[${JSON.stringify(s)}]`;
         }
         return `.${s}`;

@@ -23,9 +23,9 @@
           "defaultStyle": { "__ref": "QgrK_PWpQqvV" },
           "styles": [],
           "layout": { "__ref": "yaHrQ-02eQGX" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "JrqPjRTkO9JE": {
           "uuid": "RISPADoBEG1n",
@@ -3541,6 +3541,8 @@
           "displayName": "Select",
           "importName": "AntdSelect",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3554,6 +3556,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "placeholder": "Select..." },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "PxJuxrCsEItC": {
@@ -3626,6 +3629,8 @@
           "displayName": "Option",
           "importName": "AntdOption",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3639,6 +3644,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "children": "Option" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "MBYmMRPkwVk3": {
@@ -3715,6 +3721,8 @@
           "displayName": "Option Group",
           "importName": "AntdOptionGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3748,6 +3756,7 @@
             ],
             "label": "Group label"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "GO4yVrZOYcR0": {
@@ -3951,6 +3960,8 @@
           "displayName": "Table",
           "importName": "AntdTable",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -3964,6 +3975,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "bmV9FDhpqyLM": {
@@ -4120,6 +4132,8 @@
           "displayName": "Column",
           "importName": "AntdColumn",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4133,6 +4147,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "title": "Column Name" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "7rqi6qgzK_V8": {
@@ -4209,6 +4224,8 @@
           "displayName": "Column Group",
           "importName": "AntdColumnGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4222,6 +4239,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "title": "Column Group Name" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "iy8w31Omo_tl": {
@@ -4385,6 +4403,8 @@
           "displayName": "Checkbox",
           "importName": "AntdCheckbox",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4400,6 +4420,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Checkbox" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "nd-D97FTtgrU": {
@@ -4523,6 +4544,8 @@
           "displayName": "Checkbox Group",
           "importName": "AntdCheckboxGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4536,6 +4559,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "GnxvOatYHa_l": {
@@ -4658,6 +4682,8 @@
           "displayName": "Switch",
           "importName": "AntdSwitch",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4671,6 +4697,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "i1zBSMdurFBw": {
@@ -4783,6 +4810,8 @@
           "displayName": "Radio",
           "importName": "AntdRadio",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4798,6 +4827,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Radio" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Qne_AY5uo-ZC": {
@@ -4910,6 +4940,8 @@
           "displayName": "Radio Button",
           "importName": "AntdRadioButton",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -4925,6 +4957,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Radio" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "kJrJ3JgWNGQ1": {
@@ -5108,6 +5141,8 @@
           "displayName": "Radio Group",
           "importName": "AntdRadioGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "6wmhnPC6Dq9Z" },
@@ -5140,6 +5175,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4I1s3BzRJzc4": {
@@ -5512,6 +5548,8 @@
           "displayName": "Modal",
           "importName": "AntdModal",
           "description": "[See tutorial video](https://www.youtube.com/watch?v=TkjxNJIFun8)",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5533,6 +5571,7 @@
               "props": { "children": { "type": "text", "value": "Show modal" } }
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Ley-3E82VZbj": {
@@ -5829,6 +5868,8 @@
           "displayName": "Button",
           "importName": "AntdButton",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -5844,6 +5885,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Button" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "SRibg7z_6Lt2": {
@@ -6000,6 +6042,8 @@
           "displayName": "Menu",
           "importName": "AntdMenu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6026,6 +6070,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "3-48dTGndjJV": {
@@ -6178,6 +6223,8 @@
           "displayName": "Menu Item",
           "importName": "AntdMenuItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6193,6 +6240,7 @@
           "defaultSlotContents": {
             "children": [{ "type": "text", "value": "Menu item" }]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "ehT5UTR7iJEa": {
@@ -6269,6 +6317,8 @@
           "displayName": "Item Group",
           "importName": "AntdMenuItemGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6287,6 +6337,7 @@
               { "type": "component", "name": "plasmic-antd5-menu-item" }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "GtJDhfSZtw5a": {
@@ -6338,6 +6389,8 @@
           "displayName": "Menu Divider",
           "importName": "AntdMenuDivider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6351,6 +6404,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "5oaYRYJI1HmK": {
@@ -6487,6 +6541,8 @@
           "displayName": "Sub Menu",
           "importName": "AntdSubMenu",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6520,6 +6576,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "UdBxoFtRpX-h": {
@@ -6796,6 +6853,8 @@
           "displayName": "Dropdown",
           "importName": "AntdDropdown",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -6829,6 +6888,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "pQM3WA8HLsDE": {
@@ -7236,6 +7296,8 @@
           "displayName": "Form",
           "importName": "FormWrapper",
           "description": "[Learn how to use forms](https://docs.plasmic.app/learn/forms/)",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "FU-ye1topT6S" },
@@ -7259,6 +7321,7 @@
               }
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "8Q3Eaefr6ewT": {
@@ -7675,6 +7738,8 @@
           "displayName": "Form Field",
           "importName": "FormItemWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "ZLurt8GBWwXM" },
@@ -7691,6 +7756,7 @@
             "label": { "type": "text", "value": "Label" },
             "children": { "type": "component", "name": "plasmic-antd5-input" }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Gm7wExmvY1w2": {
@@ -7763,6 +7829,8 @@
           "displayName": "Form Field Group",
           "importName": "FormGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -7776,6 +7844,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "T7xaEQk8Lh9j": {
@@ -7868,6 +7937,8 @@
           "displayName": "Form List",
           "importName": "FormListWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -7913,6 +7984,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Cv2RwRenfvZo": {
@@ -8284,6 +8356,8 @@
           "displayName": "Input",
           "importName": "AntdInput",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -8297,6 +8371,7 @@
           "styleSections": null,
           "helpers": { "__ref": "xfefvxnb5trS" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Wg7WQ6PJ63SK": {
@@ -8479,6 +8554,8 @@
           "displayName": "Password Input",
           "importName": "AntdPassword",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -8492,6 +8569,7 @@
           "styleSections": null,
           "helpers": { "__ref": "AwPHlMIuQ7aa" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "EVmas4UxTaGu": {
@@ -8674,6 +8752,8 @@
           "displayName": "Text Area",
           "importName": "AntdTextArea",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -8687,6 +8767,7 @@
           "styleSections": null,
           "helpers": { "__ref": "DowJXSYPEocE" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "oZ6dS-KVlZmx": {
@@ -9098,6 +9179,8 @@
           "displayName": "Number Input",
           "importName": "AntdInputNumber",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9111,6 +9194,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "KhLVtVZhgX1t": {
@@ -9453,6 +9537,8 @@
           "displayName": "Date/Time Picker",
           "importName": "AntdDatePicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9466,6 +9552,7 @@
           "styleSections": null,
           "helpers": { "__ref": "edUzoRdQIvE0" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "KkgFdBoKf8wJ": {
@@ -9629,6 +9716,8 @@
           "displayName": "Upload",
           "importName": "UploadWrapper",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9650,6 +9739,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "4GvF6ER-jCXJ": {
@@ -9877,6 +9967,8 @@
           "displayName": "Color Picker",
           "importName": "AntdColorPicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -9890,6 +9982,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "NuWokkQtHvL7": {
@@ -10281,6 +10374,8 @@
           "displayName": "Drawer",
           "importName": "AntdDrawer",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -10297,6 +10392,7 @@
             "children": { "type": "vbox", "children": ["Drawer content"] },
             "title": "Drawer title"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "H8UmjF8YXNrg": {
@@ -10539,6 +10635,8 @@
           "displayName": "Steps",
           "importName": "AntdSteps",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -10552,6 +10650,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "V-eF04Ix8b1C": {
@@ -10708,6 +10807,8 @@
           "displayName": "Tooltip",
           "importName": "AntdTooltip",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -10726,6 +10827,7 @@
               "value": "This text element is wrapped in a Tooltip component"
             }
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "GjK8db42cCbl": {
@@ -10877,6 +10979,8 @@
           "displayName": "Avatar",
           "importName": "AntdAvatar",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -10890,6 +10994,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "-Mx60_uKQcod": {
@@ -11002,6 +11107,8 @@
           "displayName": "AvatarGroup",
           "importName": "AntdAvatarGroup",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -11066,6 +11173,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "HhpaqSqEZWBH": {
@@ -11564,6 +11672,8 @@
           "displayName": "Tree",
           "importName": "AntdTree",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -11577,6 +11687,7 @@
           "styleSections": null,
           "helpers": { "__ref": "Pi2REtu_cG-e" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "uQTO_QGhJi5s": {
@@ -12075,6 +12186,8 @@
           "displayName": "Directory Tree",
           "importName": "AntdDirectoryTree",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -12088,6 +12201,7 @@
           "styleSections": null,
           "helpers": { "__ref": "8JnVxl50oa7m" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "C5-bJa3vEVrM": {
@@ -12499,6 +12613,8 @@
           "displayName": "Collapse",
           "importName": "AntdSingleCollapse",
           "description": "Accordion, but with a single collapsible block.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "w5Py7Rc3xS6f" },
@@ -12515,6 +12631,7 @@
             "label2": "Collapse Header",
             "children": "Collapsible text..."
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "EjuzS8it63Mu": {
@@ -12822,6 +12939,8 @@
           "displayName": "Accordion",
           "importName": "AntdAccordion",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "DJZQLoSvC_kH" },
@@ -12856,6 +12975,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "dzmh9B4PqJDi": {
@@ -13094,6 +13214,8 @@
           "displayName": "Accordion Item",
           "importName": "AntdAccordionItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -13110,6 +13232,7 @@
             "label2": "Collapse Header",
             "children": "Collapsible text..."
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "mJgIoFM3Jzzf": {
@@ -13459,6 +13582,8 @@
           "displayName": "Popover",
           "importName": "AntdPopover",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -13476,6 +13601,7 @@
             "content": "Popover contents",
             "title": "Popover title"
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "XhkmgcJy5lPc": {
@@ -13985,6 +14111,8 @@
           "displayName": "Tabs",
           "importName": "AntdTabs",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "7zGTePel9wdI" },
@@ -14019,6 +14147,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "3DId1BU3xrAz": {
@@ -14155,6 +14284,8 @@
           "displayName": "Tab Item",
           "importName": "AntdTabItem",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14168,6 +14299,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "label": "Tab" },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "ZfJ9nzqWY2J0": {
@@ -14515,6 +14647,8 @@
           "displayName": "Rate",
           "importName": "AntdRate",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14528,6 +14662,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": { "symbols": ["1", "2", "3", "4", "5"] },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "gXnaG4eG3k-T": {
@@ -14900,6 +15035,8 @@
           "displayName": "Ant Design System Settings",
           "importName": "AntdConfigProvider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -14913,6 +15050,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "te0wbGvWy8qM": {
@@ -15487,6 +15625,8 @@
           "displayName": "Date Range Picker",
           "importName": "AntdDateRangePicker",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -15500,6 +15640,7 @@
           "styleSections": null,
           "helpers": { "__ref": "Ro2iyKEjPQi_" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "JVXhowCsLkPX": {
@@ -16063,6 +16204,8 @@
           "displayName": "Slider",
           "importName": "AntdSingleSlider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "LQ3yBtZHXlGD" },
@@ -16087,6 +16230,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "uDS5gPfvh3ZD": {
@@ -16701,6 +16845,8 @@
           "displayName": "Range Slider",
           "importName": "AntdRangeSlider",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": { "__ref": "Fv3LNxRzUWg7" },
@@ -16725,6 +16871,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "tqyxGsFPpEh6": {
@@ -16797,6 +16944,8 @@
           "displayName": "Slider Mark",
           "importName": "AntdSliderMark",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -16810,6 +16959,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "DyUH7qdntBqT": {
@@ -16843,8 +16993,8 @@
         "r3WzC2q-ZnPh": {
           "name": "renderable",
           "params": [{ "__ref": "9rFu8kx-zSaL" }, { "__ref": "_-wsRy4ohnPt" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "e6ptMoDKKcjp": {
           "name": "children",
@@ -16854,8 +17004,8 @@
         "OXPzyuEtbY_6": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "k3WnPuHkgDBO": {
           "name": "placeholder",
@@ -16865,8 +17015,8 @@
         "LZI-cYlRh8ve": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "lLvW4DIKSwwW": {
           "name": "suffixIcon",
@@ -16965,6 +17115,7 @@
             { "__ref": "Q4yqe2TXMPR-" },
             { "__ref": "cei1vYy74jaL" }
           ],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "DO2_-lXJ6bpj": {
@@ -16985,6 +17136,7 @@
         "m8p6J0AtoOwa": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "AktkCvKfCq_g": {
@@ -16999,6 +17151,7 @@
             { "__ref": "_K6xq_74OIVu" },
             { "__ref": "RCeIYCuSjUzk" }
           ],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "S8xPQf7q5bny": {
@@ -17009,6 +17162,7 @@
         "622oDnhBLPTL": {
           "name": "className",
           "selectors": [{ "__ref": "Yh-TiRrMiD8V" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "t5WPnNbocUHZ": {
@@ -17067,8 +17221,8 @@
         "fzHINR9jsz14": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qhFOiAI--Y7t": {
           "name": "children",
@@ -17104,8 +17258,8 @@
         "FaT5qGMYuHoQ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "kx09voFyWZ5I": {
           "name": "children",
@@ -17115,8 +17269,8 @@
         "lTgu_KDy1E6H": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "uzUJCWqTwS6c": {
           "name": "label",
@@ -17161,8 +17315,8 @@
         "vZT8-x3_UK2V": {
           "name": "renderable",
           "params": [{ "__ref": "wVQcxXwA5KMY" }, { "__ref": "HGy0LOsRswC8" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "bSNt1-msSn-v": {
           "name": "children",
@@ -17248,8 +17402,8 @@
         "n3tk6MVOWtKH": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "wGzQ7BDWfBUe": {
           "name": "title",
@@ -17270,8 +17424,8 @@
             { "__ref": "oa43FWQ3-JZD" }
           ],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "RwSpUj3Uc5eK": {
           "name": "render",
@@ -17336,8 +17490,8 @@
         "PSyfYzeOzOEk": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "SOdIrw2F7oP1": {
           "name": "title",
@@ -17347,8 +17501,8 @@
         "hj4FlOXCX_Ul": {
           "name": "renderable",
           "params": [{ "__ref": "quS7fJ-H61Sa" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "-Y4beXZ5xQhg": {
           "name": "children",
@@ -17411,8 +17565,8 @@
         "5PbUVpOjKG4s": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "E4mA4NYouFuc": {
           "name": "children",
@@ -17468,8 +17622,8 @@
         "hg6FpS379YxB": {
           "name": "renderable",
           "params": [{ "__ref": "MW_JKhC1sdhS" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "sisyhWe8sLIO": {
           "name": "children",
@@ -17566,8 +17720,8 @@
         "ZxJKTUYuqNNV": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "clAoOfgVwfSi": {
           "name": "children",
@@ -17615,8 +17769,8 @@
         "HvIiyI83vlGn": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "cqGCnUahIi_9": {
           "name": "children",
@@ -17692,8 +17846,8 @@
         "CKsMaV08hFFc": {
           "name": "renderable",
           "params": [{ "__ref": "3q85iDF5Evbp" }, { "__ref": "y1XBjjXOV86q" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "QX9IfhYCLaV9": {
           "name": "children",
@@ -17757,8 +17911,8 @@
         "zQoCdBv5NuyH": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "GC5WumA9Yfh5": {
           "name": "children",
@@ -17768,8 +17922,8 @@
         "dCobkcy-mT10": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "OzNL-sZsgld2": {
           "name": "title",
@@ -17779,8 +17933,8 @@
         "iFAdUjRZ-MkU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "O7h7XPGuHTBQ": {
           "name": "footer",
@@ -17790,8 +17944,8 @@
         "ZM4WTr4XYJB_": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "j7hU1rm1psAv": {
           "name": "closeIcon",
@@ -17858,6 +18012,7 @@
         "towntBUOxgRd": {
           "name": "className",
           "selectors": [{ "__ref": "aQdf__jwtAQN" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "wxFRD1kGC1dO": {
@@ -17868,6 +18023,7 @@
         "CpS1KwxSCZqn": {
           "name": "className",
           "selectors": [{ "__ref": "cl64-VDPKAMd" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "wr_YghM2HeMw": {
@@ -18013,8 +18169,8 @@
         "n_s4gAwB1OZr": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "KukwxyiGKSGk": {
           "name": "children",
@@ -18024,8 +18180,8 @@
         "4n0-87oo07Oy": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "OgGI_BgB57L9": {
           "name": "icon",
@@ -18074,8 +18230,8 @@
         "He_6VZ6Juz7v": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "rX7RAT2-lr16": {
           "name": "expandIcon",
@@ -18116,8 +18272,8 @@
             { "__ref": "1HmcGd_Wa4jP" },
             { "__ref": "TNOAqvW7EH6O" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "zAKPFMieB2wb": {
           "name": "children",
@@ -18195,8 +18351,8 @@
         "HeyQv6_oE33Y": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "aiJGdMErAGbJ": {
           "name": "children",
@@ -18236,8 +18392,8 @@
         "gON9rhFjVKoK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "b7erbuno9x9V": {
           "name": "title",
@@ -18252,8 +18408,8 @@
             { "__ref": "wqR97_yV9BvM" },
             { "__ref": "oKSoeW56hems" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "N4mvWcSMLVfk": {
           "name": "children",
@@ -18321,8 +18477,8 @@
         "vLZhS-vU2iPT": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "2m4WiFspKHvq": {
           "name": "title",
@@ -18332,6 +18488,7 @@
         "UqY7suNoiuVf": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "e4peROFnfPGQ": {
@@ -18347,8 +18504,8 @@
             { "__ref": "83VsWr6exlzb" },
             { "__ref": "1E5Yc4UAe3pF" }
           ],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "OP_QEX10jEA2": {
           "name": "children",
@@ -18393,8 +18550,8 @@
             { "__ref": "mKKRqqLLpjox" },
             { "__ref": "uOM9HFDsZETW" }
           ],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "5z9Y5Igi34L5": {
           "name": "menuItems",
@@ -18425,6 +18582,7 @@
         "o1Ue6EoyojYs": {
           "name": "className",
           "selectors": [{ "__ref": "NI1gcw9DLRAM" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "mkL-Fi7iDe7T": {
@@ -18438,6 +18596,7 @@
             { "__ref": "ZJ2T7f1An-aG" },
             { "__ref": "PSDSoHU4V0y8" }
           ],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "er7u7rS0AGnV": {
@@ -18497,8 +18656,8 @@
         "UTc_bsU8vM6Y": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "oTUjiPyyqzoY": {
           "name": "children",
@@ -18575,8 +18734,8 @@
         "MeGlYh5mgJtQ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "xwtgk988R4_9": {
           "name": "submitSlot",
@@ -18586,8 +18745,8 @@
         "G6vgdsS4L-n_": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "Eqz3zqMRczLL": {
           "name": "children",
@@ -18783,8 +18942,8 @@
         "CcGjp95jkgi4": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "UmYFzQnRpA-T": {
           "name": "label",
@@ -18794,8 +18953,8 @@
         "3U_b3bSULqv7": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "oYgUHxBkqTYl": {
           "name": "children",
@@ -18959,8 +19118,8 @@
         "lGRSbDnrHcFK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "s-pfu4yK0z2L": {
           "name": "children",
@@ -18990,8 +19149,8 @@
         "W88jHYWMWVTK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "_vd6c-WkIahn": {
           "name": "children",
@@ -19121,8 +19280,8 @@
         "x6t4T1kWmgIP": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "289O7RnO9oe_": {
           "name": "prefix",
@@ -19132,8 +19291,8 @@
         "eTiqYzeVdslf": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "LwpliQJXWhvy": {
           "name": "suffix",
@@ -19143,8 +19302,8 @@
         "UK6d2cKEdG2C": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "oGloVVlUtPnq": {
           "name": "addonAfter",
@@ -19154,8 +19313,8 @@
         "6mNnR8fYAxMU": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "ASMUipU-jxbC": {
           "name": "addonBefore",
@@ -19414,8 +19573,8 @@
         "AVH8i3dd6TZ8": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qFJ3PE8_HUCI": {
           "name": "prefix",
@@ -19425,8 +19584,8 @@
         "LyS44zO8byaC": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "3rZfFA0StM8p": {
           "name": "suffix",
@@ -19436,8 +19595,8 @@
         "_yIkz0KQ4HAR": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "EpOyV29oH4zJ": {
           "name": "addonAfter",
@@ -19447,8 +19606,8 @@
         "OtJUmYC2SQrC": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "8EmtQROJVWA1": {
           "name": "addonBefore",
@@ -19608,6 +19767,7 @@
         "6_HPKNu1X-8Y": {
           "name": "className",
           "selectors": [{ "__ref": "A4fmGM5q8Dlj" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "neVEedLmU2bw": {
@@ -19618,6 +19778,7 @@
         "ZoX0xwJhNIVz": {
           "name": "className",
           "selectors": [{ "__ref": "uViG-ZBlU4Ik" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "SPDpsbegeBly": {
@@ -19628,6 +19789,7 @@
         "KJ5lwgH-_mA4": {
           "name": "className",
           "selectors": [{ "__ref": "7DLa8OK5dAow" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "aXxYzalssW4z": {
@@ -19638,6 +19800,7 @@
         "DqGQKCf20PnH": {
           "name": "className",
           "selectors": [{ "__ref": "4zoIg9vPwgFL" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "TykhtxjaQnaZ": {
@@ -19727,8 +19890,8 @@
         "QCAbAMIp6iJD": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "9JzlcYO0aP5g": {
           "name": "children",
@@ -19785,8 +19948,8 @@
         "FWZX58WX55Rj": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "svS2BOP0uaDt": {
           "name": "children",
@@ -19812,8 +19975,8 @@
         "ocWQG1mkUtSb": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "6-54Tvnf_1cV": {
           "name": "showText",
@@ -19910,8 +20073,8 @@
         "vyzUqEVUugOQ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "2Ps0P1-Nmhx3": {
           "name": "children",
@@ -19921,8 +20084,8 @@
         "2JrzIF698oao": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "stlrM1U7I7h9": {
           "name": "title",
@@ -19932,8 +20095,8 @@
         "NmDiK-TZci-X": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "jl2-WKpTpcsE": {
           "name": "footer",
@@ -19943,8 +20106,8 @@
         "ApD_oKgWNB15": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "fOTB7wxAgtIJ": {
           "name": "closeIcon",
@@ -19974,6 +20137,7 @@
         "UetEDN79nOJI": {
           "name": "className",
           "selectors": [{ "__ref": "RTSieRo0D8bx" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "AcMgzqxqgpDB": {
@@ -19984,6 +20148,7 @@
         "UcGzfwHiOa01": {
           "name": "className",
           "selectors": [{ "__ref": "Gp4dXN8BbgTB" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "PSVC3Ovqb0Zd": {
@@ -19994,6 +20159,7 @@
         "RzESU-LzKNV1": {
           "name": "className",
           "selectors": [{ "__ref": "hz1ayh_QPSO-" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "I46DJYLPzCN2": {
@@ -20004,6 +20170,7 @@
         "OgFfukxVRzv2": {
           "name": "className",
           "selectors": [{ "__ref": "b2pg2KtIo6Ni" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "W5Ck96G4o5HE": {
@@ -20014,6 +20181,7 @@
         "MEW2itN7_vCe": {
           "name": "className",
           "selectors": [{ "__ref": "T2mGPvz60BiV" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "NLaW43JJe2x-": {
@@ -20024,6 +20192,7 @@
         "LRPq2eiraGLA": {
           "name": "className",
           "selectors": [{ "__ref": "ar-bJPj8v1Zn" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "UlNCxR4z-un7": {
@@ -20034,6 +20203,7 @@
         "rbCMUo9I1u2d": {
           "name": "className",
           "selectors": [{ "__ref": "lwdcqZ89BGzD" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "fFfzT_QrEbK4": {
@@ -20208,8 +20378,8 @@
         "s-D3j2_kMest": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "zIjK1bpaa9KH": {
           "name": "children",
@@ -20219,6 +20389,7 @@
         "RkKtGmeTErjL": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "4Pbp1u5eWNWd": {
@@ -20240,8 +20411,8 @@
         "F69h5MO1YuR8": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "K7T2bRs4UYmS": {
           "name": "title",
@@ -20373,8 +20544,8 @@
         "I835_MgYg3v5": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "6nTWxQDBqHjY": {
           "name": "children",
@@ -20542,8 +20713,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "7POdrE-dGEZE" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "6lhFp1AYvoGC": {
           "name": "titleRender",
@@ -20749,8 +20920,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "IB9aj1g4r2gj" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "L8AHgPy4ks-k": {
           "name": "titleRender",
@@ -20883,8 +21054,8 @@
         "uull1BhZfRQJ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "x7CZpsUCUsWl": {
           "name": "label2",
@@ -20894,8 +21065,8 @@
         "e5Ah4B2QrRKV": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "gOKsD0L0SwjP": {
           "name": "extra",
@@ -20916,6 +21087,7 @@
         "SBpjfTjxcPz9": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "Z0cPYnCl9v3z": {
@@ -20926,8 +21098,8 @@
         "I5xtDqCWpPMp": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "PFDl1FFVZqdU": {
           "name": "children",
@@ -20954,8 +21126,8 @@
         "YpPTlUmdcsh5": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "7aeBahMbEmaw": {
           "name": "expandIcon",
@@ -21071,8 +21243,8 @@
         "I7jbowGqvZeQ": {
           "name": "renderable",
           "params": [{ "__ref": "Vu-GeBYitauz" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "N8smL4afodHR": {
           "name": "items",
@@ -21121,8 +21293,8 @@
         "LzblgegHXHwl": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "QA8W92V0e1J2": {
           "name": "expandIcon",
@@ -21248,8 +21420,8 @@
         "i3ACfORq5ZZr": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "cFaisyR3w501": {
           "name": "label2",
@@ -21259,8 +21431,8 @@
         "eThLxmm4SDsI": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "QEZGy9Nb7s2t": {
           "name": "extra",
@@ -21281,6 +21453,7 @@
         "74z8xX-vBvsX": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "5uijyC1fwWzU": {
@@ -21291,8 +21464,8 @@
         "IMcWZsL9WIk1": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "iQe-x6fYhlOc": {
           "name": "children",
@@ -21357,8 +21530,8 @@
         "CCwoT3Yo-ZcR": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "SI8uf8_SLwpK": {
           "name": "children",
@@ -21378,6 +21551,7 @@
         "b_OUutssZZoC": {
           "name": "className",
           "selectors": [{ "__ref": "AHUxNumI3Jnt" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "BRk97PkTXPTh": {
@@ -21388,6 +21562,7 @@
         "k6EpvzRzfLn0": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "jAwGCS7g3Cq1": {
@@ -21398,8 +21573,8 @@
         "_UC1iBZCYdRN": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "SiMRRqp4fXrb": {
           "name": "content",
@@ -21420,8 +21595,8 @@
         "IHfED5FYCdqs": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "rY3Q50rHI5mv": {
           "name": "title",
@@ -21603,8 +21778,8 @@
         "ZGgAG71yBuzP": {
           "name": "renderable",
           "params": [{ "__ref": "4EsUcEO5y9y_" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "ZgbljIKHrHws": {
           "name": "items",
@@ -21624,8 +21799,8 @@
         "BDSHDtYXvkSc": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qUfgAETzHUCM": {
           "name": "tabBarExtraContentLeft",
@@ -21635,8 +21810,8 @@
         "OLZt7WKXnsRm": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "o5b59o-eMRdN": {
           "name": "tabBarExtraContentRight",
@@ -21710,6 +21885,7 @@
         "jSRUh3PFk_XH": {
           "name": "className",
           "selectors": [{ "__ref": "L_Q7YHX9uUWB" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "nu6SY9ZkfnYN": {
@@ -21730,6 +21906,7 @@
         "e04oYiNKs8rk": {
           "name": "className",
           "selectors": [{ "__ref": "nQ_ymhC8O1mi" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "hHJz0ITy8rgP": {
@@ -21831,8 +22008,8 @@
         "JM78ZeG5zeM6": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "nUaFfZwrf9RF": {
           "name": "label",
@@ -21842,8 +22019,8 @@
         "XIL9BRCO_liI": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "zQ8GAqdxOIyz": {
           "name": "children",
@@ -21900,8 +22077,8 @@
         "Z3T_OzTvFj7S": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "-yQlCnWBbFZL": {
           "name": "character",
@@ -21917,8 +22094,8 @@
         "5zJs4izrnDo9": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "qSol8BoBtalR": {
           "name": "symbols",
@@ -22219,8 +22396,8 @@
         "gNeEtN5coQy6": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "rYxXyRuzZHKT": {
           "name": "children",
@@ -22392,8 +22569,8 @@
         "Fle1XEWMbXrQ": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "U70J70Lc0P9R": {
           "name": "renderExtraFooter",
@@ -22419,6 +22596,7 @@
         "H1d5AvVZvSRn": {
           "name": "className",
           "selectors": [{ "__ref": "YWtLqe01VOfx" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "KsgveVo8C_ya": {
@@ -22429,6 +22607,7 @@
         "wPtLGUyHluyK": {
           "name": "className",
           "selectors": [{ "__ref": "jnyG8x81Ri_9" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "dJ_Iq0Ht3hfF": {
@@ -22439,6 +22618,7 @@
         "qufv0iiAdVKf": {
           "name": "className",
           "selectors": [{ "__ref": "m2BbfBkueZBI" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "dZHkI8fVv2y6": {
@@ -22449,6 +22629,7 @@
         "1hk6WbVcaqpo": {
           "name": "className",
           "selectors": [{ "__ref": "eydFmhTqPv3s" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "bmPPR8SFdws_": {
@@ -22551,8 +22732,8 @@
         "RPDnsrrRUcaS": {
           "name": "renderable",
           "params": [{ "__ref": "ailW2dTZSZ9l" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "cbiTL-MFEoap": {
           "name": "stylableMarks",
@@ -22662,6 +22843,7 @@
         "q-ATq5OfZF6i": {
           "name": "className",
           "selectors": [{ "__ref": "gGuhfjOHSw0F" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "m72w3QN-VA74": {
@@ -22672,6 +22854,7 @@
         "-m8kRzeLuxao": {
           "name": "className",
           "selectors": [{ "__ref": "l-tv-yxtFY5P" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "goPLa3oZa3DQ": {
@@ -22682,6 +22865,7 @@
         "eXLYfm3OTjye": {
           "name": "className",
           "selectors": [{ "__ref": "QIaixrDRPV-F" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "-sC8MEXsrIsF": {
@@ -22692,6 +22876,7 @@
         "YtfehIXlSlyQ": {
           "name": "className",
           "selectors": [{ "__ref": "QVJ73-fkb9Lq" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "2rxffzLDfO6v": {
@@ -22702,6 +22887,7 @@
         "W1DoM4TH0vcP": {
           "name": "className",
           "selectors": [{ "__ref": "ZsXS1DdoPAZA" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "LDXkbujB2K7R": {
@@ -22712,6 +22898,7 @@
         "VEbuEqI5stZ2": {
           "name": "className",
           "selectors": [{ "__ref": "-OP-NsA-NxkJ" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "EOhWuOOBV32U": {
@@ -22815,8 +23002,8 @@
         "jSbFm5m89hGv": {
           "name": "renderable",
           "params": [{ "__ref": "rbuq4azZF3pH" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "IYa4C_mFINgL": {
           "name": "stylableMarks",
@@ -22926,6 +23113,7 @@
         "Fsyu5TJyUojF": {
           "name": "className",
           "selectors": [{ "__ref": "0TP9b1BqVOsm" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "NOu0VgwF4ula": {
@@ -22936,6 +23124,7 @@
         "OqSPsnJR5PkK": {
           "name": "className",
           "selectors": [{ "__ref": "_LkG6EmfmCaA" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "7O-ZIctB4EQb": {
@@ -22946,6 +23135,7 @@
         "6F11JVnXbhNC": {
           "name": "className",
           "selectors": [{ "__ref": "MUU_zff1PjNV" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "6cdYINJ1RBIK": {
@@ -22956,6 +23146,7 @@
         "aK9aG8xB6G5P": {
           "name": "className",
           "selectors": [{ "__ref": "5HfYEuhsBrLC" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "li9o7fElkLyk": {
@@ -22966,6 +23157,7 @@
         "XMrGCxF1CnrH": {
           "name": "className",
           "selectors": [{ "__ref": "LuSP6qe3RnV8" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "8zO6z1LLl0e4": {
@@ -22976,6 +23168,7 @@
         "f3Dl6GhlNa0_": {
           "name": "className",
           "selectors": [{ "__ref": "SKcqX4oLCzTr" }],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "DvWzoi9KdPYg": {
@@ -23023,8 +23216,8 @@
         "8gLSOK2KeBWH": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "dpgqExUiEJrN": {
           "name": "children",
@@ -23079,31 +23272,37 @@
         "Q4yqe2TXMPR-": {
           "selector": ":component .ant-select-selector.ant-select-selector",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "cei1vYy74jaL": {
           "selector": ":component .ant-select-selector:hover",
           "label": "Hovered",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "lnCEAZSft1q7": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "_K6xq_74OIVu": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option-active",
           "label": "Focused",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "RCeIYCuSjUzk": {
           "selector": ":popup.ant-select-dropdown .ant-select-item-option-selected",
           "label": "Selected",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Yh-TiRrMiD8V": {
           "selector": ":component .ant-select-selector .ant-select-selection-placeholder",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "4b-MDvhvwLkV": {
@@ -23445,11 +23644,13 @@
         "aQdf__jwtAQN": {
           "selector": ":modal .ant-modal-content",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "cl64-VDPKAMd": {
           "selector": ":modal .ant-modal-close",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "zZoHKTjm2tiP": {
@@ -23720,16 +23921,19 @@
         "NI1gcw9DLRAM": {
           "selector": ":dropdownMenu.ant-dropdown-menu",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "ZJ2T7f1An-aG": {
           "selector": ":dropdownMenu.ant-dropdown-menu .ant-dropdown-menu-item",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "PSDSoHU4V0y8": {
           "selector": ":dropdownMenu.ant-dropdown-menu .ant-dropdown-menu-item-active",
           "label": "Focused",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "OtdiIbX-BvXr": {
@@ -24054,21 +24258,25 @@
         "A4fmGM5q8Dlj": {
           "selector": ":datePickerPopup .ant-picker-panel-container",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "uViG-ZBlU4Ik": {
           "selector": ":datePickerPopup .ant-picker-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "7DLa8OK5dAow": {
           "selector": ":datePickerPopup .ant-picker-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "4zoIg9vPwgFL": {
           "selector": ":datePickerPopup .ant-picker-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "ooTQxkT9CALk": {
@@ -24143,36 +24351,43 @@
         "RTSieRo0D8bx": {
           "selector": ":drawer .ant-drawer-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "Gp4dXN8BbgTB": {
           "selector": ":drawer .ant-drawer-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "hz1ayh_QPSO-": {
           "selector": ":drawer .ant-drawer-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "b2pg2KtIo6Ni": {
           "selector": ":drawer .ant-drawer-title",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "T2mGPvz60BiV": {
           "selector": ":drawer .ant-drawer-mask",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "ar-bJPj8v1Zn": {
           "selector": ":drawer .ant-drawer-content-wrapper",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "lwdcqZ89BGzD": {
           "selector": ":drawer .ant-drawer-close",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "XXlz6R0IJGeA": {
@@ -24550,6 +24765,7 @@
         "AHUxNumI3Jnt": {
           "selector": ":popover.ant-popover .ant-popover-inner",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "YJvygd9NiYAB": {
@@ -24605,11 +24821,13 @@
         "L_Q7YHX9uUWB": {
           "selector": ":tabs.ant-tabs .ant-tabs-nav",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "nQ_ymhC8O1mi": {
           "selector": ":tabsDropdown.ant-tabs-dropdown .ant-tabs-dropdown-menu",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "vjSGqc-9_bJ9": {
@@ -24765,21 +24983,25 @@
         "YWtLqe01VOfx": {
           "selector": ":dateRangePickerPopup .ant-picker-panel-container",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "jnyG8x81Ri_9": {
           "selector": ":dateRangePickerPopup .ant-picker-header",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "m2BbfBkueZBI": {
           "selector": ":dateRangePickerPopup .ant-picker-body",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "eydFmhTqPv3s": {
           "selector": ":dateRangePickerPopup .ant-picker-footer",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "5IfbsEbyr9vq": {
@@ -24827,31 +25049,37 @@
         "gGuhfjOHSw0F": {
           "selector": ":slider.ant-slider .ant-slider-rail",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "l-tv-yxtFY5P": {
           "selector": ":slider.ant-slider .ant-slider-track",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "QIaixrDRPV-F": {
           "selector": ":slider.ant-slider .ant-slider-handle::after",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "QVJ73-fkb9Lq": {
           "selector": ":slider.ant-slider .ant-slider-dot",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "ZsXS1DdoPAZA": {
           "selector": ":slider.ant-slider .ant-slider-dot.ant-slider-dot-active",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "-OP-NsA-NxkJ": {
           "selector": ":slider.ant-slider .ant-slider-tooltip",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "JKmYWnPos_Wh": {
@@ -24892,31 +25120,37 @@
         "0TP9b1BqVOsm": {
           "selector": ":slider.ant-slider .ant-slider-rail",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "_LkG6EmfmCaA": {
           "selector": ":slider.ant-slider .ant-slider-track",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "MUU_zff1PjNV": {
           "selector": ":slider.ant-slider .ant-slider-handle::after",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "5HfYEuhsBrLC": {
           "selector": ":slider.ant-slider .ant-slider-dot",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "LuSP6qe3RnV8": {
           "selector": ":slider.ant-slider .ant-slider-dot.ant-slider-dot-active",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "SKcqX4oLCzTr": {
           "selector": ":slider.ant-slider .ant-slider-tooltip",
           "label": "Base",
+          "defaultStyles": {},
           "__type": "LabeledSelector"
         },
         "-UoI9gGlUGwg": {
@@ -25219,6 +25453,8 @@
           "displayName": "Segmented Option",
           "importName": "AntdSegmentedOption",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -25232,6 +25468,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "rwhS3eL9JQv9": {
@@ -25435,6 +25672,8 @@
           "displayName": "Segmented",
           "importName": "AntdSegmented",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -25503,6 +25742,7 @@
               }
             ]
           },
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "SynAZPblIAub": { "name": "text", "__type": "Text" },
@@ -25514,8 +25754,8 @@
         "BuAPHPmMq-S-": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "prPcGKMYzHBG": {
           "name": "children",
@@ -25599,8 +25839,8 @@
         "aT_26d-1XlQM": {
           "name": "renderable",
           "params": [{ "__ref": "hquNXinhyB2C" }],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "Y5wf3uU8011V": {
           "name": "optionsSlot",
@@ -26144,6 +26384,8 @@
           "displayName": "Pagination",
           "importName": "AntdPagination",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -26157,6 +26399,7 @@
           "styleSections": null,
           "helpers": { "__ref": "raMAFj6OAnqh" },
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "LR3mUM24OTXj": { "name": "num", "__type": "Num" },
@@ -26366,6 +26609,8 @@
           "displayName": "Progress",
           "importName": "AntdProgress",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -26379,6 +26624,7 @@
           "styleSections": null,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "y6RAE7uOF-A2": {
@@ -26939,6 +27185,7 @@
         "jlqZjQtTeRc-": {
           "name": "className",
           "selectors": [],
+          "defaultStyles": {},
           "__type": "ClassNamePropType"
         },
         "eySGjiCbU8L9": { "name": "text", "__type": "Text" },
@@ -26970,8 +27217,8 @@
         "6mzXs5aW1VlK": {
           "name": "renderable",
           "params": [],
-          "__type": "RenderableType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderableType"
         },
         "8ogW9wjOYs-j": {
           "name": "trigger",
@@ -27104,7 +27351,7 @@
         }
       },
       "deps": [],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ],
   [
@@ -27521,9 +27768,9 @@
             { "__ref": "NcyvyqX12KnQ" }
           ],
           "layout": { "__ref": "9w9_PZkf4oJb" },
+          "addItemPrefs": {},
           "active": true,
-          "__type": "Theme",
-          "addItemPrefs": {}
+          "__type": "Theme"
         },
         "6NMWXmKJMmeY": { "name": "text", "__type": "Text" },
         "bvOB1QL9GT4T": {
@@ -27779,6 +28026,8 @@
           "displayName": "Page Metadata Override",
           "importName": "PlasmicHead",
           "description": "Set page metadata (HTML <head />) to dynamic values.",
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -27792,6 +28041,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "QH3RnlW6CsC_": {
@@ -27924,6 +28174,8 @@
           "displayName": "Data Fetcher",
           "importName": "Fetcher",
           "description": null,
+          "section": null,
+          "thumbnailUrl": null,
           "classNameProp": null,
           "refProp": null,
           "defaultStyles": null,
@@ -27937,6 +28189,7 @@
           "styleSections": false,
           "helpers": null,
           "defaultSlotContents": {},
+          "variants": {},
           "__type": "CodeComponentMeta"
         },
         "Q0IbDa_JBuFR": { "name": "text", "__type": "Text" },
@@ -27990,8 +28243,8 @@
           "name": "renderFunc",
           "params": [{ "__ref": "g1z_fqrQgVea" }],
           "allowed": [],
-          "__type": "RenderFuncType",
-          "allowRootWrapper": null
+          "allowRootWrapper": null,
+          "__type": "RenderFuncType"
         },
         "n2BRNpas0tPW": {
           "name": "children",
@@ -28111,7 +28364,6 @@
           "uuid": "NT--qk70nFYH",
           "width": 800,
           "height": 800,
-          "viewportHeight": null,
           "container": { "__ref": "5mjWycgJRA5O" },
           "lang": "English",
           "pinnedVariants": {},
@@ -28243,7 +28495,6 @@
           "uuid": "zvfhVPud0Y0B",
           "width": 1366,
           "height": 768,
-          "viewportHeight": 768,
           "container": { "__ref": "y0Cp69muu8sr" },
           "lang": "English",
           "pinnedVariants": {},
@@ -28261,7 +28512,6 @@
           "uuid": "We8wDKYIwUHO",
           "width": 414,
           "height": 736,
-          "viewportHeight": 736,
           "container": { "__ref": "8WZSqb7daENp" },
           "lang": "English",
           "pinnedVariants": {},
@@ -29175,7 +29425,7 @@
         "aA9tyZnmtZAM": { "text": ["countries"], "__type": "TemplatedString" }
       },
       "deps": ["c37f5929-869b-409a-95d5-17c69bc4e9d3"],
-      "version": "228-add-allow-root-wrapper"
+      "version": "236-rename-duplicated-components"
     }
   ]
 ]

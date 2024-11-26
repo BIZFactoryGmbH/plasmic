@@ -1,17 +1,9 @@
 import {
-  Component,
-  Site,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-} from "@/wab/classes";
-import {
   getSuperComponents,
   isCodeComponent,
   isPageComponent,
-} from "@/wab/components";
-import { getProjectFlags } from "@/wab/devflags";
+} from "@/wab/shared/core/components";
+import { getProjectFlags } from "@/wab/shared/devflags";
 import { componentToReferenced } from "@/wab/shared/cached-selectors";
 import {
   ComponentGenHelper,
@@ -21,6 +13,24 @@ import {
   makeIconImports,
   makePictureImports,
 } from "@/wab/shared/codegen/image-assets";
+import { optimizeGeneratedCodeForHostlessPackages } from "@/wab/shared/codegen/react-p/optimize-hostless-packages";
+import {
+  getExportedComponentName,
+  getHostNamedImportsForRender,
+  getHostNamedImportsForSkeleton,
+  getImportedComponentName,
+  getNormalizedComponentName,
+  getReactWebNamedImportsForRender,
+  makeArgPropsName,
+  makeArgsTypeName,
+  makeCssFileName,
+  makePlasmicComponentName,
+  makePlasmicSuperContextName,
+  makeStylesImports,
+  makeVariantPropsName,
+  makeVariantsArgTypeName,
+  makeWabFlexContainerClassName,
+} from "@/wab/shared/codegen/react-p/utils";
 import {
   ComponentExportOutput,
   ExportOpts,
@@ -29,22 +39,33 @@ import {
 import { jsLiteral } from "@/wab/shared/codegen/util";
 import { makeGlobalVariantGroupImportTemplate } from "@/wab/shared/codegen/variants";
 import {
-  getPlumeCodegenPlugin,
+  Component,
+  Site,
+  TplComponent,
+  TplNode,
+  TplSlot,
+  TplTag,
+} from "@/wab/shared/model/classes";
+import {
   PlumeType,
+  getPlumeCodegenPlugin,
 } from "@/wab/shared/plume/plume-registry";
 import { makeVariantComboSorter } from "@/wab/shared/variant-sort";
-import { allImageAssets, allMixins, allStyleTokens } from "@/wab/sites";
-import { CssVarResolver } from "@/wab/styles";
+import { allImageAssets, allMixins, allStyleTokens } from "@/wab/shared/core/sites";
+import { CssVarResolver } from "@/wab/shared/core/styles";
 import {
   isTplComponent,
   isTplSlot,
   isTplTag,
   isTplTextBlock,
   summarizeTpl,
-} from "@/wab/tpls";
+} from "@/wab/shared/core/tpls";
 import L from "lodash";
 import {
+  SerializerBaseContext,
+  SerializerSiteContext,
   asOneNode,
+  computeSerializerSiteContext,
   deriveReactHookSpecs,
   exportProjectConfig,
   generateReferencedImports,
@@ -68,31 +89,12 @@ import {
   serializeDataReps,
   serializeDefaultExternalProps,
   serializePlasmicSuperContext,
-  SerializerBaseContext,
   serializeTplComponentBase,
   serializeTplSlotBase,
   serializeTplTagBase,
   serializeTplTextBlockContent,
   serializeVariantsArgsType,
 } from ".";
-import { optimizeGeneratedCodeForHostlessPackages } from "./optimize-hostless-packages";
-import {
-  getExportedComponentName,
-  getHostNamedImportsForRender,
-  getHostNamedImportsForSkeleton,
-  getImportedComponentName,
-  getNormalizedComponentName,
-  getReactWebNamedImportsForRender,
-  makeArgPropsName,
-  makeArgsTypeName,
-  makeCssFileName,
-  makePlasmicComponentName,
-  makePlasmicSuperContextName,
-  makeStylesImports,
-  makeVariantPropsName,
-  makeVariantsArgTypeName,
-  makeWabFlexContainerClassName,
-} from "./utils";
 
 export const tplMarker = `/*__TPL_MARKER__*/`;
 
@@ -122,6 +124,7 @@ export function exportReactPlain(
     useCustomFunctionsStub: false,
     targetEnv: "codegen",
   },
+  siteCtx: SerializerSiteContext,
   extraOpts: Partial<SerializerBaseContext> = {}
 ): ComponentExportOutput {
   const { fakeTpls, replacedHostlessComponentImportPath } =
@@ -149,6 +152,7 @@ export function exportReactPlain(
     nodeNamer,
     reactHookSpecs,
     site,
+    siteCtx,
     projectConfig,
     usedGlobalVariantGroups,
     variantComboChecker,
@@ -254,7 +258,13 @@ ${plumeImports ? plumeImports.imports : ""}
 
 ${referencedImports.join("\n")}
 ${importGlobalVariantContexts}
-${makeStylesImports(site, component, projectConfig, ctx.exportOpts, "plain")}
+${makeStylesImports(
+  siteCtx.cssProjectDependencies,
+  component,
+  projectConfig,
+  ctx.exportOpts,
+  "plain"
+)}
 ${iconImports}
 ${makePictureImports(site, component, ctx.exportOpts, "managed")}
 
@@ -305,6 +315,13 @@ function ${componentName}_(props: ${makeComponentPropsTypeName(component)}${
   `
       : ""
   }
+
+  ${
+    ctx.projectFlags.usePlasmicTranslation
+      ? `const $translator = usePlasmicTranslator?.();`
+      : ""
+  }
+
   const variants = {
     ...pick(props, ...${jsLiteral(
       getParamNames(
@@ -648,6 +665,7 @@ export function exportReactPlainTypical(
     project,
     projectConfig,
     exportOpts,
+    computeSerializerSiteContext(project),
     extraOpts
   );
   return skeletonModule;

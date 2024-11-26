@@ -1,46 +1,34 @@
-import * as classes from "@/wab/classes";
+import { LEFT_PANE_INIT_WIDTH } from "@/wab/client/ClientConstants";
+import { DragInsertManager } from "@/wab/client/Dnd";
 import {
-  Arena,
-  ArenaChild,
-  ArenaFrame,
-  Component,
-  ComponentArena,
-  DataSourceTemplate,
-  isKnownArenaFrame,
-  isKnownComponentArena,
-  isKnownProjectDependency,
-  isKnownVariantSetting,
-  ObjInst,
-  PageArena,
-  ProjectDependency,
-  TemplatedString,
-  TplComponent,
-  TplNode,
-  TplSlot,
-  TplTag,
-  Variant,
-  VariantGroup,
-} from "@/wab/classes";
-import { modelSchemaHash } from "@/wab/classes-metas";
+  handleError,
+  reportError,
+  showError,
+} from "@/wab/client/ErrorNotifications";
+import { ProjectDependencyManager } from "@/wab/client/ProjectDependencyManager";
+import { zoomJump } from "@/wab/client/Zoom";
 import { apiKey, invalidationKey } from "@/wab/client/api";
 import { getProjectReleases } from "@/wab/client/api-hooks";
 import {
+  UU,
   mkProjectLocation,
   parseProjectLocation,
-  UU,
 } from "@/wab/client/cli-routes";
-import { LEFT_PANE_INIT_WIDTH } from "@/wab/client/ClientConstants";
-import { Clipboard } from "@/wab/client/clipboard";
+import { LocalClipboard } from "@/wab/client/clipboard/local";
 import { syncCodeComponentsAndHandleErrors } from "@/wab/client/code-components/code-components";
 import { CodeFetchersRegistry } from "@/wab/client/code-fetchers";
+import {
+  showForbiddenError,
+  showReloadError,
+  showSaveErrorRecoveredNotice,
+} from "@/wab/client/components/Messages";
 import { storageViewAsKey } from "@/wab/client/components/app-auth/ViewAsButton";
 import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import { SiteOps } from "@/wab/client/components/canvas/site-ops";
-import { SubDeps } from "@/wab/client/components/canvas/subdeps";
 import {
+  InsertRelLoc,
   getFocusedInsertAnchor,
   getPreferredInsertLocs,
-  InsertRelLoc,
 } from "@/wab/client/components/canvas/view-ops";
 import {
   clearDarkMask,
@@ -48,13 +36,8 @@ import {
 } from "@/wab/client/components/darkMask";
 import { PreviewCtx } from "@/wab/client/components/live/PreviewCtx";
 import {
-  showForbiddenError,
-  showReloadError,
-  showSaveErrorRecoveredNotice,
-} from "@/wab/client/components/Messages";
-import {
-  maybeShowPaywall,
   PaywallError,
+  maybeShowPaywall,
 } from "@/wab/client/components/modals/PricingModal";
 import { OmnibarState } from "@/wab/client/components/omnibar/Omnibar";
 import {
@@ -70,6 +53,7 @@ import {
   AlertSpec,
 } from "@/wab/client/components/widgets/plasmic/AlertBanner";
 import { personalProjectPaywallMessage } from "@/wab/client/components/widgets/plasmic/ShareDialogContent";
+import { CommentsData } from "@/wab/client/components/comments/CommentsProvider";
 import { frameToScalerRect } from "@/wab/client/coords";
 import { DbCtx, WithDbCtx } from "@/wab/client/db";
 import {
@@ -77,7 +61,6 @@ import {
   AddTplItem,
   INSERTABLES_MAP,
 } from "@/wab/client/definitions/insertables";
-import { DragInsertManager } from "@/wab/client/Dnd";
 import {
   cachedJQSelector,
   getTextWidth,
@@ -85,23 +68,28 @@ import {
   scriptExec,
   setElementStyles,
 } from "@/wab/client/dom-utils";
-import {
-  handleError,
-  reportError,
-  showError,
-} from "@/wab/client/ErrorNotifications";
 import { fixupChrome, fixupForChanges } from "@/wab/client/fixes-post-change";
 import { FontManager } from "@/wab/client/fonts";
+import {
+  getRootSubHostVersion,
+  getRootSubReact,
+} from "@/wab/client/frame-ctx/windows";
 import { checkDepPkgHosts } from "@/wab/client/init-ctx";
 import { postInsertableTemplate } from "@/wab/client/insertable-templates";
 import { PLATFORM } from "@/wab/client/platform";
-import { ProjectDependencyManager } from "@/wab/client/ProjectDependencyManager";
 import { requestIdleCallbackAsync } from "@/wab/client/requestidlecallback";
 import { plasmicExtensionAvailable } from "@/wab/client/screenshot-util";
+import { ViewportCtx } from "@/wab/client/studio-ctx/ViewportCtx";
+import { ComponentCtx } from "@/wab/client/studio-ctx/component-ctx";
+import { MultiplayerCtx } from "@/wab/client/studio-ctx/multiplayer-ctx";
+import {
+  SpotlightAndVariantsInfo,
+  ViewCtx,
+} from "@/wab/client/studio-ctx/view-ctx";
 import {
   StyleMgr,
-  summaryToStyleChanges,
   UpsertStyleChanges,
+  summaryToStyleChanges,
 } from "@/wab/client/style-mgr";
 import { TutorialEventsType } from "@/wab/client/tours/tutorials/tutorials-events";
 import { TutorialStateFlags } from "@/wab/client/tours/tutorials/tutorials-types";
@@ -111,32 +99,6 @@ import {
   getHostUrl,
   maybeToggleTrailingSlash,
 } from "@/wab/client/utils/app-hosting-utils";
-import { zoomJump } from "@/wab/client/Zoom";
-import {
-  arrayEqIgnoreOrder,
-  asOne,
-  assert,
-  AsyncCallable,
-  asyncMaxAtATime,
-  asyncOneAtATime,
-  asyncTimeout,
-  ensure,
-  ensureHTMLElt,
-  ensureType,
-  last,
-  maybe,
-  mkShortId,
-  removeWhere,
-  spawn,
-  spawnWrapper,
-  swallow,
-  switchType,
-  tuple,
-  withoutNils,
-  withTimeout,
-  xDifference,
-  xGroupBy,
-} from "@/wab/common";
 import { drainQueue } from "@/wab/commons/asyncutil";
 import { arrayReversed, removeFromArray } from "@/wab/commons/collections";
 import {
@@ -146,39 +108,6 @@ import {
 import { safeCallbackify } from "@/wab/commons/control";
 import { isLatest, latestTag, lt } from "@/wab/commons/semver";
 import { DeepReadonly } from "@/wab/commons/types";
-import {
-  allComponentVariants,
-  CodeComponent,
-  ComponentType,
-  extractParamsFromPagePath,
-  getRealParams,
-  isCodeComponent,
-  isPageComponent,
-  isPlainComponent,
-  PageComponent,
-} from "@/wab/components";
-import {
-  DEVFLAGS,
-  InsertableTemplatesGroup,
-  InsertableTemplatesItem,
-} from "@/wab/devflags";
-import { tryExtractJson } from "@/wab/exprs";
-import { Box, Pt } from "@/wab/geom";
-import {
-  ChangesType,
-  ChangeSummary,
-  summarizeChanges,
-} from "@/wab/model-change-util";
-import {
-  emptyRecordedChanges,
-  filterPersistentChanges,
-  mergeRecordedChanges,
-  ModelChange,
-  RecordedChanges,
-} from "@/wab/observable-model";
-import { walkDependencyTree } from "@/wab/project-deps";
-import { isSelectable, makeSelectableFullKey } from "@/wab/selection";
-import { AddItemKey } from "@/wab/shared/add-item-keys";
 import { UnauthorizedError } from "@/wab/shared/ApiErrors/errors";
 import {
   ApiBranch,
@@ -188,26 +117,26 @@ import {
   ArenaType,
   BranchId,
   CopilotInteractionId,
-  GetCommentsResponse,
   InitServerInfo,
   MainBranchId,
   ServerSessionsInfo,
   TemplateSpec,
   UpdatePlayerViewRequest,
+  GetCommentsResponse,
 } from "@/wab/shared/ApiSchema";
 import {
   AnyArena,
+  FrameViewMode,
+  IArenaFrame,
   cloneArenaFrame,
   ensureActivatedScreenVariantsForArena,
   ensureActivatedScreenVariantsForFrameByWidth,
-  FrameViewMode,
   getArenaFrames,
   getArenaName,
   getArenaType,
   getArenaUuidOrName,
   getFrameHeight,
   getGridRowLabels,
-  IArenaFrame,
   isComponentArena,
   isDedicatedArena,
   isHeightAutoDerived,
@@ -217,31 +146,126 @@ import {
   syncArenaFrameSize,
   updateAutoDerivedFrameHeight,
 } from "@/wab/shared/Arenas";
+import { AccessLevel, accessLevelRank } from "@/wab/shared/EntUtil";
+import {
+  PkgVersionInfo,
+  PkgVersionInfoMeta,
+  SiteInfo,
+} from "@/wab/shared/SharedApi";
+import { isSlot, tryGetMainContentSlotTarget } from "@/wab/shared/SlotUtils";
+import { addEmptyQuery } from "@/wab/shared/TplMgr";
+import { isVariantSettingEmpty } from "@/wab/shared/Variants";
+import { AddItemKey } from "@/wab/shared/add-item-keys";
 import {
   Bundle,
   BundledInst,
+  FastBundler,
   checkBundleFields,
   checkRefsInBundle,
-  FastBundler,
 } from "@/wab/shared/bundler";
-import { getBundle, UnsafeBundle } from "@/wab/shared/bundles";
+import { UnsafeBundle, getBundle } from "@/wab/shared/bundles";
 import {
   allCodeLibraries,
   allCustomFunctions,
   computedProjectFlags,
   usedHostLessPkgs,
 } from "@/wab/shared/cached-selectors";
-import { getBuiltinComponentRegistrations } from "@/wab/shared/code-components/builtin-code-components";
+import {
+  getBuiltinComponentRegistrations,
+  isBuiltinCodeComponent,
+} from "@/wab/shared/code-components/builtin-code-components";
 import {
   CodeComponentsRegistry,
-  customFunctionId,
   HighlightInteractionRequest,
+  customFunctionId,
   registeredFunctionId,
   syncPlumeComponent,
 } from "@/wab/shared/code-components/code-components";
+import {
+  AsyncCallable,
+  arrayEqIgnoreOrder,
+  asOne,
+  assert,
+  asyncMaxAtATime,
+  asyncOneAtATime,
+  asyncTimeout,
+  ensure,
+  ensureHTMLElt,
+  ensureType,
+  isNonNil,
+  last,
+  maybe,
+  mkShortId,
+  removeWhere,
+  spawn,
+  spawnWrapper,
+  swallow,
+  switchType,
+  tuple,
+  withTimeout,
+  withoutNils,
+  xDifference,
+  xGroupBy,
+} from "@/wab/shared/common";
 import { ensureActivatedScreenVariantsForComponentArenaFrame } from "@/wab/shared/component-arenas";
 import { RootComponentVariantFrame } from "@/wab/shared/component-frame";
-import { instUtil } from "@/wab/shared/core/InstUtil";
+import {
+  CodeComponent,
+  ComponentType,
+  PageComponent,
+  allComponentVariants,
+  extractParamsFromPagePath,
+  getRealParams,
+  isCodeComponent,
+  isPageComponent,
+  isPlainComponent,
+} from "@/wab/shared/core/components";
+import { tryExtractJson } from "@/wab/shared/core/exprs";
+import {
+  ComponentContext,
+  ModelChange,
+  RecordedChanges,
+  emptyRecordedChanges,
+  filterPersistentChanges,
+  mergeRecordedChanges,
+} from "@/wab/shared/core/observable-model";
+import { walkDependencyTree } from "@/wab/shared/core/project-deps";
+import {
+  isSelectable,
+  makeSelectableFullKey,
+} from "@/wab/shared/core/selection";
+import {
+  allGlobalVariants,
+  getAllSiteFrames,
+  getArenaByNameOrUuidOrPath,
+  getDedicatedArena,
+  getSiteArenas,
+  isHostLessPackage,
+  isTplAttachedToSite,
+  isValidArena,
+  siteIsEmpty,
+} from "@/wab/shared/core/sites";
+import { SlotSelection } from "@/wab/shared/core/slots";
+import { SplitStatus } from "@/wab/shared/core/splits";
+import {
+  taggedUnbundle,
+  unbundleProjectDependency,
+  unbundleSite,
+} from "@/wab/shared/core/tagged-unbundle";
+import {
+  EventHandlerKeyType,
+  ancestorsUp,
+  flattenTpls,
+  isTplComponent,
+  isTplContainer,
+  isTplNamable,
+  isTplSlot,
+  tplChildren,
+  trackComponentRoot,
+  trackComponentSite,
+} from "@/wab/shared/core/tpls";
+import { undoChanges } from "@/wab/shared/core/undo-util";
+import { ValComponent, ValNode } from "@/wab/shared/core/val-nodes";
 import {
   ALL_QUERIES,
   dataSourceTemplateToString,
@@ -249,13 +273,47 @@ import {
   mkDataSourceTemplate,
 } from "@/wab/shared/data-sources-meta/data-sources";
 import { AddItemPrefs, getSimplifiedStyles } from "@/wab/shared/default-styles";
-import { isCoreTeamEmail } from "@/wab/shared/devflag-utils";
-import { DataSourceUser } from "@/wab/shared/dynamic-bindings";
-import { accessLevelRank } from "@/wab/shared/EntUtil";
+import { isAdminTeamEmail } from "@/wab/shared/devflag-utils";
 import {
-  cloneInsertableTemplateComponent,
-  InsertableTemplateExtraInfo,
-} from "@/wab/shared/insertable-templates";
+  DEVFLAGS,
+  InsertableTemplatesGroup,
+  InsertableTemplatesItem,
+} from "@/wab/shared/devflags";
+import { DataSourceUser } from "@/wab/shared/dynamic-bindings";
+import { Box, Pt } from "@/wab/shared/geom";
+import { cloneInsertableTemplateComponent } from "@/wab/shared/insertable-templates";
+import { InsertableTemplateComponentExtraInfo } from "@/wab/shared/insertable-templates/types";
+import { instUtil } from "@/wab/shared/model/InstUtil";
+import * as classes from "@/wab/shared/model/classes";
+import {
+  Arena,
+  ArenaChild,
+  ArenaFrame,
+  Component,
+  ComponentArena,
+  DataSourceTemplate,
+  ObjInst,
+  PageArena,
+  ProjectDependency,
+  StyleToken,
+  TemplatedString,
+  TplComponent,
+  TplNode,
+  TplSlot,
+  TplTag,
+  Variant,
+  VariantGroup,
+  isKnownArenaFrame,
+  isKnownComponentArena,
+  isKnownProjectDependency,
+  isKnownVariantSetting,
+} from "@/wab/shared/model/classes";
+import { modelSchemaHash } from "@/wab/shared/model/classes-metas";
+import {
+  ChangeSummary,
+  ChangesType,
+  summarizeChanges,
+} from "@/wab/shared/model/model-change-util";
 import { reorderPageArenaCols } from "@/wab/shared/page-arenas";
 import { getAccessLevelToResource } from "@/wab/shared/perms";
 import {
@@ -265,61 +323,23 @@ import {
   updateSummaryFromDeletedInstances,
 } from "@/wab/shared/server-updates-utils";
 import {
-  PkgVersionInfo,
-  PkgVersionInfoMeta,
-  SiteInfo,
-} from "@/wab/shared/SharedApi";
-import {
+  INITIAL_VERSION_NUMBER,
   calculateSemVer,
   compareSites,
   extractSplitStatusDiff,
-  INITIAL_VERSION_NUMBER,
 } from "@/wab/shared/site-diffs";
 import {
-  assertSiteInvariants,
   InvariantError,
+  assertSiteInvariants,
 } from "@/wab/shared/site-invariants";
-import { isSlot, tryGetMainContentSlotTarget } from "@/wab/shared/SlotUtils";
-import { addEmptyQuery } from "@/wab/shared/TplMgr";
 import {
-  getLeftTabPermission,
-  LeftTabKey,
   LEFT_TAB_PANEL_KEYS,
-  mergeUiConfigs,
+  LeftTabKey,
+  LeftTabUiKey,
   UiConfig,
+  getLeftTabPermission,
+  mergeUiConfigs,
 } from "@/wab/shared/ui-config-utils";
-import { isVariantSettingEmpty } from "@/wab/shared/Variants";
-import {
-  allGlobalVariants,
-  getAllSiteFrames,
-  getArenaByNameOrUuidOrPath,
-  getDedicatedArena,
-  getSiteArenas,
-  isHostLessPackage,
-  isTplAttachedToSite,
-  siteIsEmpty,
-} from "@/wab/sites";
-import { SlotSelection } from "@/wab/slots";
-import { SplitStatus } from "@/wab/splits";
-import {
-  taggedUnbundle,
-  unbundleProjectDependency,
-  unbundleSite,
-} from "@/wab/tagged-unbundle";
-import {
-  ancestorsUp,
-  EventHandlerKeyType,
-  flattenTpls,
-  isTplComponent,
-  isTplContainer,
-  isTplNamable,
-  isTplSlot,
-  tplChildren,
-  trackComponentRoot,
-  trackComponentSite,
-} from "@/wab/tpls";
-import { undoChanges } from "@/wab/undo-util";
-import { ValComponent, ValNode } from "@/wab/val-nodes";
 import {
   DataOp,
   executePlasmicDataOp,
@@ -342,6 +362,7 @@ import {
   mapValues,
   maxBy,
   memoize,
+  partition,
   uniq,
 } from "lodash";
 import assign from "lodash/assign";
@@ -349,9 +370,10 @@ import defer from "lodash/defer";
 import isEqual from "lodash/isEqual";
 import orderBy from "lodash/orderBy";
 import {
+  IObservableValue,
+  ObservableMap,
   autorun,
   flow,
-  IObservableValue,
   makeObservable,
   observable,
   reaction,
@@ -363,11 +385,7 @@ import React, { useContext } from "react";
 import semver from "semver";
 import * as Signals from "signals";
 import { mutate } from "swr";
-import { failable, FailableArgParams, IFailable } from "ts-failable";
-import { ComponentCtx } from "./component-ctx";
-import { MultiplayerCtx } from "./multiplayer-ctx";
-import { SpotlightAndVariantsInfo, ViewCtx } from "./view-ctx";
-import { ViewportCtx } from "./ViewportCtx";
+import { FailableArgParams, IFailable, failable } from "ts-failable";
 
 (window as any).dbg.classes = classes;
 
@@ -376,7 +394,6 @@ const DEFAULT_ZOOM_PADDING = 40;
 
 interface StudioCtxArgs {
   dbCtx: DbCtx;
-  clipboard: Clipboard;
 }
 
 interface ZoomState {
@@ -551,6 +568,9 @@ export enum RightTabKey {
   component = "component",
 }
 
+const THUMBNAIL_DURATION = 1000 * 60 * 5; // 5 minutes to recompute thumbnail
+const RECENT_ARENAS_LIMIT = 5;
+
 export class StudioCtx extends WithDbCtx {
   //
   // Keep track of modifier keys and space keys as they are pressed
@@ -563,9 +583,8 @@ export class StudioCtx extends WithDbCtx {
   private static ALT = 18;
   private disposals: (() => void)[] = [];
   _dbCtx: DbCtx;
-  clipboard: Clipboard;
+  readonly clipboard = new LocalClipboard();
   fontManager: FontManager;
-  popupCodesandboxWindow: Window | null = null;
   previewCtx: PreviewCtx | undefined;
   _viewportCtx = observable.box<ViewportCtx | null>(null);
   get viewportCtx() {
@@ -604,7 +623,7 @@ export class StudioCtx extends WithDbCtx {
       _isUnlogged: observable,
     });
 
-    ({ dbCtx: this._dbCtx, clipboard: this.clipboard } = args);
+    ({ dbCtx: this._dbCtx } = args);
 
     this.rightTabKey = this.appCtx.appConfig.rightTabs
       ? RightTabKey.settings
@@ -681,6 +700,35 @@ export class StudioCtx extends WithDbCtx {
       }),
       autorun(
         async () => {
+          const arenaFrames = getArenaFrames(this.previousArena);
+          if (!isKnownComponentArena(this.previousArena)) {
+            return;
+          }
+          if (arenaFrames.length === 0) {
+            return;
+          }
+          const arenaFrame = arenaFrames[0];
+          const viewCtx = this.tryGetViewCtxForFrame(arenaFrame);
+          if (!viewCtx || !isPlainComponent(viewCtx.component)) {
+            return;
+          }
+          const currentComponent = viewCtx.currentComponent();
+
+          if (!this.hasCachedThumbnail(currentComponent.uuid)) {
+            try {
+              const thumbnail = await viewCtx.canvasCtx.getThumbnail();
+              this.saveThumbnail(currentComponent.uuid, thumbnail);
+            } catch (e) {
+              debugger;
+            }
+          }
+        },
+        {
+          name: "StudioCtx.setComponentThumbnails",
+        }
+      ),
+      autorun(
+        async () => {
           const projectName = this.siteInfo.name;
           const branch = this.dbCtx().branchInfo;
           const branchName = branch ? branch.name : MainBranchId;
@@ -749,6 +797,48 @@ export class StudioCtx extends WithDbCtx {
         },
         { name: "StudioCtx.updateFocusPreference" }
       ),
+      ...(this.appCtx.appConfig.incrementalObservables
+        ? [
+            autorun(
+              () => {
+                const currentArena = this.currentArena;
+                if (!currentArena) {
+                  return;
+                }
+                console.log("running currentArena change", currentArena);
+                const componentsToObserve = isDedicatedArena(currentArena)
+                  ? [currentArena.component]
+                  : currentArena.children.map(
+                      (child) => child.container.component
+                    );
+                this.dbCtx().maybeObserveComponents(
+                  componentsToObserve,
+                  ComponentContext.Arena
+                );
+              },
+              { name: "StudioCtx.observeCurrentArena" }
+            ),
+            autorun(
+              () => {
+                const currentViewCtxComponent =
+                  this.focusedViewCtx()?.currentComponent();
+                if (!currentViewCtxComponent) {
+                  return;
+                }
+                console.log(
+                  "running viewCtx component change",
+                  currentViewCtxComponent
+                );
+                const componentsToObserve = [currentViewCtxComponent];
+                this.dbCtx().maybeObserveComponents(
+                  componentsToObserve,
+                  ComponentContext.View
+                );
+              },
+              { name: "StudioCtx.observeCurrentViewCtx" }
+            ),
+          ]
+        : []),
       autorun(() => {
         if (!isHostLessPackage(this.site)) {
           this.updatePkgsList(usedHostLessPkgs(this.site));
@@ -1045,12 +1135,11 @@ export class StudioCtx extends WithDbCtx {
     this.tryZoomToFitArena();
   }
 
-  getSubReactVersion() {
-    return ((window.parent as any).__Sub as SubDeps).React.version;
-  }
-
-  getRegisteredComponentsReact() {
-    return ((window.parent as any).__Sub as SubDeps).React;
+  /**
+   * @deprecated use {@link getRootSubReact} instead.
+   */
+  getRootSubReact() {
+    return getRootSubReact();
   }
 
   getPlumeSite() {
@@ -1115,6 +1204,29 @@ export class StudioCtx extends WithDbCtx {
   }
 
   async change<E = never, Result = void>(
+    f: (args: FailableArgParams<Result, E>) => IFailable<Result, E>,
+    opts: StudioChangeOpts = {}
+  ): Promise<IFailable<Result, E>> {
+    return this._change(f, opts);
+  }
+
+  /**
+   * Observes a list of component before applying the changes
+   */
+  async changeObserved<E = never, Result = void>(
+    c: () => Component[],
+    f: (args: FailableArgParams<Result, E>) => IFailable<Result, E>,
+    opts: StudioChangeOpts = {}
+  ): Promise<IFailable<Result, E>> {
+    if (!this.appCtx.appConfig.incrementalObservables) {
+      return this._change(f, opts);
+    }
+    const changedComponents = c();
+    this.dbCtx().maybeObserveComponents(changedComponents);
+    return this._change(f, opts);
+  }
+
+  async _change<E = never, Result = void>(
     f: (args: FailableArgParams<Result, E>) => IFailable<Result, E>,
     opts: StudioChangeOpts = {}
   ): Promise<IFailable<Result, E>> {
@@ -1298,6 +1410,10 @@ export class StudioCtx extends WithDbCtx {
 
       return success();
     });
+  }
+
+  observeComponents(components: Component[]) {
+    return this.dbCtx().maybeObserveComponents(components);
   }
 
   private _isDocs = observable.box(false);
@@ -1547,9 +1663,40 @@ export class StudioCtx extends WithDbCtx {
   //
 
   private _currentArena = observable.box<AnyArena | null>(null);
+  private _recentArenas = observable.box<AnyArena[]>([]);
 
   get currentArena() {
     return this._currentArena.get();
+  }
+
+  set currentArena(arena: AnyArena | null) {
+    if (arena) {
+      const fixedRecentArenas = this.recentArenas.filter((a) => {
+        return a !== arena && isValidArena(this.site, a);
+      });
+      fixedRecentArenas.push(arena);
+      if (fixedRecentArenas.length > RECENT_ARENAS_LIMIT) {
+        fixedRecentArenas.shift();
+      }
+      this._recentArenas.set(fixedRecentArenas);
+    }
+
+    this._currentArena.set(arena);
+  }
+
+  get previousArena() {
+    const recentLength = this.recentArenas.length;
+    return recentLength >= 2 ? this.recentArenas[recentLength - 1] : null;
+  }
+
+  get recentArenas() {
+    return this._recentArenas.get();
+  }
+
+  get currentComponent() {
+    return isDedicatedArena(this.currentArena)
+      ? this.currentArena.component
+      : undefined;
   }
 
   private arenaViewStates = observable.map<AnyArena, ArenaViewInfo>();
@@ -1914,7 +2061,7 @@ export class StudioCtx extends WithDbCtx {
       }
 
       this.viewportCtx?.setArena(arena);
-      this._currentArena.set(arena);
+      this.currentArena = arena;
       if (!arena) {
         return;
       }
@@ -2050,7 +2197,7 @@ export class StudioCtx extends WithDbCtx {
     }: {
       type: ComponentType;
       plumeTemplateId?: string;
-      insertableTemplateInfo?: InsertableTemplateExtraInfo;
+      insertableTemplateInfo?: InsertableTemplateComponentExtraInfo;
       noSwitchArena?: boolean;
     }
   ) {
@@ -2086,7 +2233,6 @@ export class StudioCtx extends WithDbCtx {
           this.projectDependencyManager.plumeSite
         );
         postInsertableTemplate(this, seenFonts);
-        this.tplMgr().attachComponent(comp);
         return comp;
       } else {
         return this.tplMgr().addComponent({
@@ -2247,15 +2393,11 @@ export class StudioCtx extends WithDbCtx {
     this._showCommentsPanel.set(!this.showCommentsPanel);
   }
 
-  private _xCommentsData = observable.box<
-    [GetCommentsResponse, Map<string, ApiUser>] | undefined
-  >(undefined);
+  private _xCommentsData = observable.box<CommentsData>(undefined);
   get commentsData() {
     return this._xCommentsData.get();
   }
-  set commentsData(
-    commentsData: [GetCommentsResponse, Map<string, ApiUser>] | undefined
-  ) {
+  set commentsData(commentsData: CommentsData) {
     this._xCommentsData.set(commentsData);
   }
 
@@ -2377,6 +2519,28 @@ export class StudioCtx extends WithDbCtx {
     for (const viewCtx of this.viewCtxs) {
       viewCtx.canvasCtx.setInteractiveMode(interactive);
     }
+  }
+
+  private _isAutoOpenMode = observable.box(true);
+  get isAutoOpenMode() {
+    return this._isAutoOpenMode.get();
+  }
+  set isAutoOpenMode(autoOpen: boolean) {
+    this._isAutoOpenMode.set(autoOpen);
+  }
+  toggleAutoOpenMode() {
+    this.isAutoOpenMode = !this.isAutoOpenMode;
+  }
+
+  private _showCommentsOverlay = observable.box(false);
+  get showCommentsOverlay() {
+    return this._showCommentsOverlay.get();
+  }
+  set showCommentsOverlay(show: boolean) {
+    this._showCommentsOverlay.set(show);
+  }
+  toggleShowCommentsOverlay() {
+    this.showCommentsOverlay = !this.showCommentsOverlay;
   }
 
   //
@@ -2515,17 +2679,6 @@ export class StudioCtx extends WithDbCtx {
     this._omnibarState.show = true;
     this._omnibarState.includedGroupKeys = undefined;
   }
-  showInsertModal(): void {
-    this._omnibarState.show = true;
-    this._omnibarState.includedGroupKeys = [
-      "insertable-templates",
-      "insertable-icons",
-    ];
-  }
-  showHostLessModal(): void {
-    this._omnibarState.show = true;
-    this._omnibarState.includedGroupKeys = ["hostless"];
-  }
   showPresetsModal(component: CodeComponent): void {
     this._omnibarState.show = true;
     this._omnibarState.includedGroupKeys = ["presets-" + component.uuid];
@@ -2535,10 +2688,17 @@ export class StudioCtx extends WithDbCtx {
   // Branching
   //
   showBranching() {
+    const team = this.appCtx
+      .getAllTeams()
+      .find((t) => t.id === this.siteInfo.teamId);
     return (
       this.appCtx.appConfig.branching ||
       (this.siteInfo.teamId &&
-        this.appCtx.appConfig.branchingTeamIds.includes(this.siteInfo.teamId))
+        this.appCtx.appConfig.branchingTeamIds.includes(
+          this.siteInfo.teamId
+        )) ||
+      (team?.parentTeamId &&
+        this.appCtx.appConfig.branchingTeamIds.includes(team.parentTeamId))
     );
   }
 
@@ -2697,7 +2857,7 @@ export class StudioCtx extends WithDbCtx {
     }
   }
 
-  getLeftTabPermission(tab: LeftTabKey) {
+  getLeftTabPermission(tab: LeftTabUiKey) {
     return getLeftTabPermission(this.getCurrentUiConfig(), tab, {
       isContentCreator: this.contentEditorMode,
     });
@@ -2719,6 +2879,30 @@ export class StudioCtx extends WithDbCtx {
       this._contentEditorMode.set(false);
     }
   }
+
+  // Component thumbnail management
+
+  private _thumbnailsCache: ObservableMap<string, [string, number]> =
+    observable.map(new Map());
+
+  saveThumbnail = (componentUuid: string, thumbnail: string) => {
+    this._thumbnailsCache.set(componentUuid, [thumbnail, Date.now()]);
+  };
+
+  getCachedThumbnail = (componentUuid: string) => {
+    return this._thumbnailsCache.get(componentUuid)?.[0];
+  };
+
+  hasCachedThumbnail = (componentUuid: string) => {
+    const cachedThumbnail = this._thumbnailsCache.get(componentUuid);
+    if (
+      !cachedThumbnail ||
+      Date.now() - cachedThumbnail[1] > THUMBNAIL_DURATION
+    ) {
+      return false;
+    }
+    return true;
+  };
 
   //
   // Managing the Variants switcher drawer
@@ -3284,7 +3468,7 @@ export class StudioCtx extends WithDbCtx {
       }
 
       const $focusedDom = vc.focusedDomElt();
-      if (!$focusedDom) {
+      if (!$focusedDom?.length) {
         return;
       }
 
@@ -3536,8 +3720,8 @@ export class StudioCtx extends WithDbCtx {
    */
   canSendMultiplayerInfo() {
     return (
-      isCoreTeamEmail(this.siteInfo.owner?.email, this.appCtx.appConfig) ||
-      !isCoreTeamEmail(this.appCtx.selfInfo?.email, this.appCtx.appConfig)
+      isAdminTeamEmail(this.siteInfo.owner?.email, this.appCtx.appConfig) ||
+      !isAdminTeamEmail(this.appCtx.selfInfo?.email, this.appCtx.appConfig)
     );
   }
 
@@ -4328,7 +4512,8 @@ export class StudioCtx extends WithDbCtx {
               groupBy(
                 allCustomFunctions(this.site)
                   .map(({ customFunction }) => customFunction)
-                  .filter((f) => !!f.namespace)
+                  .filter((f) => !!f.namespace),
+                (f) => f.namespace
               )
             ),
           ].map((functionOrGroup) =>
@@ -4392,7 +4577,7 @@ export class StudioCtx extends WithDbCtx {
     if (params.some((p) => p.startsWith("..."))) {
       // catch all routes only supported if host is greater than
       // 1.0.186
-      const hostVersion = (window.parent as any).__Sub.hostVersion;
+      const hostVersion = getRootSubHostVersion();
       if (!hostVersion || lt(hostVersion, "1.0.186")) {
         notification.error({
           message: "Catch-all routes are not supported for your host",
@@ -4588,10 +4773,8 @@ export class StudioCtx extends WithDbCtx {
           changeCounterBeingSaved - this._savedChangeCounter,
         "changeRecords should have exactly the amount os changes since it was saved last"
       );
-      const { changesBundle, toDeleteIids, allIids } = this.bundleChanges(
-        changes.changes,
-        incremental
-      );
+      const { changesBundle, toDeleteIids, allIids, modifiedComponentIids } =
+        this.bundleChanges(changes.changes, incremental);
 
       if (!DEVFLAGS.skipInvariants) {
         try {
@@ -4621,7 +4804,9 @@ export class StudioCtx extends WithDbCtx {
             incremental: incremental,
             toDeleteIids,
             branchId: this.dbCtx().branchInfo?.id,
+            modifiedComponentIids,
           }),
+          "Saving project revision timed out",
           // Two-minute timeout
           120 * 1000
         );
@@ -4646,9 +4831,10 @@ export class StudioCtx extends WithDbCtx {
         return SaveResult.Success;
       } catch (e) {
         if (e.name === "ProjectRevisionError") {
-          return await withTimeout(this.fetchUpdates(), 60 * 1000).then(() =>
-            this.trySave(preferIncremental)
-          );
+          return await withTimeout(
+            this.fetchUpdates(),
+            "Sync with latest updates timed out"
+          ).then(() => this.trySave(preferIncremental));
         } else if (e.name === "ForbiddenError") {
           showForbiddenError();
           this.alertBannerState.set(AlertSpec.PermError);
@@ -4864,6 +5050,7 @@ export class StudioCtx extends WithDbCtx {
     changesBundle: DeepReadonly<Bundle>;
     toDeleteIids: string[];
     allIids: string[];
+    modifiedComponentIids: string[];
   } {
     const persistentChanges = filterPersistentChanges(allChanges);
 
@@ -4882,7 +5069,7 @@ export class StudioCtx extends WithDbCtx {
         persistentChanges.map((change) => change.changeNode)
       );
 
-      if (!DEVFLAGS.skipInvariants && Math.random() < 0.05) {
+      if (!DEVFLAGS.skipInvariants && Math.random() < 0.1) {
         // Random check to silently see if results match
         this.checkIfMatchesSlowBundle(_bundle, persistentChanges);
       }
@@ -4897,6 +5084,7 @@ export class StudioCtx extends WithDbCtx {
         changesBundle: bundle,
         toDeleteIids: [],
         allIids,
+        modifiedComponentIids: [],
       };
     }
 
@@ -4909,7 +5097,8 @@ export class StudioCtx extends WithDbCtx {
       }
     });
 
-    // Updated Iids
+    const modifiedComponentIids = new Set<string>();
+    // Updated Iids and modified components
     persistentChanges.forEach((change) => {
       const { inst, field } = change.changeNode;
       const addr = this.bundler().addrOf(inst);
@@ -4925,6 +5114,16 @@ export class StudioCtx extends WithDbCtx {
           map[addr.iid][field] = bundle.map[addr.iid][field];
         }
       }
+      if (this.appCtx.appConfig.incrementalObservables) {
+        change.path?.forEach((path) => {
+          if (classes.isKnownComponent(path.inst) && path.field === "tplTree") {
+            const compAddr = this.bundler().addrOf(path.inst);
+            if (compAddr) {
+              modifiedComponentIids.add(compAddr.iid);
+            }
+          }
+        });
+      }
     });
 
     // Deleted Iids
@@ -4936,6 +5135,7 @@ export class StudioCtx extends WithDbCtx {
       changesBundle: { ...bundle, map },
       toDeleteIids,
       allIids,
+      modifiedComponentIids: Array.from(modifiedComponentIids),
     };
   }
 
@@ -5216,7 +5416,6 @@ export class StudioCtx extends WithDbCtx {
       return {
         version: INITIAL_VERSION_NUMBER,
         changeLog: extractSplitStatusDiff(this.site, () => SplitStatus.New),
-        prevSite: undefined,
         releaseType: undefined,
       };
     }
@@ -5234,6 +5433,15 @@ export class StudioCtx extends WithDbCtx {
       );
     if (latestPublishedRev.revision === this.dbCtx().revisionNum) {
       return undefined;
+    }
+
+    if (
+      this.appCtx.appConfig.serverPublishProjectIds.includes(this.siteInfo.id)
+    ) {
+      return this.appCtx.api.computeNextProjectVersion(this.siteInfo.id, {
+        revisionNum: this.dbCtx().revisionNum,
+        branchId: this.dbCtx().branchInfo?.id,
+      });
     }
 
     const latestPublishedPkg = await this.appCtx.api.getPkgVersion(
@@ -5256,7 +5464,7 @@ export class StudioCtx extends WithDbCtx {
     if (!version) {
       throw new Error("Invalid version number found: " + latestRelease.version);
     }
-    return { version, changeLog, prevSite, releaseType };
+    return { version, changeLog, releaseType };
   }
 
   async branchHasUnpublishedChanges({
@@ -5278,9 +5486,12 @@ export class StudioCtx extends WithDbCtx {
         return [];
       }
     })();
-    const { rev } = await this.appCtx.api.getSiteInfo(this.siteInfo.id, {
-      branchId: branchId ?? undefined,
-    });
+    const { rev } = await this.appCtx.api.getProjectRevWithoutData(
+      this.siteInfo.id,
+      // undefined to get the latest revision
+      undefined,
+      branchId ?? undefined
+    );
     const latestPublishedVersion = head(branchReleases);
     const { rev: latestPublishedRev } = await this.getLatestVersion(
       latestPublishedVersion?.revisionId,
@@ -5519,6 +5730,11 @@ export class StudioCtx extends WithDbCtx {
     }
   }
 
+  async handleBranchMerged() {
+    // Ensure that we're up to date with the latest changes in the branch
+    await this.fetchUpdates();
+  }
+
   private async fetchUpdatesWatch() {
     const partial = await this.appCtx.api.getModelUpdates(
       this.siteInfo.id,
@@ -5560,6 +5776,10 @@ export class StudioCtx extends WithDbCtx {
     );
   }
 
+  /**
+   * Never call this.change() inside this method without wrapping it
+   * in a spawn() to avoid deadlocks and/or breaking this.modelChangeQueue.
+   */
   private async fetchUpdatesInternal() {
     assert(
       !this._isChanging && !this._isUndoing,
@@ -5586,14 +5806,16 @@ export class StudioCtx extends WithDbCtx {
           getArenaType(this.currentArena)
         );
         if (newCurrentArena) {
-          await this.change(
-            ({ success }) => {
-              this.switchToArena(newCurrentArena);
-              return success();
-            },
-            {
-              noUndoRecord: true,
-            }
+          spawn(
+            this.change(
+              ({ success }) => {
+                this.switchToArena(newCurrentArena);
+                return success();
+              },
+              {
+                noUndoRecord: true,
+              }
+            )
           );
         }
       }
@@ -5601,9 +5823,26 @@ export class StudioCtx extends WithDbCtx {
     }
     const hasUnsavedChanges = this.hasUnsavedChanges();
     if (updatedModel.data) {
-      const { data, depPkgs } = updatedModel;
+      const { data, depPkgs, deletedIids, modifiedComponentIids } =
+        updatedModel;
       try {
         this._isRefreshing = true;
+
+        if (this.appCtx.appConfig.incrementalObservables) {
+          this.dbCtx().maybeObserveComponents(
+            withoutNils(
+              modifiedComponentIids.map((c) => {
+                const compInst = this.bundler().objByAddr({
+                  uuid: projectId,
+                  iid: c,
+                });
+                return classes.isKnownComponent(compInst)
+                  ? compInst
+                  : undefined;
+              })
+            )
+          );
+        }
 
         const undoAndRecord = (changes: RecordedChanges) =>
           this.recorder.withRecording(() => undoChanges(changes.changes));
@@ -5621,7 +5860,7 @@ export class StudioCtx extends WithDbCtx {
           updateSummaryFromDeletedInstances(
             this._serverUpdatesSummary,
             withoutNils(
-              updatedModel.deletedIids.map((iid) =>
+              deletedIids.map((iid) =>
                 this.bundler().objByAddr({ uuid: projectId, iid })
               )
             )
@@ -5660,9 +5899,7 @@ export class StudioCtx extends WithDbCtx {
             Object.keys(partialBundle.map).forEach((iid) =>
               this._savedIids.add(iid)
             );
-            updatedModel.deletedIids.forEach((iid) =>
-              this._savedIids.delete(iid)
-            );
+            deletedIids.forEach((iid) => this._savedIids.delete(iid));
           });
 
           // Re-apply the local changes on top of the server changes
@@ -6006,6 +6243,18 @@ export class StudioCtx extends WithDbCtx {
       this.leftTabKey = "components";
     }
   }
+  private _findReferencesToken = observable.box<StyleToken | undefined>(
+    undefined
+  );
+  get findReferencesToken() {
+    return this._findReferencesToken.get();
+  }
+  set findReferencesToken(c: StyleToken | undefined) {
+    this._findReferencesToken.set(c);
+    if (!this.leftTabKey) {
+      this.leftTabKey = "tokens";
+    }
+  }
 
   private _showPageSettings = observable.box<PageComponent | undefined>(
     undefined
@@ -6020,6 +6269,25 @@ export class StudioCtx extends WithDbCtx {
   siteIsEmpty() {
     return siteIsEmpty(this.site);
   }
+
+  getProjectData = computedFn(
+    () => {
+      const [pages, comps] = partition(
+        this.site.components.filter((c) => !isBuiltinCodeComponent(c)),
+        (c) => {
+          return isNonNil(c.pageMeta);
+        }
+      );
+      return {
+        components: comps.map((c) => ({ name: c.name })),
+        pages: pages.map((c) => ({
+          name: c.name,
+          pageMeta: { path: c.pageMeta!.path },
+        })),
+      };
+    },
+    { name: "getProjectData" }
+  );
 
   private _copilotHistory = observable.map<string, CopilotInteraction[]>();
 
@@ -6517,7 +6785,8 @@ function canUserEditProject(user: ApiUser | null, project: SiteInfo) {
     return false;
   }
   if (
-    (DEVFLAGS.allowPlasmicTeamEdits && isCoreTeamEmail(user.email, DEVFLAGS)) ||
+    (DEVFLAGS.allowPlasmicTeamEdits &&
+      isAdminTeamEmail(user.email, DEVFLAGS)) ||
     accessLevelRank(project.defaultAccessLevel) >= accessLevelRank("content")
   ) {
     return true;
@@ -6547,10 +6816,11 @@ function isContentEditor(user: ApiUser | null, project: SiteInfo) {
   return accessLevel === "content";
 }
 
-export function isUserProjectEditor(
+export function checkAccessLevelRank(
   user: ApiUser | null,
   project: ApiProject,
-  perms: ApiPermission[]
+  perms: ApiPermission[],
+  rank: AccessLevel
 ) {
   if (!user) {
     return false;
@@ -6565,8 +6835,24 @@ export function isUserProjectEditor(
         user,
         perms
       )
-    ) >= accessLevelRank("editor")
+    ) >= accessLevelRank(rank)
   );
+}
+
+export function isUserProjectEditor(
+  user: ApiUser | null,
+  project: ApiProject,
+  perms: ApiPermission[]
+) {
+  return checkAccessLevelRank(user, project, perms, "editor");
+}
+
+export function isUserProjectOwner(
+  user: ApiUser | null,
+  project: ApiProject,
+  perms: ApiPermission[]
+) {
+  return checkAccessLevelRank(user, project, perms, "owner");
 }
 
 export function cssPropsForInvertTransform(
@@ -6635,7 +6921,8 @@ function viewCtxInfoChanged(
     vcInfo.showDefaultSlotContents !== vcPreviousInfo.showDefaultSlotContents ||
     !isEqual(vcInfo.pinnedVariants, vcPreviousInfo.pinnedVariants) ||
     makeSelectableFullKey(vcInfo.focusedSelectable) !==
-      makeSelectableFullKey(vcPreviousInfo.focusedSelectable)
+      makeSelectableFullKey(vcPreviousInfo.focusedSelectable) ||
+    vcInfo.focusedTpl !== vcPreviousInfo.focusedTpl
   );
 }
 

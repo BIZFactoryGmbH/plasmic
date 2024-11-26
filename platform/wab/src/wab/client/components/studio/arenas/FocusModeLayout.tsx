@@ -1,9 +1,9 @@
-import { ArenaFrame } from "@/wab/classes";
-import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import { CanvasFrame } from "@/wab/client/components/canvas/CanvasFrame";
+import { CanvasCtx } from "@/wab/client/components/canvas/canvas-ctx";
 import { StudioCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { FocusedDedicatedArena } from "@/wab/shared/Arenas";
-import { observer } from "mobx-react-lite";
+import { ArenaFrame } from "@/wab/shared/model/classes";
+import { observer } from "mobx-react";
 import React from "react";
 
 export const FocusModeLayout = observer(function FocusModeLayout(props: {

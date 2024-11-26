@@ -13,39 +13,31 @@
 
 import * as React from "react";
 
-import * as p from "@plasmicapp/react-web";
-import * as ph from "@plasmicapp/react-web/lib/host";
-
 import {
-  hasVariant,
-  classNames,
-  wrapWithClassName,
-  createPlasmicElementProxy,
-  makeFragment,
-  MultiChoiceArg,
+  Flex as Flex__,
   SingleBooleanChoiceArg,
-  SingleChoiceArg,
-  pick,
-  omit,
-  useTrigger,
+  Stack as Stack__,
   StrictProps,
+  classNames,
+  createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
+  hasVariant,
+  renderPlasmicSlot,
+  useDollarState,
 } from "@plasmicapp/react-web";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
+
+import ListSection from "../../components/ListSection"; // plasmic-import: znioE83CPU/component
+import CmsModelItem from "../../components/cms/CmsModelItem"; // plasmic-import: FpZFUfiTA6/component
 import IconButton from "../../components/widgets/IconButton"; // plasmic-import: LPry-TF4j22a/component
 import Searchbox from "../../components/widgets/Searchbox"; // plasmic-import: po7gr0PX4_gWo/component
-import CmsModelItem from "../../components/cms/CmsModelItem"; // plasmic-import: FpZFUfiTA6/component
-import ListSection from "../../components/ListSection"; // plasmic-import: znioE83CPU/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
 import plasmic_plasmic_kit_design_system_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
 import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
-import projectcss from "./plasmic_plasmic_kit_cms.module.css"; // plasmic-import: ieacQ3Z46z4gwo1FnaB5vY/projectcss
 import sty from "./PlasmicCmsModelsList.module.css"; // plasmic-import: M3aa84scyXT/css
-
-import PlussvgIcon from "../q_4_icons/icons/PlasmicIcon__Plussvg"; // plasmic-import: sQKgd2GNr/icon
-import ChevronDownsvgIcon from "../q_4_icons/icons/PlasmicIcon__ChevronDownsvg"; // plasmic-import: xZrB9_0ir/icon
+import projectcss from "./plasmic_plasmic_kit_cms.module.css"; // plasmic-import: ieacQ3Z46z4gwo1FnaB5vY/projectcss
 
 createPlasmicElementProxy;
 
@@ -77,10 +69,10 @@ export const PlasmicCmsModelsList__ArgProps = new Array<ArgPropType>(
 );
 
 export type PlasmicCmsModelsList__OverridesType = {
-  root?: p.Flex<"div">;
-  addModelButton?: p.Flex<typeof IconButton>;
-  searchInput?: p.Flex<typeof Searchbox>;
-  archivedModelsSection?: p.Flex<typeof ListSection>;
+  root?: Flex__<"div">;
+  addModelButton?: Flex__<typeof IconButton>;
+  searchInput?: Flex__<typeof Searchbox>;
+  archivedModelsSection?: Flex__<typeof ListSection>;
 };
 
 export interface DefaultCmsModelsListProps {
@@ -102,20 +94,27 @@ function PlasmicCmsModelsList__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
     ...variants,
   };
 
-  const $ctx = ph.useDataEnv?.() || {};
+  const $ctx = useDataEnv?.() || {};
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = p.useCurrentUser?.() || {};
-
-  const stateSpecs: Parameters<typeof p.useDollarState>[0] = React.useMemo(
+  const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
         path: "isEmpty",
@@ -137,9 +136,10 @@ function PlasmicCmsModelsList__RenderFunc(props: {
           $props.hasArchivedModels,
       },
     ],
+
     [$props, $ctx, $refs]
   );
-  const $state = p.useDollarState(stateSpecs, {
+  const $state = useDollarState(stateSpecs, {
     $props,
     $ctx,
     $queries: {},
@@ -162,6 +162,11 @@ function PlasmicCmsModelsList__RenderFunc(props: {
         plasmic_plasmic_kit_color_tokens_css.plasmic_tokens,
         sty.root,
         {
+          [sty.roothasArchivedModels]: hasVariant(
+            $state,
+            "hasArchivedModels",
+            "hasArchivedModels"
+          ),
           [sty.rootisEmpty]: hasVariant($state, "isEmpty", "isEmpty"),
           [sty.rootisSchemaMode]: hasVariant(
             $state,
@@ -171,7 +176,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
         }
       )}
     >
-      <p.Stack
+      <Stack__
         as={"div"}
         hasGap={true}
         className={classNames(projectcss.all, sty.freeBox__dprWy, {
@@ -250,7 +255,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
           />
         </div>
         {(hasVariant($state, "isEmpty", "isEmpty") ? false : true) ? (
-          <p.Stack
+          <Stack__
             as={"div"}
             hasGap={true}
             className={classNames(projectcss.all, sty.freeBox__tBrpA, {
@@ -261,7 +266,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
               ),
             })}
           >
-            {p.renderPlasmicSlot({
+            {renderPlasmicSlot({
               defaultContents: (
                 <React.Fragment>
                   <CmsModelItem
@@ -279,9 +284,10 @@ function PlasmicCmsModelsList__RenderFunc(props: {
                   />
                 </React.Fragment>
               ),
+
               value: args.children,
             })}
-          </p.Stack>
+          </Stack__>
         ) : null}
         <div
           className={classNames(
@@ -299,7 +305,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
         >
           {"No models have been created."}
         </div>
-      </p.Stack>
+      </Stack__>
       {(
         hasVariant($state, "hasArchivedModels", "hasArchivedModels")
           ? true
@@ -334,7 +340,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
             </div>
           }
         >
-          <p.Stack
+          <Stack__
             as={"div"}
             hasGap={true}
             className={classNames(projectcss.all, sty.freeBox___0Dez, {
@@ -351,7 +357,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
             })}
           >
             {(hasVariant($state, "isEmpty", "isEmpty") ? false : true) ? (
-              <p.Stack
+              <Stack__
                 as={"div"}
                 hasGap={true}
                 className={classNames(projectcss.all, sty.freeBox__rIsR7, {
@@ -362,7 +368,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
                   ),
                 })}
               >
-                {p.renderPlasmicSlot({
+                {renderPlasmicSlot({
                   defaultContents: (
                     <React.Fragment>
                       <CmsModelItem
@@ -380,9 +386,10 @@ function PlasmicCmsModelsList__RenderFunc(props: {
                       />
                     </React.Fragment>
                   ),
+
                   value: args.archivedModels,
                 })}
-              </p.Stack>
+              </Stack__>
             ) : null}
             <div
               className={classNames(
@@ -400,7 +407,7 @@ function PlasmicCmsModelsList__RenderFunc(props: {
             >
               {"No models have been created."}
             </div>
-          </p.Stack>
+          </Stack__>
         </ListSection>
       ) : null}
     </div>
@@ -428,6 +435,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicCmsModelsList__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

@@ -15,74 +15,44 @@ import * as React from "react";
 
 import {
   Flex as Flex__,
-  MultiChoiceArg,
-  PlasmicDataSourceContextProvider as PlasmicDataSourceContextProvider__,
-  PlasmicIcon as PlasmicIcon__,
-  PlasmicImg as PlasmicImg__,
-  PlasmicLink as PlasmicLink__,
-  PlasmicPageGuard as PlasmicPageGuard__,
-  SingleBooleanChoiceArg,
   SingleChoiceArg,
-  Stack as Stack__,
   StrictProps,
-  Trans as Trans__,
   classNames,
   createPlasmicElementProxy,
   deriveRenderOpts,
-  ensureGlobalVariants,
-  generateOnMutateForSpec,
-  generateStateOnChangeProp,
-  generateStateOnChangePropForCodeComponents,
-  generateStateValueProp,
-  get as $stateGet,
   hasVariant,
-  initializeCodeComponentStates,
-  initializePlasmicStates,
-  makeFragment,
-  omit,
-  pick,
-  renderPlasmicSlot,
-  set as $stateSet,
-  useCurrentUser,
   useDollarState,
-  usePlasmicTranslator,
-  useTrigger,
-  wrapWithClassName,
 } from "@plasmicapp/react-web";
-import {
-  DataCtxReader as DataCtxReader__,
-  useDataEnv,
-  useGlobalActions,
-} from "@plasmicapp/react-web/lib/host";
+import { useDataEnv } from "@plasmicapp/react-web/lib/host";
 
-import LeftTabStrip from "../../components/studio/LeftTabStrip"; // plasmic-import: l7y_rhJyMt2/component
-import LeftTabButton from "../../components/studio/LeftTabButton"; // plasmic-import: 1q_JapBg7U/component
-import LeftGeneralTokensPanel from "../../components/sidebar/LeftGeneralTokensPanel"; // plasmic-import: bDbzY5jXLz/component
-import { MixinsPanel as LeftMixinsPanel } from "../../components/sidebar/MixinControls"; // plasmic-import: ZsFxxgE4E8/component
-import { ImageAssetsPanel as LeftImagesPanel } from "../../components/sidebar/image-asset-controls"; // plasmic-import: ECu8FUyP0f3/component
-import LeftThemesPanel from "../../components/sidebar/ThemesControls"; // plasmic-import: 9I47RGPv62/component
-import { UserManagedFontsPanel as LeftFontsPanel } from "../../components/sidebar/UserManagedFonts"; // plasmic-import: 5oz1qmvGBe/component
-import { ProjectDependenciesPanel as LeftImportsPanel } from "../../components/sidebar/ProjectDependencies"; // plasmic-import: MeRxD_0BtJ/component
 import { VersionsTab as LeftVersionsPanel } from "../../components/sidebar-tabs/versions-tab"; // plasmic-import: YldGgVsq6N/component
 import LeftComponentsPanel from "../../components/sidebar/LeftComponentsPanel"; // plasmic-import: 7Wsvgu6cRd/component
+import LeftGeneralTokensPanel from "../../components/sidebar/LeftGeneralTokensPanel"; // plasmic-import: bDbzY5jXLz/component
+import LeftLintIssuesPanel from "../../components/sidebar/LeftLintIssuesPanel"; // plasmic-import: xymZo1AIeU/component
 import LeftPagesPanel from "../../components/sidebar/LeftPagesPanel"; // plasmic-import: wXKvVcr82I/component
 import LeftSettingsPanel from "../../components/sidebar/LeftSettingsPanel"; // plasmic-import: EeT-6P6YTW/component
 import LeftSplitsPanel from "../../components/sidebar/LeftSplitsPanel"; // plasmic-import: OzaoSbFLbl/component
-import LeftLintIssuesPanel from "../../components/sidebar/LeftLintIssuesPanel"; // plasmic-import: xymZo1AIeU/component
+import { MixinsPanel as LeftMixinsPanel } from "../../components/sidebar/MixinControls"; // plasmic-import: ZsFxxgE4E8/component
+import { ProjectDependenciesPanel as LeftImportsPanel } from "../../components/sidebar/ProjectDependencies"; // plasmic-import: MeRxD_0BtJ/component
+import LeftThemesPanel from "../../components/sidebar/ThemesControls"; // plasmic-import: 9I47RGPv62/component
+import { UserManagedFontsPanel as LeftFontsPanel } from "../../components/sidebar/UserManagedFonts"; // plasmic-import: 5oz1qmvGBe/component
+import { ImageAssetsPanel as LeftImagesPanel } from "../../components/sidebar/image-asset-controls"; // plasmic-import: ECu8FUyP0f3/component
+import LeftTabButton from "../../components/studio/LeftTabButton"; // plasmic-import: 1q_JapBg7U/component
+import LeftTabStrip from "../../components/studio/LeftTabStrip"; // plasmic-import: l7y_rhJyMt2/component
 
 import "@plasmicapp/react-web/lib/plasmic.css";
 
 import plasmic_plasmic_kit_design_system_deprecated_css from "../PP__plasmickit_design_system.module.css"; // plasmic-import: tXkSR39sgCDWSitZxC5xFV/projectcss
+import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import plasmic_plasmic_kit_color_tokens_css from "../plasmic_kit_q_4_color_tokens/plasmic_plasmic_kit_q_4_color_tokens.module.css"; // plasmic-import: 95xp9cYcv7HrNWpFWWhbcv/projectcss
 import plasmic_plasmic_kit_new_design_system_former_style_controls_css from "../plasmic_kit_style_controls/plasmic_plasmic_kit_styles_pane.module.css"; // plasmic-import: gYEVvAzCcLMHDVPvuYxkFh/projectcss
-import projectcss from "../PP__plasmickit_left_pane.module.css"; // plasmic-import: aukbrhkegRkQ6KizvhdUPT/projectcss
 import sty from "./PlasmicLeftPane.module.css"; // plasmic-import: avrERxAp81S/css
 
-import WarningTrianglesvgIcon from "../q_4_icons/icons/PlasmicIcon__WarningTrianglesvg"; // plasmic-import: S0L-xosWD/icon
-import TreeIcon from "../plasmic_kit/PlasmicIcon__Tree"; // plasmic-import: 4KZjuPY_m0VTb/icon
-import ComponentssvgIcon from "../q_4_icons/icons/PlasmicIcon__Componentssvg"; // plasmic-import: coPzxnFyi/icon
 import GearIcon from "../plasmic_kit/PlasmicIcon__Gear"; // plasmic-import: ZmVZmXEc9f_SR/icon
-import DotsHorizontalCirclesvgIcon from "../q_4_icons/icons/PlasmicIcon__DotsHorizontalCirclesvg"; // plasmic-import: xdn8wiJBv/icon
+import TreeIcon from "../plasmic_kit/PlasmicIcon__Tree"; // plasmic-import: 4KZjuPY_m0VTb/icon
+import ComponentsSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__ComponentsSvg"; // plasmic-import: coPzxnFyi/icon
+import DotsHorizontalCircleSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__DotsHorizontalCircleSvg"; // plasmic-import: xdn8wiJBv/icon
+import WarningTriangleSvgIcon from "../plasmic_kit_icons/icons/PlasmicIcon__WarningTriangleSvg"; // plasmic-import: S0L-xosWD/icon
 
 createPlasmicElementProxy;
 
@@ -175,6 +145,7 @@ export interface DefaultLeftPaneProps {
     | "copilot"
     | "lint"
   >;
+
   className?: string;
 }
 
@@ -188,7 +159,16 @@ function PlasmicLeftPane__RenderFunc(props: {
 }) {
   const { variants, overrides, forNode } = props;
 
-  const args = React.useMemo(() => Object.assign({}, props.args), [props.args]);
+  const args = React.useMemo(
+    () =>
+      Object.assign(
+        {},
+        Object.fromEntries(
+          Object.entries(props.args).filter(([_, v]) => v !== undefined)
+        )
+      ),
+    [props.args]
+  );
 
   const $props = {
     ...args,
@@ -199,8 +179,6 @@ function PlasmicLeftPane__RenderFunc(props: {
   const refsRef = React.useRef({});
   const $refs = refsRef.current;
 
-  const currentUser = useCurrentUser?.() || {};
-
   const stateSpecs: Parameters<typeof useDollarState>[0] = React.useMemo(
     () => [
       {
@@ -210,6 +188,7 @@ function PlasmicLeftPane__RenderFunc(props: {
         initFunc: ({ $props, $state, $queries, $ctx }) => $props.type,
       },
     ],
+
     [$props, $ctx, $refs]
   );
   const $state = useDollarState(stateSpecs, {
@@ -281,7 +260,7 @@ function PlasmicLeftPane__RenderFunc(props: {
               data-plasmic-override={overrides.lint}
               className={classNames("__wab_instance", sty.lint)}
               icon={
-                <WarningTrianglesvgIcon
+                <WarningTriangleSvgIcon
                   className={classNames(projectcss.all, sty.svg__zOfU0)}
                   role={"img"}
                 />
@@ -305,7 +284,7 @@ function PlasmicLeftPane__RenderFunc(props: {
               data-plasmic-override={overrides.assets}
               className={classNames("__wab_instance", sty.assets)}
               icon={
-                <ComponentssvgIcon
+                <ComponentsSvgIcon
                   className={classNames(projectcss.all, sty.svg___2I0R2)}
                   role={"img"}
                 />
@@ -329,7 +308,7 @@ function PlasmicLeftPane__RenderFunc(props: {
               data-plasmic-override={overrides.more}
               className={classNames("__wab_instance", sty.more)}
               icon={
-                <DotsHorizontalCirclesvgIcon
+                <DotsHorizontalCircleSvgIcon
                   className={classNames(projectcss.all, sty.svg___52RoI)}
                   role={"img"}
                 />
@@ -699,6 +678,7 @@ const PlasmicDescendants = {
     "leftSplitsPanel",
     "leftLintIssuesPanel",
   ],
+
   leftTabStrip: [
     "leftTabStrip",
     "lint",
@@ -707,6 +687,7 @@ const PlasmicDescendants = {
     "settingsGroup",
     "more",
   ],
+
   lint: ["lint"],
   outline: ["outline"],
   assets: ["assets"],
@@ -728,6 +709,7 @@ const PlasmicDescendants = {
     "leftSplitsPanel",
     "leftLintIssuesPanel",
   ],
+
   paneContent: [
     "paneContent",
     "leftGeneralTokensPanel",
@@ -743,6 +725,7 @@ const PlasmicDescendants = {
     "leftSplitsPanel",
     "leftLintIssuesPanel",
   ],
+
   leftGeneralTokensPanel: ["leftGeneralTokensPanel"],
   leftMixinsPanel: ["leftMixinsPanel"],
   leftImagesPanel: ["leftImagesPanel"],
@@ -788,6 +771,7 @@ type NodeOverridesType<T extends NodeNameType> = Pick<
   PlasmicLeftPane__OverridesType,
   DescendantsType<T>
 >;
+
 type NodeComponentProps<T extends NodeNameType> =
   // Explicitly specify variants, args, and overrides as objects
   {

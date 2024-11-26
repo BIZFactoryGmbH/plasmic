@@ -4,7 +4,7 @@ import {
   PlasmicTextbox,
   PlasmicTextbox__VariantsArgs,
 } from "@/wab/client/plasmic/plasmic_kit/PlasmicTextbox";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import React, { ReactNode, useEffect } from "react";
 import { useMount, useMountedState } from "react-use";
 
@@ -29,6 +29,7 @@ type TextboxProps = Omit<React.ComponentProps<"input">, "disabled"> & {
   skipEditOnBlur?: boolean;
   selectAllOnAutoFocus?: boolean;
   selectAllOnFocus?: boolean;
+  isDelayedFocus?: boolean;
   children?: never;
   wrapperProps?: React.ComponentProps<"div">;
 };
@@ -107,7 +108,13 @@ export const Textbox = React.forwardRef(
       //
       // So we manually focus just in case.
       if (props.autoFocus) {
-        focus();
+        if (props?.isDelayedFocus) {
+          setTimeout(() => {
+            focus();
+          }, 300);
+        } else {
+          focus();
+        }
       }
     });
 

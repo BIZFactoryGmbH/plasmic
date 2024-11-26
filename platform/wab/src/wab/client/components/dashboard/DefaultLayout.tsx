@@ -1,6 +1,10 @@
 /** @format */
 
 import { U, UU } from "@/wab/client/cli-routes";
+import { promptNewTeam } from "@/wab/client/components/dashboard/dashboard-actions";
+import NavSeparator from "@/wab/client/components/dashboard/NavSeparator";
+import NavTeamSection from "@/wab/client/components/dashboard/NavTeamSection";
+import NavWorkspaceButton from "@/wab/client/components/dashboard/NavWorkspaceButton";
 import { recentlyEndedTrial } from "@/wab/client/components/FreeTrial";
 import {
   canUpgradeTeam,
@@ -16,19 +20,15 @@ import {
   PlasmicDefaultLayout__OverridesType,
 } from "@/wab/client/plasmic/plasmic_kit_dashboard/PlasmicDefaultLayout";
 import { useBrowserNotification } from "@/wab/client/utils/useBrowserNotification";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import { TeamId, WorkspaceId } from "@/wab/shared/ApiSchema";
 import { HTMLElementRefOf } from "@plasmicapp/react-web";
 import { Dropdown, Menu } from "antd";
 import * as _ from "lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router";
-import { promptNewTeam } from "./dashboard-actions";
-import NavSeparator from "./NavSeparator";
-import NavTeamSection from "./NavTeamSection";
-import NavWorkspaceButton from "./NavWorkspaceButton";
 
 type DefaultLayoutProps = DefaultDefaultLayoutProps & {
   helpButton: PlasmicDefaultLayout__OverridesType["helpButton"];
@@ -263,5 +263,5 @@ function DefaultLayout_(
   );
 }
 
-const DefaultLayout = observer(DefaultLayout_, { forwardRef: true });
+const DefaultLayout = observer(React.forwardRef(DefaultLayout_));
 export default DefaultLayout;

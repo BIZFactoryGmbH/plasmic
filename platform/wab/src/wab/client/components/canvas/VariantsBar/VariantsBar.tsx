@@ -1,28 +1,31 @@
-import { isKnownArenaFrame, Variant } from "@/wab/classes";
 import {
   getSpotlightDomInfo,
   getSpotlightInfo,
 } from "@/wab/client/components/canvas/Spotlight";
+import VariantBadge from "@/wab/client/components/canvas/VariantsBar/VariantBadge";
+import styles from "@/wab/client/components/canvas/VariantsBar/VariantsBar.module.scss";
+import VariantsDrawer from "@/wab/client/components/canvas/VariantsBar/VariantsDrawer";
 import { makeVariantsController } from "@/wab/client/components/variants/VariantsController";
 import { frameToClientRect } from "@/wab/client/coords";
 import { plasmicCanvasTransformEvent } from "@/wab/client/definitions/events";
 import PlasmicVariantsBar from "@/wab/client/plasmic/plasmic_kit_variants_bar/PlasmicVariantsBar";
 import { StudioCtx, usePlasmicCtx } from "@/wab/client/studio-ctx/StudioCtx";
 import { ViewCtx } from "@/wab/client/studio-ctx/view-ctx";
-import { ensure } from "@/wab/common";
+import { ensure } from "@/wab/shared/common";
 import { useSignalListener } from "@/wab/commons/components/use-signal-listener";
 import {
   getSuperComponentVariantGroupToComponent,
   isFrameComponent,
-} from "@/wab/components";
-import { Box } from "@/wab/geom";
+} from "@/wab/shared/core/components";
+import { Box } from "@/wab/shared/geom";
 import { isDedicatedArena, isMixedArena } from "@/wab/shared/Arenas";
+import { isKnownArenaFrame, Variant } from "@/wab/shared/model/classes";
 import { withoutIrrelevantScreenVariants } from "@/wab/shared/PinManager";
 import { getAllVariantsForTpl, isScreenVariant } from "@/wab/shared/Variants";
 import { Dropdown } from "antd";
 import defer from "lodash/defer";
 import last from "lodash/lodash";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import React, {
   useCallback,
   useEffect,
@@ -30,9 +33,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import VariantBadge from "./VariantBadge";
-import styles from "./VariantsBar.module.scss";
-import VariantsDrawer from "./VariantsDrawer";
 
 const HOVER_TAG_HEIGHT = 30;
 const CANVAS_PADDING = 15;
